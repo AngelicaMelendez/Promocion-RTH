@@ -1,2 +1,2 @@
 # Promocion-RTH
-Tener un control de monitoreo para la operación es que realiza y puedan tener estadísticas de su área. 
+Tener un control de monitoreo para la operación de primer contacto, cotizacion, ordenes, facturas y reportes que se realizan y puedan tener estadísticas de su área. 
