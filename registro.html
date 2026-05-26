@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RYTH | Registro de Clientes</title>
+  <link rel="icon" type="image/x-icon" href="img/star.ico">
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+
+    :root {
+
+      --primary-blue: #bc955b;
+      --primary-hover: #691b31;
+      --bg-color: #691b31;
+      --text-dark: #ddc9a3;
+      --text-muted: #bc955b;
+      --border-color: #691b31;
+
+    }
+
+    * {
+
+      box-sizing: border-box;
+
+    }
+
+    body {
+
+      margin: 0;
+      padding: 60px 0;
+
+      font-family: 'Montserrat', sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #691b31,
+          #7A1E48,
+          #8A1538
+        );
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+
+      min-height: 100vh;
+
+      overflow-x: hidden;
+
+      position: relative;
+
+    }
+
+    body::before {
+
+      content: "";
+
+      position: fixed;
+
+      top: 0;
+      left: 0;
+
+      width: 150%;
+      height: 180%;
+
+      background:
+        url("img/logo_vryt.png")
+        no-repeat center / contain;
+
+      opacity: 0.08;
+
+      filter: blur(2px);
+
+      pointer-events: none;
+
+      z-index: 0;
+
+    }
+
+    body > * {
+
+      position: relative;
+
+      z-index: 1;
+
+    }
+
+    .card {
+
+      position: relative;
+
+      overflow: hidden;
+
+      background:
+        rgba(160, 33, 66, 0.90);
+
+      padding:
+        50px 36px 42px;
+
+      border-radius: 28px;
+
+      width: 100%;
+      max-width: 430px;
+
+      box-shadow:
+        0 15px 40px rgba(0,0,0,0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.08);
+
+      border: 1px solid rgba(221,201,163,0.15);
+
+      backdrop-filter: blur(12px);
+
+    }
+
+    .top-line {
+
+      position: absolute;
+
+      top: 0;
+
+      left: 0;
+
+      width: 100%;
+
+      height: 7px;
+
+      overflow: hidden;
+
+      background: transparent;
+
+    }
+
+    .top-line::before {
+
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+
+      width: 45%;
+
+      height: 100%;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        #8A1538,
+        #8A1538,
+        #7A1E48,
+        transparent
+      );
+
+      animation:
+        moveLine 2s linear infinite;
+
+    }
+
+    @keyframes moveLine {
+
+      0% {
+
+        left: -45%;
+
+      }
+
+      100% {
+
+        left: 100%;
+
+      }
+
+    }
+
+    .logo-icon img {
+
+      width: 220px;
+      max-width: 100%;
+      height: auto;
+
+      display: block;
+
+      margin:
+        0 auto 18px;
+
+      object-fit: contain;
+
+    }
+
+    h2 {
+
+      text-align: center;
+
+      color:
+        var(--text-dark);
+
+      margin-bottom: 6px;
+
+      font-size: 2rem;
+
+      font-weight: 800;
+
+      font-family: 'Montserrat', sans-serif;
+
+    }
+
+    .subtitle {
+
+      text-align: center;
+
+      color:
+        var(--text-muted);
+
+      margin-bottom: 24px;
+
+      font-size: 0.95rem;
+
+      font-family: 'Montserrat', sans-serif;
+
+    }
+
+    .input-group {
+
+      margin-bottom: 16px;
+
+    }
+
+    .input-group label {
+
+      display: block;
+
+      margin-bottom: 8px;
+
+      color:
+        white;
+
+      font-size: 0.90rem;
+
+      font-weight: 700;
+
+      font-family: 'Montserrat', sans-serif;
+
+    }
+
+    .input-group input {
+
+      width: 100%;
+
+      padding: 13px;
+
+      border-radius: 16px;
+
+      border: none;
+
+      box-sizing: border-box;
+
+      background:
+        rgba(255,255,255,0.95);
+
+      font-size: 0.95rem;
+
+      font-family: 'Montserrat', sans-serif;
+
+      transition: .3s;
+
+    }
+
+    .input-group input:focus {
+
+      outline: none;
+
+      background: white;
+
+      box-shadow:
+        0 0 15px rgba(221,201,163,0.35);
+
+      transform:
+        scale(1.01);
+
+    }
+
+    .btn-submit {
+
+      width: 100%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #bc955b,
+          #ddc9a3
+        );
+
+      color: white;
+
+      border: none;
+
+      padding: 14px;
+
+      border-radius: 16px;
+
+      font-size: 1rem;
+
+      font-weight: 700;
+
+      font-family: 'Montserrat', sans-serif;
+
+      cursor: pointer;
+
+      transition: .3s;
+
+      margin-top: 6px;
+
+    }
+
+    .btn-submit:hover {
+
+      transform:
+        translateY(-2px);
+
+      background:
+        linear-gradient(
+          90deg,
+          #ddc9a3,
+          #bc955b
+        );
+
+    }
+
+    #mensaje {
+
+      margin-top: 15px;
+
+      text-align: center;
+
+      font-weight: bold;
+
+      display: none;
+
+      font-family: 'Montserrat', sans-serif;
+
+    }
+
+    .success {
+
+      color: #ddc9a3;
+
+    }
+
+    .error {
+
+      color: white;
+
+    }
+
+    .back-link {
+
+      display: block;
+
+      margin-top: 18px;
+
+      text-align: center;
+
+      text-decoration: none;
+
+      color:
+        var(--text-muted);
+
+      font-size: 0.9rem;
+
+      font-family: 'Montserrat', sans-serif;
+
+    }
+
+    .back-link:hover {
+
+      color:
+        white;
+
+    }
+
+    @media(max-width: 500px){
+
+      .card {
+
+        width: 92%;
+        padding: 30px 22px;
+
+      }
+
+      .logo-icon img {
+
+        width: 180px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="top-line"></div>
+
+    <div class="logo-icon">
+
+      <img
+        src="img/logo_vryt.png"
+        alt="Logo Hidalgo">
+
+    </div>
+
+    <h2>Registro de Clientes</h2>
+
+    <p class="subtitle">
+
+      Registrar nuevo cliente en el sistema
+
+    </p>
+
+    <form id="clienteForm">
+
+      <div class="input-group">
+
+        <label>Razón Social</label>
+
+        <input type="text" id="razon_social" required>
+
+      </div>
+
+      <div class="input-group">
+
+        <label>RFC</label>
+
+        <input
+          type="text"
+          id="rfc"
+          required
+          maxlength="13"
+          placeholder="ABCD010101ABC">
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Domicilio Fiscal</label>
+
+        <input type="text" id="domicilio_fiscal" required>
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Correo</label>
+
+        <input type="email" id="correo" required>
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Teléfono</label>
+
+        <input type="text" id="telefono">
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Régimen Fiscal</label>
+
+        <input type="text" id="regimen_fiscal">
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Uso CFDI</label>
+
+        <input type="text" id="uso_cfdi">
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Representante</label>
+
+        <input type="text" id="representante">
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Contraseña</label>
+
+        <input
+          type="password"
+          id="clave"
+          required
+          minlength="6">
+
+      </div>
+
+      <button
+        type="submit"
+        class="btn-submit">
+
+        Registrar Cliente
+
+      </button>
+
+      <div id="mensaje"></div>
+
+    </form>
+
+    <a href="login.html" class="back-link">
+
+      ← Volver al inicio de sesión
+
+    </a>
+
+  </div>
+
+  <script type="module">
+
+    import { createClient }
+    from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://feylqcbnbndaefshhrpv.supabase.co',
+      'sb_publishable_RAlV0OCSUQNvEhmZam1cwA_3aViGAzg'
+    )
+
+    const form = document.getElementById('clienteForm')
+    const mensaje = document.getElementById('mensaje')
+
+    form.addEventListener('submit', async (e) => {
+
+      e.preventDefault()
+
+      mensaje.style.display = 'none'
+      mensaje.textContent = ''
+
+      const razon_social =
+        document.getElementById('razon_social').value.trim()
+
+      const rfc =
+        document.getElementById('rfc')
+          .value
+          .trim()
+          .toUpperCase()
+
+      const domicilio_fiscal =
+        document.getElementById('domicilio_fiscal').value.trim()
+
+      const correo =
+        document.getElementById('correo').value.trim()
+
+      const telefono =
+        document.getElementById('telefono').value.trim()
+
+      const regimen_fiscal =
+        document.getElementById('regimen_fiscal').value.trim()
+
+      const uso_cfdi =
+        document.getElementById('uso_cfdi').value.trim()
+
+      const representante =
+        document.getElementById('representante').value.trim()
+
+      const clave =
+        document.getElementById('clave').value
+
+      const rfcRegex =
+        /^([A-ZÑ&]{3,4})\d{6}([A-Z0-9]{3})$/
+
+      if (!rfc) {
+
+        mensaje.style.display = 'block'
+        mensaje.className = 'error'
+        mensaje.textContent =
+          'El RFC es obligatorio'
+
+        return
+
+      }
+
+      if (!rfcRegex.test(rfc)) {
+
+        mensaje.style.display = 'block'
+        mensaje.className = 'error'
+        mensaje.textContent =
+          'El RFC no tiene un formato válido'
+
+        return
+
+      }
+
+      const { error: authError } =
+        await supabase.auth.signUp({
+
+          email: correo,
+          password: clave
+
+        })
+
+      if (authError) {
+
+        mensaje.style.display = 'block'
+        mensaje.className = 'error'
+        mensaje.textContent =
+          authError.message
+
+        return
+
+      }
+
+      const { error: clienteError } =
+        await supabase
+          .from('clientes')
+          .insert([
+            {
+              razon_social,
+              rfc,
+              domicilio_fiscal,
+              correo,
+              telefono,
+              regimen_fiscal,
+              uso_cfdi,
+              representante
+            }
+          ])
+
+      if (clienteError) {
+
+        mensaje.style.display = 'block'
+        mensaje.className = 'error'
+        mensaje.textContent =
+          'Error al registrar: ' +
+          clienteError.message
+
+        return
+
+      }
+
+      mensaje.style.display = 'block'
+      mensaje.className = 'success'
+      mensaje.textContent =
+        'Cliente registrado correctamente'
+
+      form.reset()
+
+    })
+
+  </script>
+
+</body>
+</html>
