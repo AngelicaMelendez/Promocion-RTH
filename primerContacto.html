@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RYTH | Primer Contacto</title>
+    <link rel="icon" type="image/x-icon" href="img/star.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --vino: #691b31;
+            --vino-claro: #a02142;
+            --dorado: #bc955b;
+            --beige: #ddc9a3;
+            --gris: #7d7d7d;
+            --gris-claro: #f4f4f4;
+            --blanco: #ffffff;
+            --fondo: #f7f3ed;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--fondo);
+            color: #2c3e4e;
+        }
+
+        .navbar {
+            background: var(--vino);
+            color: var(--beige);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap !important;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            overflow-x: auto;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .nav-logo img {
+            width: 90px;
+            height: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .nav-links a {
+            color: var(--beige);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            background-color: var(--dorado);
+            color: var(--vino);
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            top: 40px;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--vino);
+            padding: 10px 16px;
+            display: block;
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            background: var(--dorado);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        #nav-user-name {
+            margin-left: 2px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: var(--beige);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: var(--vino);
+        }
+
+        .subtitle {
+            color: var(--gris);
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .grupo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grupo label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--vino);
+        }
+
+        input,
+        select {
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--vino);
+        }
+
+        .acciones {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .btn-vino {
+            background: var(--vino);
+            color: white;
+        }
+
+        .btn-dorado {
+            background: var(--dorado);
+            color: white;
+        }
+
+        #mensaje {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Estilos del modal de observación */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .modal-box h3 {
+            color: var(--vino);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-box textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            outline: none;
+        }
+
+        .modal-box textarea:focus {
+            border-color: var(--vino);
+        }
+
+        .modal-acciones {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .modal-acciones button {
+            padding: 10px 18px;
+        }
+
+        .btn-cancelar {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .footer {
+            background: var(--vino);
+            color: white;
+            margin-top: 70px;
+            padding: 50px 55px 35px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 50px;
+        }
+
+        .footer-logo img {
+            width: 150px;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-emergencias {
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+            text-align: center;
+        }
+
+        .emergencia-item strong {
+            display: block;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-line {
+            width: 100%;
+            height: 1px;
+            background: var(--dorado);
+            margin: 40px 0 30px;
+        }
+
+        @media (max-width: 850px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .navbar {
+                flex-wrap: nowrap !important;
+                justify-content: flex-start;
+                gap: 10px;
+                padding: 15px 20px;
+            }
+            .nav-links {
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .nav-profile {
+                flex-shrink: 0;
+            }
+            .dropdown-content {
+                right: auto;
+                left: 0;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 30px;
+            }
+            .footer-emergencias {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ENCABEZADO -->
+<nav class="navbar">
+    <div class="nav-logo">
+        <img src="img/logo_RYT.png" alt="Logo">
+        <span>RADIO Y TELEVISIÓN HIDALGO</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="primimim.html" class="active"><i class="fas fa-users"></i> Clientes</a>
+        <a href="cotizacion2.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
+        <a href="ordenes2.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+        <a href="factura2.html"><i class="fas fa-receipt"></i> Facturas</a>
+        <div class="dropdown">
+            <a href="reportes2.html"><i class="fas fa-chart-line"></i> Reportes ▼</a>
+        </div>
+    </div>
+
+    <div class="nav-profile">
+        <div class="avatar" id="nav-avatar">U</div>
+        <span id="nav-user-name">Usuario</span>
+        <button class="logout-btn" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="container">
+    <h1>Nuevo Cliente · Primer Contacto</h1>
+    <p class="subtitle">Registra los datos fiscales y de contacto del cliente</p>
+
+    <div class="grid">
+        <div class="grupo">
+            <label for="id">ID</label>
+            <input type="text" id="id" placeholder="Dejar vacío para auto-asignar">
+        </div>
+
+        <div class="grupo">
+            <label for="nombre">Nombre(s) *</label>
+            <input type="text" id="nombre" placeholder="Nombre del contacto" required>
+        </div>
+
+        <div class="grupo">
+            <label for="apellido_paterno">Apellido Paterno</label>
+            <input type="text" id="apellido_paterno" placeholder="Apellido paterno">
+        </div>
+
+        <div class="grupo">
+            <label for="apellido_materno">Apellido Materno</label>
+            <input type="text" id="apellido_materno" placeholder="Apellido materno">
+        </div>
+
+        <div class="grupo">
+            <label for="telefono">Teléfono *</label>
+            <input type="tel" id="telefono" placeholder="10 dígitos" required>
+        </div>
+
+        <div class="grupo">
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" placeholder="cliente@correo.com">
+        </div>
+
+        <div class="grupo">
+            <label for="representante">Puesto / Representante</label>
+            <input type="text" id="representante" placeholder="Ej. Director General">
+        </div>
+
+        <div class="grupo">
+            <label for="razon_social">Razón Social</label>
+            <input type="text" id="razon_social" placeholder="Ej. Empresa SA de CV">
+        </div>
+
+        <div class="grupo">
+            <label for="rfc">RFC</label>
+            <input type="text" id="rfc" placeholder="Ej. XAXX010101000">
+        </div>
+
+        <div class="grupo">
+            <label for="domicilio_fiscal">Domicilio Fiscal</label>
+            <input type="text" id="domicilio_fiscal" placeholder="Calle, número, colonia, CP">
+        </div>
+
+        <div class="grupo">
+            <label for="regimen_fiscal">Régimen Fiscal</label>
+            <input type="text" id="regimen_fiscal" placeholder="Ej. 601 General de Ley Personas Morales">
+        </div>
+
+        <div class="grupo">
+            <label for="uso_cfdi">Uso CFDI</label>
+            <input type="text" id="uso_cfdi" placeholder="Ej. G03 Gastos en general">
+        </div>
+    </div>
+
+    <div class="acciones">
+        <button type="button" class="btn-vino" onclick="guardarCliente()">
+            <i class="fas fa-save"></i> Guardar Cliente
+        </button>
+    </div>
+
+    <p id="mensaje"></p>
+</div>
+
+<!-- MODAL DE OBSERVACIÓN -->
+<div class="modal-overlay" id="modalObservacion">
+    <div class="modal-box">
+        <h3><i class="fas fa-clipboard-list"></i> Observaciones del registro</h3>
+        <textarea id="observacionTexto" placeholder="Escribe aquí las observaciones..."></textarea>
+        <div class="modal-acciones">
+            <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-vino" onclick="aceptarObservacion()">
+                <i class="fas fa-save"></i> Guardar con observación
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- PIE DE PÁGINA -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="img/logo_RYT.png" alt="Gobierno Hidalgo">
+        </div>
+        <div class="footer-emergencias">
+            <div class="emergencia-item">
+                <strong>911</strong>
+                <span>Emergencia</span>
+            </div>
+            <div class="emergencia-item">
+                <strong>089</strong>
+                <span>Denuncia Anónima</span>
+            </div>
+        </div>
+        <div>
+            <p>Aviso de privacidad</p>
+            <p>Contacto: Carretera Federal México-Pachuca Km 84.5</p>
+            <p>Sector Primario, C.P. 42080</p>
+            <p>Pachuca de Soto, Hidalgo, México</p>
+            <p>+52 (771) 71 79000 Ext. 9211</p>
+        </div>
+    </div>
+    <div class="footer-line"></div>
+    <div>
+        Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación
+    </div>
+</footer>
+
+<script type="module">
+    // Importamos todo desde el archivo central app.js
+    import { initAuth, supabase } from './app.js'
+
+    // Inicializamos la autenticación (navbar, listener, cierre de sesión, etc.)
+    await initAuth()
+
+    // ---------- Resto del código original (formulario, modal, etc.) ----------
+    const mensaje = document.getElementById('mensaje')
+    const modal = document.getElementById('modalObservacion')
+    const observacionTexto = document.getElementById('observacionTexto')
+
+    let datosTemporales = null
+
+    function generarObservacion() {
+        const campos = [
+            { id: 'apellido_paterno', label: 'Apellido Paterno' },
+            { id: 'apellido_materno', label: 'Apellido Materno' },
+            { id: 'correo', label: 'Correo electrónico' },
+            { id: 'representante', label: 'Puesto / Representante' },
+            { id: 'razon_social', label: 'Razón Social' },
+            { id: 'rfc', label: 'RFC' },
+            { id: 'domicilio_fiscal', label: 'Domicilio Fiscal' },
+            { id: 'regimen_fiscal', label: 'Régimen Fiscal' },
+            { id: 'uso_cfdi', label: 'Uso CFDI' }
+        ];
+
+        const faltantes = campos
+            .filter(campo => document.getElementById(campo.id).value.trim() === '')
+            .map(campo => campo.label);
+
+        if (faltantes.length === 0) {
+            return 'Datos opcionales completos.';
+        } else {
+            return `Faltaron los siguientes datos opcionales: ${faltantes.join(', ')}.`;
+        }
+    }
+
+    function mostrarModal(textoInicial) {
+        observacionTexto.value = textoInicial;
+        modal.classList.add('active');
+    }
+
+    window.cerrarModal = function() {
+        modal.classList.remove('active');
+        datosTemporales = null;
+    }
+
+    window.aceptarObservacion = function() {
+        if (!datosTemporales) return;
+        const observacionFinal = observacionTexto.value.trim();
+        datosTemporales.nuevoCliente.observaciones = observacionFinal;
+        guardarEnSupabase(datosTemporales.nuevoCliente, datosTemporales.idInput);
+        modal.classList.remove('active');
+        datosTemporales = null;
+    }
+
+    async function guardarEnSupabase(nuevoCliente, idInput) {
+        try {
+            const { data, error } = await supabase
+                .from('clientes')
+                .insert([nuevoCliente])
+                .select()
+
+            if (error) {
+                mensaje.textContent = 'Error al guardar: ' + error.message;
+                mensaje.style.color = 'red';
+                return;
+            }
+
+            mensaje.innerHTML = 'Cliente registrado exitosamente.';
+            mensaje.style.color = 'green';
+
+            const ids = [
+                'id', 'nombre', 'apellido_paterno', 'apellido_materno', 'telefono',
+                'correo', 'representante', 'razon_social', 'rfc', 'domicilio_fiscal',
+                'regimen_fiscal', 'uso_cfdi'
+            ];
+            ids.forEach(id => document.getElementById(id).value = '');
+
+        } catch (err) {
+            mensaje.textContent = 'Error inesperado: ' + err.message;
+            mensaje.style.color = 'red';
+        }
+    }
+
+    window.guardarCliente = async function () {
+        const nombre = document.getElementById('nombre').value.trim();
+        const telefono = document.getElementById('telefono').value.trim();
+
+        if (!nombre || !telefono) {
+            mensaje.textContent = 'El Nombre y el Teléfono son obligatorios.';
+            mensaje.style.color = 'red';
+            return;
+        }
+
+        const idInput = document.getElementById('id').value.trim();
+
+        const nuevoCliente = {
+            nombre,
+            telefono,
+            apellido_paterno: document.getElementById('apellido_paterno').value.trim(),
+            apellido_materno: document.getElementById('apellido_materno').value.trim(),
+            correo: document.getElementById('correo').value.trim(),
+            representante: document.getElementById('representante').value.trim(),
+            razon_social: document.getElementById('razon_social').value.trim(),
+            rfc: document.getElementById('rfc').value.trim(),
+            domicilio_fiscal: document.getElementById('domicilio_fiscal').value.trim(),
+            regimen_fiscal: document.getElementById('regimen_fiscal').value.trim(),
+            uso_cfdi: document.getElementById('uso_cfdi').value.trim()
+        };
+
+        if (idInput !== '') {
+            const idNumerico = parseInt(idInput, 10);
+            if (isNaN(idNumerico)) {
+                mensaje.textContent = 'El ID debe ser un número entero o dejarlo vacío.';
+                mensaje.style.color = 'red';
+                return;
+            }
+            nuevoCliente.id = idNumerico;
+        }
+
+        const observacionInicial = generarObservacion();
+        datosTemporales = { nuevoCliente, idInput };
+        mostrarModal(observacionInicial);
+        mensaje.textContent = '';
+    }
+
+    // Cerrar modal si se hace clic fuera de la caja
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            window.cerrarModal();
+        }
+    });
+</script>
+
+</body>
+</html>
