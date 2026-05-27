@@ -251,22 +251,19 @@
 </head>
 <body>
 
+<!-- ENCABEZADO -->
 <nav class="navbar">
   <div class="nav-logo">
     <img src="img/logo_RYT.png" alt="Logo">
     <span>RADIO Y TELEVISIÓN HIDALGO</span>
   </div>
   <div class="nav-links">
-    <a href="dashboard.html"><i class="fas fa-tags"></i> Servicios</a>
+    <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
     <a href="cotizacion.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-    <a href="ordenesApro.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
     <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
     <div class="dropdown">
       <a href="reportes.html" class="active"><i class="fas fa-chart-line"></i> Reportes ▼</a>
-      <div class="dropdown-content">
-        <a href="#"><i class="fas fa-chart-bar"></i> Dashboard ingresos</a>
-        <a href="#"><i class="fas fa-chart-pie"></i> Ingresos por servicio</a>
-      </div>
     </div>
   </div>
   <div class="nav-profile">
@@ -278,8 +275,7 @@
 
 <main class="container">
   <div class="stats-grid">
-    <!-- Tarjeta clickeable: Ingresos totales -->
-     <div class="stat-card" id="cardServiciosVendidos">
+    <div class="stat-card" id="cardServiciosVendidos">
       <h3><i class="fas fa-tag"></i> Servicios vendidos</h3>
       <div class="valor" id="totalServiciosVendidos">0</div>
       <div class="sub">Cantidad total</div>
@@ -294,7 +290,6 @@
       <div class="valor" id="cotizacionesAprobadas">0</div>
       <div class="sub">En ejecución</div>
     </div>
-    <!-- Tarjeta clickeable: Facturas pendientes -->
     <div class="stat-card" id="cardFacturasPendientes">
       <h3><i class="fas fa-file-invoice"></i> Facturas pendientes</h3>
       <div class="valor" id="facturasPendientes">0</div>
@@ -302,7 +297,6 @@
     </div>
   </div>
 
-  <!-- Resto del contenido igual ... -->
   <div class="card">
     <div class="card-header"><i class="fas fa-chart-bar"></i> Ingresos mensuales (facturados)</div>
     <div class="card-body">
@@ -345,7 +339,6 @@
 </main>
 
 <!-- ===================== MODALES ===================== -->
- 
 <div class="modal" id="modalServiciosVendidos">
   <div class="modal-content">
     <div class="modal-header">
@@ -376,7 +369,6 @@
   </div>
 </div>
 
-<!-- Modal: Ingresos Totales -->
 <div class="modal" id="modalIngresosTotales">
   <div class="modal-content">
     <div class="modal-header">
@@ -403,7 +395,6 @@
   </div>
 </div>
 
-<!-- Modal: Facturas Pendientes -->
 <div class="modal" id="modalFacturasPendientes">
   <div class="modal-content">
     <div class="modal-header">
@@ -431,7 +422,6 @@
   </div>
 </div>
 
-<!-- Modal: Órdenes Confirmadas -->
 <div class="modal" id="modalOrdenesConfirmadas">
   <div class="modal-content">
     <div class="modal-header">
@@ -458,8 +448,6 @@
   </div>
 </div>
 
-<!-- Modal: Servicios Vendidos (ya existente) -->
-
 <footer class="footer">
   <div class="footer-content">
     <div class="footer-logo"><img src="img/logo_RYT.png" alt="Gobierno Hidalgo"></div>
@@ -480,16 +468,14 @@
 </footer>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  import { initAuth, supabase } from './app.js'
 
-  const supabase = createClient(
-    'https://feylqcbnbndaefshhrpv.supabase.co',
-    'sb_publishable_RAlV0OCSUQNvEhmZam1cwA_3aViGAzg'
-  )
+  // Inicializar la autenticación (navbar, listener, cierre de sesión, etc.)
+  await initAuth()
 
+  // ---------- Variables y referencias a modales ----------
   let ingresosMensualesChart, ingresosPorCategoriaChart
 
-  // ---------- Referencias a los modales y tarjetas ----------
   const modalIngresos = document.getElementById('modalIngresosTotales')
   const modalPendientes = document.getElementById('modalFacturasPendientes')
   const modalOrdenes = document.getElementById('modalOrdenesConfirmadas')
@@ -500,7 +486,6 @@
   const cardOrdenes = document.getElementById('cardOrdenesConfirmadas')
   const cardServicios = document.getElementById('cardServiciosVendidos')
 
-  // Manejadores de apertura de modales
   cardIngresos.addEventListener('click', () => {
     modalIngresos.classList.add('active')
     cargarDetalleIngresos()
@@ -518,7 +503,6 @@
     cargarDetalleServiciosVendidos()
   })
 
-  // Cerrar modales con el botón X y clic fuera
   document.querySelectorAll('.cerrar-modal').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.closest('.modal').classList.remove('active')
@@ -530,7 +514,7 @@
     })
   })
 
-  // ---------- Funciones de carga de reportes principales ----------
+  // ---------- Funciones de carga de reportes ----------
   async function cargarReportes() {
     await Promise.all([
       cargarEstadisticas(),
@@ -577,7 +561,6 @@
     document.getElementById('totalServiciosVendidos').innerText = totalCantidad
   }
 
-  // ---------- Detalle de Ingresos Totales ----------
   async function cargarDetalleIngresos() {
     const tbody = document.getElementById('tbodyIngresosDetalle')
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>'
@@ -608,7 +591,6 @@
     })
   }
 
-  // ---------- Detalle de Facturas Pendientes ----------
   async function cargarDetallePendientes() {
     const tbody = document.getElementById('tbodyPendientesDetalle')
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>'
@@ -642,7 +624,6 @@
     })
   }
 
-  // ---------- Detalle de Órdenes Confirmadas ----------
   async function cargarDetalleOrdenes() {
     const tbody = document.getElementById('tbodyOrdenesDetalle')
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>'
@@ -673,12 +654,10 @@
     })
   }
 
-  // ---------- Detalle de Servicios Vendidos (línea por línea) ----------
   async function cargarDetalleServiciosVendidos() {
     const tbody = document.getElementById('tbodyDetalleVendidos')
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando...</td></tr>'
 
-    // 1. Cotizaciones confirmadas
     const { data: cotizaciones, error: errorCot } = await supabase
       .from('cotizaciones')
       .select('id, folio, cliente_nombre, fecha')
@@ -697,7 +676,6 @@
 
     const cotizacionesIds = cotizaciones.map(c => c.id)
 
-    // 2. Detalles
     const { data: detalles, error: errorDet } = await supabase
       .from('cotizacion_detalle')
       .select('cotizacion_id, servicio_id, cantidad, precio_unitario')
@@ -712,7 +690,6 @@
       return
     }
 
-    // 3. Servicios
     const serviciosIds = [...new Set(detalles.map(d => d.servicio_id))]
     const { data: servicios, error: errorServ } = await supabase
       .from('servicios')
@@ -725,7 +702,6 @@
     }
     const servicioMap = Object.fromEntries(servicios.map(s => [s.id, s.nombre || 'Sin nombre']))
 
-    // 4. Construir filas
     const cotizacionMap = Object.fromEntries(cotizaciones.map(c => [c.id, c]))
     tbody.innerHTML = ''
     for (const cot of cotizaciones) {
@@ -745,7 +721,6 @@
     }
   }
 
-  // ----- Funciones de gráficos y cartera vencida (sin cambios) -----
   async function cargarIngresosMensuales() {
     const { data: facturadas } = await supabase
       .from('cotizaciones')
@@ -888,20 +863,9 @@
     })
   }
 
-  window.cerrarSesion = async () => {
-    await supabase.auth.signOut()
-    window.location.href = 'login.html'
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      const nombre = user.email?.split('@')[0] || 'Usuario'
-      document.getElementById('nav-user-name').innerText = nombre
-      document.getElementById('nav-avatar').innerText = nombre.charAt(0).toUpperCase()
-    }
-    await cargarReportes()
-  })
+  // Iniciar carga de reportes
+  cargarReportes()
 </script>
+
 </body>
 </html>

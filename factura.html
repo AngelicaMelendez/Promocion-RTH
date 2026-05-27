@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RYTH | Facturas</title>
-
   <link rel="icon" type="image/x-icon" href="img/star.ico">
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -25,30 +23,10 @@
       --fondo: #f7f3ed;
     }
 
-    html,
-    body {
-      min-height: 100%;
-    }
-
-    html {
-      overflow-y: auto;
-      overflow-x: hidden;
-      scrollbar-width: none;
-    }
-
-    html::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-
     body {
       font-family: 'Montserrat', sans-serif;
       background: var(--fondo);
       color: #2c3e4e;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      overflow-x: hidden;
     }
 
     .navbar {
@@ -156,8 +134,6 @@
       max-width: 1300px;
       margin: 30px auto;
       padding: 0 25px;
-      flex: 1;
-      width: 100%;
     }
 
     .card {
@@ -261,9 +237,8 @@
     .footer {
       background: var(--vino);
       color: white;
-      margin-top: auto;
+      margin-top: 70px;
       padding: 40px 55px 35px;
-      width: 100%;
     }
 
     .footer-content {
@@ -328,6 +303,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <nav class="navbar">
@@ -337,10 +313,10 @@
   </div>
 
   <div class="nav-links">
-    <a href="dashboard.html"><i class="fas fa-tags"></i> Servicios</a>
+    <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
     <a href="cotizacion.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-    <a href="ordenesApro.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
-    <a href="facturra.html" class="active"><i class="fas fa-receipt"></i> Facturas</a>
+    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="factura.html" class="active"><i class="fas fa-receipt"></i> Facturas</a>
 
     <div class="dropdown">
       <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes ▼</a>
@@ -430,13 +406,13 @@
 </footer>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  // Importamos todo desde el archivo central app.js
+  import { initAuth, supabase } from './app.js'
 
-  const supabase = createClient(
-    'https://feylqcbnbndaefshhrpv.supabase.co',
-    'sb_publishable_RAlV0OCSUQNvEhmZam1cwA_3aViGAzg'
-  )
+  // Inicializamos la autenticación (navbar, listener, cierre de sesión, etc.)
+  await initAuth()
 
+  // ---------- Funciones originales de facturas ----------
   async function cargarFacturas() {
     const tbody = document.getElementById('tbodyFacturas')
 
@@ -446,7 +422,6 @@
       </tr>
     `
 
-    // Solo traemos las confirmadas (estatus_orden = 'Confirmada')
     const { data, error } = await supabase
       .from('cotizaciones')
       .select('*')
@@ -486,7 +461,6 @@
       row.insertCell(3).innerText =
         `$${Number(cot.total || 0).toFixed(2)}`
 
-      // Estatus Factura
       const estatusFacturaCell = row.insertCell(4)
       if (cot.estatus_factura === 'Facturado') {
         estatusFacturaCell.innerHTML =
@@ -496,7 +470,6 @@
           '<span class="badge badge-pendiente">Pendiente</span>'
       }
 
-      // Evidencia Factura
       const evidenciaFacturaCell = row.insertCell(5)
       if (cot.evidencia_factura) {
         evidenciaFacturaCell.innerHTML = `
@@ -511,7 +484,6 @@
         evidenciaFacturaCell.innerHTML = 'Sin evidencia'
       }
 
-      // Acción: subir factura
       const accionCell = row.insertCell(6)
 
       if (cot.estatus_factura === 'Facturado') {
@@ -578,19 +550,11 @@
     cargarFacturas()
   }
 
-  async function cerrarSesion() {
-    await supabase.auth.signOut()
-    window.location.href = 'login.html'
-  }
-
   window.cargarFacturas = cargarFacturas
   window.subirFactura = subirFactura
-  window.cerrarSesion = cerrarSesion
 
-  document.addEventListener('DOMContentLoaded', () => {
-    cargarFacturas()
-  })
+  // Inicializar facturas
+  cargarFacturas()
 </script>
-
 </body>
 </html>

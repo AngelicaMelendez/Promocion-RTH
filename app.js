@@ -58,7 +58,7 @@ if (loginForm) {
           console.warn('No se pudo guardar objeto usuario en localStorage', e)
         }
 
-        window.location.href = 'primimim.html'
+        window.location.href = 'primerContacto.html'
       }
     } catch (err) {
       errorMessage.textContent = 'Error al iniciar sesión'
