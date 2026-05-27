@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RYTH | Órdenes de Servicio</title>
+  <link rel="icon" type="image/x-icon" href="img/star.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --vino: #691b31;
+      --vino-claro: #a02142;
+      --dorado: #bc955b;
+      --beige: #ddc9a3;
+      --gris: #7d7d7d;
+      --gris-claro: #f4f4f4;
+      --blanco: #ffffff;
+      --fondo: #f7f3ed;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--fondo);
+      color: #2c3e4e;
+    }
+
+    .navbar {
+      background: var(--vino);
+      color: var(--beige);
+      padding: 12px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 700;
+    }
+
+    .nav-logo img {
+      width: 90px;
+      height: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nav-links a {
+      color: var(--beige);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: var(--dorado);
+      color: var(--vino);
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 200px;
+      border-radius: 12px;
+      top: 40px;
+      right: 0;
+      z-index: 100;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      color: var(--vino);
+      padding: 10px 16px;
+      display: block;
+    }
+
+    .nav-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      background: var(--dorado);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: none;
+      color: var(--beige);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 30px auto;
+      padding: 0 25px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .card-header {
+      background: var(--vino);
+      color: white;
+      padding: 18px 28px;
+      font-weight: 700;
+      font-size: 1.3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .card-body {
+      padding: 25px 28px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: var(--gris-claro);
+      color: var(--vino);
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .badge-pendiente {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .badge-confirmada {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .btn-action {
+      background: var(--vino-claro);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      margin: 2px;
+    }
+
+    .btn-action:hover {
+      background: var(--vino);
+    }
+
+    .btn-action:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .btn-ver {
+      background: var(--dorado);
+      color: var(--vino);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 2px;
+      font-weight: 700;
+    }
+
+    .btn-ver:hover {
+      background: #a8813f;
+      color: white;
+    }
+
+    .footer {
+      background: var(--vino);
+      color: white;
+      margin-top: 70px;
+      padding: 40px 55px 35px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-logo img {
+      width: 140px;
+      filter: brightness(0) invert(1);
+    }
+
+    .footer-emergencias {
+      display: flex;
+      gap: 50px;
+      justify-content: center;
+    }
+
+    .emergencia-item strong {
+      font-size: 1.3rem;
+      display: block;
+    }
+
+    .footer-contacto p {
+      margin: 0 0 12px;
+    }
+
+    .footer-line {
+      height: 1px;
+      background: var(--dorado);
+      margin: 30px 0 20px;
+    }
+
+    .footer-copy {
+      text-align: center;
+    }
+
+    @media (max-width:850px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        justify-content: center;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 25px;
+      }
+
+      .footer-emergencias {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <img src="img/logo_RYT.png" alt="Logo">
+    <span>RADIO Y TELEVISIÓN HIDALGO</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="primimim.html" ><i class="fas fa-users"></i> Clientes</a>
+    <a href="cotizacion2.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
+    <a href="ordenes2.html" class="active"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="factura2.html"><i class="fas fa-receipt"></i> Facturas</a>
+
+    <div class="dropdown">
+      <a href="reportes2.html"><i class="fas fa-chart-line"></i> Reportes ▼</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-profile">
+    <div class="avatar" id="nav-avatar">U</div>
+    <span id="nav-user-name">Usuario</span>
+    <button class="logout-btn" onclick="cerrarSesion()">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </div>
+</nav>
+
+<main class="container">
+
+  <div class="card">
+    <div class="card-header">
+      <span><i class="fas fa-tasks"></i> Órdenes de Servicio</span>
+      <button class="btn-action" onclick="cargarOrdenes()">
+        <i class="fas fa-sync-alt"></i> Actualizar
+      </button>
+    </div>
+
+    <div class="card-body">
+      <h3 style="color:var(--vino); margin-bottom:15px;">
+        📋 Cotizaciones registradas
+      </h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Subtotal</th>
+            <th>IVA</th>
+            <th>Total</th>
+            <th>Estatus</th>
+            <th>Evidencia</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+
+        <tbody id="tbodyOrdenes">
+          <tr>
+            <td colspan="9">Cargando cotizaciones...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <img src="img/logo_RYT.png" alt="Gobierno Hidalgo">
+    </div>
+
+    <div class="footer-emergencias">
+      <div class="emergencia-item">
+        <strong>911</strong>
+        <span>Emergencia</span>
+      </div>
+
+      <div class="emergencia-item">
+        <strong>089</strong>
+        <span>Denuncia Anónima</span>
+      </div>
+    </div>
+
+    <div class="footer-contacto">
+      <p>Aviso de privacidad</p>
+      <p>Carretera Federal México-Pachuca Km 84.5</p>
+      <p>Sector Primario, C.P. 42080</p>
+      <p>Pachuca de Soto, Hidalgo</p>
+      <p>Tel: (771) 71 79000 Ext. 9211</p>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="footer-copy">© 2026 Radio y Televisión de Hidalgo - Todos los derechos reservados</div>
+</footer>
+
+<script type="module">
+  // Importamos todo desde el archivo central app.js
+  import { initAuth, supabase } from './app.js'
+
+  // Inicializamos la autenticación (navbar, listener, cierre de sesión, etc.)
+  await initAuth()
+
+  // ---------- Funciones originales de órdenes ----------
+  async function cargarOrdenes() {
+    const tbody = document.getElementById('tbodyOrdenes')
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9">Cargando cotizaciones...</td>
+      </tr>
+    `
+
+    const { data, error } = await supabase
+      .from('cotizaciones')
+      .select('*')
+      .order('id', { ascending: false })
+
+    if (error) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9">Error: ${error.message}</td>
+        </tr>
+      `
+      return
+    }
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9">No hay cotizaciones registradas.</td>
+        </tr>
+      `
+      return
+    }
+
+    tbody.innerHTML = ''
+
+    data.forEach(cot => {
+      const row = tbody.insertRow()
+
+      row.insertCell(0).innerText = cot.folio || '-'
+      row.insertCell(1).innerText = cot.cliente_nombre || '-'
+      row.insertCell(2).innerText =
+        cot.fecha ||
+        cot.created_at?.split('T')[0] ||
+        '-'
+
+      row.insertCell(3).innerText =
+        `$${Number(cot.subtotal || 0).toFixed(2)}`
+
+      row.insertCell(4).innerText =
+        `$${Number(cot.iva || 0).toFixed(2)}`
+
+      row.insertCell(5).innerText =
+        `$${Number(cot.total || 0).toFixed(2)}`
+
+      const estatusCell = row.insertCell(6)
+
+      if (cot.estatus_orden === 'Confirmada') {
+        estatusCell.innerHTML =
+          '<span class="badge badge-confirmada">Confirmada</span>'
+      } else {
+        estatusCell.innerHTML =
+          '<span class="badge badge-pendiente">Pendiente</span>'
+      }
+
+      const evidenciaCell = row.insertCell(7)
+
+      if (cot.evidencia_aprobacion) {
+        evidenciaCell.innerHTML = `
+          <a class="btn-ver" href="${cot.evidencia_aprobacion}" target="_blank" rel="noopener">
+            Abrir
+          </a>
+
+          <a class="btn-ver" href="${cot.evidencia_aprobacion}" download>
+            Descargar
+          </a>
+        `
+      } else {
+        evidenciaCell.innerHTML = 'Sin evidencia'
+      }
+
+      const accionCell = row.insertCell(8)
+
+      if (cot.evidencia_aprobacion) {
+        accionCell.innerHTML = `
+          <button class="btn-action" disabled>
+            Confirmada
+          </button>
+        `
+      } else {
+        const inputFile = document.createElement('input')
+        inputFile.type = 'file'
+        inputFile.accept = '.pdf,.jpg,.jpeg,.png'
+        inputFile.style.display = 'none'
+
+        inputFile.onchange = () => {
+          subirEvidencia(cot.id, inputFile.files[0])
+        }
+
+        const boton = document.createElement('button')
+        boton.className = 'btn-action'
+        boton.innerHTML = '<i class="fas fa-upload"></i> Subir evidencia'
+        boton.onclick = () => inputFile.click()
+
+        accionCell.appendChild(inputFile)
+        accionCell.appendChild(boton)
+      }
+    })
+  }
+
+  async function subirEvidencia(cotizacionId, archivo) {
+    if (!archivo) return
+
+    const extension = archivo.name.split('.').pop()
+    const nombreArchivo =
+      `ordenes/cotizacion_${cotizacionId}_${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('evidencias')
+      .upload(nombreArchivo, archivo)
+
+    if (uploadError) {
+      alert('Error al subir evidencia: ' + uploadError.message)
+      return
+    }
+
+    const { data } = supabase.storage
+      .from('evidencias')
+      .getPublicUrl(nombreArchivo)
+
+    const { error: updateError } = await supabase
+      .from('cotizaciones')
+      .update({
+        evidencia_aprobacion: data.publicUrl,
+        estatus_orden: 'Confirmada'
+      })
+      .eq('id', cotizacionId)
+
+    if (updateError) {
+      alert('Error al confirmar cotización: ' + updateError.message)
+      return
+    }
+
+    alert('Evidencia subida correctamente. Cotización confirmada.')
+    cargarOrdenes()
+  }
+
+  window.cargarOrdenes = cargarOrdenes
+  window.subirEvidencia = subirEvidencia
+
+  // Inicializar órdenes
+  cargarOrdenes()
+</script>
+
+</body>
+</html>
