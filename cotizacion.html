@@ -534,9 +534,9 @@
   </div>
 
   <div class="nav-links">
-    <a href="dashboard.html"><i class="fas fa-tags"></i> Servicios</a>
+    <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
     <a href="cotizacion.html" class="active"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-    <a href="ordenesApro.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
     <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
 
     <div class="dropdown">
@@ -718,6 +718,7 @@
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  import { initAuth } from './app.js'
 
   const supabase = createClient(
     'https://feylqcbnbndaefshhrpv.supabase.co',
@@ -1402,6 +1403,8 @@ y = boxY + 34
   })
 
   document.addEventListener('DOMContentLoaded', async () => {
+    await initAuth()
+    
     selectedDate = new Date()
     currentDate = new Date()
     fechaInput.value = formatoFechaVisible(selectedDate)
