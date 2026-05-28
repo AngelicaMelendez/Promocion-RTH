@@ -22,6 +22,27 @@
             --fondo: #f7f3ed;
         }
 
+        html{
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:none;
+}
+
+html::-webkit-scrollbar{
+    width:0;
+    height:0;
+}
+
+body{
+    overflow-x:hidden;
+    scrollbar-width:none;
+}
+
+body::-webkit-scrollbar{
+    width:0;
+    height:0;
+}
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: var(--fondo);
@@ -40,7 +61,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            overflow-x: auto;
+            overflow-x: hidden;
         }
 
         .nav-logo {
