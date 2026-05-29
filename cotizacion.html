@@ -181,6 +181,14 @@
       border-color: var(--vino);
     }
 
+    /* Estilo para el input de folio automático */
+    #folio {
+      background-color: #eee;
+      font-weight: bold;
+      color: var(--vino);
+      cursor: not-allowed;
+    }
+
     .date-picker {
       position: relative;
       display: flex;
@@ -562,7 +570,7 @@
 
     <div class="grupo">
       <label>Folio</label>
-      <input type="text" id="folio" placeholder="Ejemplo: COT-001">
+      <input type="text" id="folio" placeholder="Cargando folio..." readonly>
     </div>
 
     <div class="grupo">
@@ -731,6 +739,7 @@
   const servicioSelect = document.getElementById('servicio')
   const mensaje = document.getElementById('mensaje')
   const fechaInput = document.getElementById('fecha_cotizacion')
+  const folioInput = document.getElementById('folio');
 
   let currentDate = new Date()
   let selectedDate = new Date()
@@ -740,6 +749,38 @@
     'Mayo', 'Junio', 'Julio', 'Agosto',
     'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ]
+
+  // --- NUEVA FUNCIÓN PARA GENERAR FOLIO AUTOMÁTICO ---
+  async function generarSiguienteFolio() {
+    try {
+      // Consultamos el último folio registrado ordenando por ID descendente
+      const { data, error } = await supabase
+        .from('cotizaciones')
+        .select('folio')
+        .order('id', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+
+      let siguienteNumero = 1;
+
+      if (data && data.length > 0) {
+        // Extraemos el número del folio (asumiendo formato COT-XXXX)
+        const ultimoFolio = data[0].folio;
+        const partes = ultimoFolio.split('-');
+        if (partes.length === 2) {
+          siguienteNumero = parseInt(partes[1]) + 1;
+        }
+      }
+
+      // Formateamos con ceros a la izquierda (4 dígitos)
+      const nuevoFolio = `COT-${String(siguienteNumero).padStart(4, '0')}`;
+      folioInput.value = nuevoFolio;
+    } catch (err) {
+      console.error('Error al generar folio:', err);
+      folioInput.value = 'COT-0001'; // Fallback si falla
+    }
+  }
 
   function mostrarAlerta(mensaje, tipo = 'vino') {
   const modal = document.getElementById('modalAlerta')
@@ -864,6 +905,13 @@
     })
   }
 
+  // Al iniciar la página
+  window.addEventListener('DOMContentLoaded', () => {
+    cargarServicios();
+    generarSiguienteFolio(); // Iniciamos el folio automático
+    fechaInput.value = formatoFechaVisible(new Date());
+  });
+
   servicioSelect.addEventListener('change', () => {
     const servicioId = Number(servicioSelect.value)
     const servicio = servicios.find(s => s.id === servicioId)
@@ -957,7 +1005,7 @@
     const fecha_cotizacion = formatoFechaBD(selectedDate)
 
     if (!folio || !cliente_nombre || detalle.length === 0) {
-      mostrarAlerta('Completa folio, cliente y agrega al menos un servicio', 'vino')
+      mostrarAlerta('Completa cliente y agrega al menos un servicio', 'vino')
       return
     }
 
@@ -1006,10 +1054,10 @@
     mensaje.textContent = 'Cotización guardada correctamente'
     mensaje.style.color = 'green'
 
+    // Limpiar formulario y cargar el SIGUIENTE folio automáticamente
     detalle = []
     pintarTabla()
 
-    document.getElementById('folio').value = ''
     document.getElementById('cliente_nombre').value = ''
     servicioSelect.value = ''
     document.getElementById('cantidad').value = 1
@@ -1019,6 +1067,9 @@
     currentDate = new Date()
     fechaInput.value = formatoFechaVisible(selectedDate)
     renderCalendar()
+    
+    // Generar el siguiente número de folio para la próxima cotización
+    generarSiguienteFolio();
   }
 
   async function cargarImagenBase64(url) {

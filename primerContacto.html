@@ -381,7 +381,6 @@ body::-webkit-scrollbar{
 </head>
 <body>
 
-<!-- ENCABEZADO -->
 <nav class="navbar">
     <div class="nav-logo">
         <img src="img/logo_RYT.png" alt="Logo">
@@ -407,13 +406,12 @@ body::-webkit-scrollbar{
     </div>
 </nav>
 
-<!-- CONTENIDO PRINCIPAL -->
 <div class="container">
     <h1>Nuevo Cliente · Primer Contacto</h1>
     <p class="subtitle">Registra los datos fiscales y de contacto del cliente</p>
 
     <div class="grid">
-        <div class="grupo">
+        <div class="grupo" style="display: none;">
             <label for="id">ID</label>
             <input type="text" id="id" placeholder="Dejar vacío para auto-asignar">
         </div>
@@ -483,7 +481,6 @@ body::-webkit-scrollbar{
     <p id="mensaje"></p>
 </div>
 
-<!-- MODAL DE OBSERVACIÓN -->
 <div class="modal-overlay" id="modalObservacion">
     <div class="modal-box">
         <h3><i class="fas fa-clipboard-list"></i> Observaciones del registro</h3>
@@ -497,7 +494,6 @@ body::-webkit-scrollbar{
     </div>
 </div>
 
-<!-- PIE DE PÁGINA -->
 <footer class="footer">
     <div class="footer-content">
         <div class="footer-logo">
@@ -586,6 +582,22 @@ body::-webkit-scrollbar{
 
     async function guardarEnSupabase(nuevoCliente, idInput) {
         try {
+            // LÓGICA DE AUTO-INCREMENTO DEL ID
+            // Verifica si no trae ID para asignarle el siguiente automáticamente
+            if (!nuevoCliente.id) {
+                const { data: maxIdData, error: errMax } = await supabase
+                    .from('clientes')
+                    .select('id')
+                    .order('id', { ascending: false })
+                    .limit(1);
+                
+                let nextId = 1; // Por defecto empezará en 1
+                if (maxIdData && maxIdData.length > 0 && maxIdData[0].id) {
+                    nextId = parseInt(maxIdData[0].id, 10) + 1; // Toma el más alto y suma 1
+                }
+                nuevoCliente.id = nextId; // Asigna el ID al objeto antes de guardarlo
+            }
+
             const { data, error } = await supabase
                 .from('clientes')
                 .insert([nuevoCliente])
