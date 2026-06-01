@@ -575,7 +575,15 @@
 
     <div class="grupo">
       <label>Cliente</label>
-      <input type="text" id="cliente_nombre" placeholder="Nombre del cliente" required>
+      <input 
+       type="text" 
+       id="cliente_nombre" 
+       list="listaClientes" 
+       placeholder="Buscar cliente por nombre, RFC o teléfono" 
+       autocomplete="off"
+       required>  
+
+    <datalist id="listaClientes"></datalist>
     </div>
 
     <div class="grupo">
@@ -722,11 +730,73 @@
   </div>
 </footer>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
   import { initAuth } from './app.js'
+
+
+  function formatoMoneda(valor) {
+  return new Intl.NumberFormat('es-MX', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(valor)
+}
+
+
+let clientes = []
+
+const clienteInput = document.getElementById('cliente_nombre')
+const listaClientes = document.getElementById('listaClientes')
+
+async function cargarClientes() {
+
+  const { data, error } = await supabase
+    .from('clientes')
+    .select(`
+      id,
+      nombre,
+      apellido_paterno,
+      apellido_materno,
+      telefono,
+      rfc,
+      razon_social
+    `)
+    .order('nombre')
+
+  if (error) {
+    console.error(error)
+    return
+  }
+
+  clientes = data || []
+
+  listaClientes.innerHTML = ''
+
+  clientes.forEach(cliente => {
+
+    const nombreCompleto = [
+      cliente.nombre,
+      cliente.apellido_paterno,
+      cliente.apellido_materno
+    ]
+    .filter(Boolean)
+    .join(' ')
+
+    const referencia =
+      cliente.rfc ||
+      cliente.telefono ||
+      cliente.razon_social ||
+      'Sin referencia'
+
+    listaClientes.innerHTML += `
+      <option value="${nombreCompleto} - ${referencia}">
+    `
+  })
+}
 
   const supabase = createClient(
     'https://feylqcbnbndaefshhrpv.supabase.co',
@@ -883,27 +953,31 @@
   }
 
   async function cargarServicios() {
-    const { data, error } = await supabase
-      .from('servicios')
-      .select('*')
-      .order('id', { ascending: true })
+  const { data, error } = await supabase
+    .from('servicios')
+    .select('*')
+    .order('id', { ascending: true })
 
-    if (error) {
-      mensaje.textContent = 'Error al cargar servicios: ' + error.message
-      mensaje.style.color = 'red'
-      return
-    }
-
-    servicios = data || []
-
-    servicios.forEach(servicio => {
-      servicioSelect.innerHTML += `
-        <option value="${servicio.id}">
-          ${servicio.clave} - ${servicio.nombre}
-        </option>
-      `
-    })
+  if (error) {
+    mensaje.textContent = 'Error al cargar servicios: ' + error.message
+    mensaje.style.color = 'red'
+    return
   }
+
+  servicios = data || []
+
+  servicioSelect.innerHTML = `
+    <option value="">Seleccionar servicio</option>
+  `
+
+  servicios.forEach(servicio => {
+    servicioSelect.innerHTML += `
+      <option value="${servicio.id}">
+        ${servicio.clave} - ${servicio.nombre}
+      </option>
+    `
+  })
+}
 
   // Al iniciar la página
   window.addEventListener('DOMContentLoaded', () => {
@@ -968,8 +1042,8 @@
         <tr>
           <td>${item.nombre}</td>
           <td>${item.cantidad}</td>
-          <td>$${item.precio_unitario.toFixed(2)}</td>
-          <td>$${item.importe.toFixed(2)}</td>
+          <td>$${formatoMoneda(item.precio_unitario)}</td>
+          <td>$${formatoMoneda(item.importe)}</td>
           <td>
             <button type="button" class="btn-danger" onclick="eliminarFila(${index})">
               Eliminar
@@ -992,9 +1066,14 @@
     const iva = subtotal * 0.16
     const total = subtotal + iva
 
-    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`
-    document.getElementById('iva').textContent = `$${iva.toFixed(2)}`
-    document.getElementById('total').textContent = `$${total.toFixed(2)}`
+    document.getElementById('subtotal').textContent =
+    `$${formatoMoneda(subtotal)}`
+
+    document.getElementById('iva').textContent =
+    `$${formatoMoneda(iva)}`
+
+    document.getElementById('total').textContent =
+    `$${formatoMoneda(total)}`
 
     return { subtotal, iva, total }
   }
@@ -1461,6 +1540,7 @@ y = boxY + 34
     fechaInput.value = formatoFechaVisible(selectedDate)
 
     await cargarServicios()
+    await cargarClientes()
     renderCalendar()
   })
 </script>
