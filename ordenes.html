@@ -412,6 +412,16 @@
   await initAuth()
 
   // ---------- Funciones originales de órdenes ----------
+  
+  // Función auxiliar para formatear cantidades con separador de miles
+  function formatoMoneda(cantidad) {
+    const numero = Number(cantidad) || 0;
+    return '$' + numero.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
   async function cargarOrdenes() {
     const tbody = document.getElementById('tbodyOrdenes')
 
@@ -456,14 +466,14 @@
         cot.created_at?.split('T')[0] ||
         '-'
 
-      row.insertCell(3).innerText =
-        `$${Number(cot.subtotal || 0).toFixed(2)}`
+      // Subtotal con separador de miles
+      row.insertCell(3).innerText = formatoMoneda(cot.subtotal)
 
-      row.insertCell(4).innerText =
-        `$${Number(cot.iva || 0).toFixed(2)}`
+      // IVA con separador de miles
+      row.insertCell(4).innerText = formatoMoneda(cot.iva)
 
-      row.insertCell(5).innerText =
-        `$${Number(cot.total || 0).toFixed(2)}`
+      // Total con separador de miles
+      row.insertCell(5).innerText = formatoMoneda(cot.total)
 
       const estatusCell = row.insertCell(6)
 

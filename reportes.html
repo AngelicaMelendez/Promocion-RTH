@@ -514,6 +514,20 @@
     })
   })
 
+  // ---------- Funciones auxiliares de formato ----------
+  function formatoMoneda(cantidad) {
+    const numero = Number(cantidad) || 0;
+    return '$' + numero.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function formatoNumero(cantidad) {
+    const numero = Number(cantidad) || 0;
+    return numero.toLocaleString('en-US');
+  }
+
   // ---------- Funciones de carga de reportes ----------
   async function cargarReportes() {
     await Promise.all([
@@ -531,19 +545,19 @@
       .select('total')
       .eq('estatus_factura', 'Facturado')
     const totalIngresos = facturadas?.reduce((sum, c) => sum + (c.total || 0), 0) || 0
-    document.getElementById('totalIngresos').innerText = `$${totalIngresos.toFixed(2)}`
+    document.getElementById('totalIngresos').innerText = formatoMoneda(totalIngresos)
 
     const { count: pendientes } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_factura', 'Pendiente')
-    document.getElementById('facturasPendientes').innerText = pendientes || 0
+    document.getElementById('facturasPendientes').innerText = formatoNumero(pendientes || 0)
 
     const { count: confirmadas } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_orden', 'Confirmada')
-    document.getElementById('cotizacionesAprobadas').innerText = confirmadas || 0
+    document.getElementById('cotizacionesAprobadas').innerText = formatoNumero(confirmadas || 0)
 
     const { data: cotizacionesConfirmadas } = await supabase
       .from('cotizaciones')
@@ -558,7 +572,7 @@
         .in('cotizacion_id', ids)
       totalCantidad = detalles?.reduce((sum, d) => sum + (d.cantidad || 0), 0) || 0
     }
-    document.getElementById('totalServiciosVendidos').innerText = totalCantidad
+    document.getElementById('totalServiciosVendidos').innerText = formatoNumero(totalCantidad)
   }
 
   async function cargarDetalleIngresos() {
@@ -587,7 +601,7 @@
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
-      row.insertCell(3).innerText = cot.total ? `$${cot.total.toFixed(2)}` : '$0.00'
+      row.insertCell(3).innerText = formatoMoneda(cot.total)
     })
   }
 
@@ -618,7 +632,7 @@
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
-      row.insertCell(3).innerText = cot.total ? `$${cot.total.toFixed(2)}` : '$0.00'
+      row.insertCell(3).innerText = formatoMoneda(cot.total)
       const dias = Math.floor((hoy - new Date(cot.fecha)) / (1000 * 60 * 60 * 24))
       row.insertCell(4).innerText = `${dias} días`
     })
@@ -650,7 +664,7 @@
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
-      row.insertCell(3).innerText = cot.total ? `$${cot.total.toFixed(2)}` : '$0.00'
+      row.insertCell(3).innerText = formatoMoneda(cot.total)
     })
   }
 
@@ -713,10 +727,10 @@
         row.insertCell(2).innerText = cot.fecha || '-'
         row.insertCell(3).innerText = cot.hora || '—'
         row.insertCell(4).innerText = servicioMap[det.servicio_id] || 'Desconocido'
-        row.insertCell(5).innerText = det.cantidad
-        row.insertCell(6).innerText = det.precio_unitario ? `$${det.precio_unitario.toFixed(2)}` : '$0.00'
+        row.insertCell(5).innerText = formatoNumero(det.cantidad)
+        row.insertCell(6).innerText = formatoMoneda(det.precio_unitario)
         const importe = (det.cantidad || 0) * (det.precio_unitario || 0)
-        row.insertCell(7).innerText = `$${importe.toFixed(2)}`
+        row.insertCell(7).innerText = formatoMoneda(importe)
       }
     }
   }
@@ -821,7 +835,7 @@
       row.insertCell(0).innerText = c.folio || '-'
       row.insertCell(1).innerText = c.cliente_nombre || '-'
       row.insertCell(2).innerText = c.fecha
-      row.insertCell(3).innerText = `$${c.total?.toFixed(2) || '0'}`
+      row.insertCell(3).innerText = formatoMoneda(c.total)
       row.insertCell(4).innerText = `${dias} días`
     })
   }
@@ -858,8 +872,8 @@
       const row = tbody.insertRow()
       row.insertCell(0).innerText = r.clave
       row.insertCell(1).innerText = r.nombre
-      row.insertCell(2).innerText = r.cantidad
-      row.insertCell(3).innerText = `$${r.importe.toFixed(2)}`
+      row.insertCell(2).innerText = formatoNumero(r.cantidad)
+      row.insertCell(3).innerText = formatoMoneda(r.importe)
     })
   }
 
