@@ -299,6 +299,41 @@
     .doc-item i { margin-right: 8px; color: var(--vino); }
     /* ------------------------- */
 
+    .doc-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-doc-ver {
+  background: var(--vino-claro);
+  color: white;
+  border: none;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-doc-descargar {
+  background: var(--dorado);
+  color: var(--vino);
+  border: none;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-doc-ver:hover,
+.btn-doc-descargar:hover {
+  opacity: .9;
+}
+
     .footer {
       background: var(--vino);
       color: white;
@@ -515,6 +550,27 @@
     }
   })
 
+  async function descargarArchivo(url, nombreArchivo) {
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = nombreArchivo
+
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    URL.revokeObjectURL(link.href)
+  } catch (error) {
+    alert('Error al descargar el archivo')
+  }
+}
+
+window.descargarArchivo = descargarArchivo
+
   // Función para abrir el modal de descarga y cargar los documentos
   async function abrirDescargarDocumentos(cotizacionId) {
     modalDescargar.classList.add('active')
@@ -540,11 +596,34 @@
     let html = ''
     documentos.forEach(doc => {
       html += `
-        <div class="doc-item">
-          <span><i class="fas fa-file-pdf"></i> <strong>${doc.tipo_documento}</strong> - ${doc.nombre_archivo || 'archivo'}</span>
-          <a class="btn-ver" href="${doc.url}" download><i class="fas fa-download"></i> Descargar</a>
-        </div>
-      `
+  <div class="doc-item">
+    <span>
+      <i class="fas fa-file-pdf"></i>
+      <strong>${doc.tipo_documento}</strong> - ${doc.nombre_archivo || 'archivo'}
+    </span>
+
+    <div class="doc-actions">
+
+      <a
+        href="${doc.url}"
+        target="_blank"
+        rel="noopener"
+        class="btn-doc-ver"
+      >
+        <i class="fas fa-eye"></i> Ver archivo
+      </a>
+
+      <button
+        type="button"
+        class="btn-doc-descargar"
+        onclick="descargarArchivo('${doc.url}','${doc.nombre_archivo || 'documento.pdf'}')"
+      >
+        <i class="fas fa-download"></i> Descargar
+      </button>
+
+    </div>
+  </div>
+`
     })
     modalDocumentosContenido.innerHTML = html
   }
