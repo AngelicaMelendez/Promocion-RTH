@@ -377,6 +377,27 @@
         gap: 15px;
       }
     }
+
+    .btn-descarga {
+  border: none;
+  background: var(--dorado);
+  color: var(--vino);
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 3px;
+  cursor: pointer;
+}
+
+.btn-descarga:hover{
+  background:#a8813f;
+  color:white;
+}
+
+.descargas-cell{
+  min-width:220px;
+}
   </style>
 </head>
 
@@ -435,13 +456,14 @@
             <th>Total</th>
             <th>Estatus</th>
             <th>Evidencia</th>
+            <th>Archivos</th>
             <th>Acción</th>
           </tr>
         </thead>
 
         <tbody id="tbodyOrdenes">
           <tr>
-            <td colspan="9">Cargando cotizaciones...</td>
+            <td colspan="10">Cargando cotizaciones...</td>
           </tr>
         </tbody>
       </table>
@@ -484,8 +506,16 @@
       </div>
 
       <div class="btn-upload-group">
-        <button class="btn-action" id="btnSubirDocumentos">
-          <i class="fas fa-cloud-upload-alt"></i> Subir todos
+
+       <button class="btn-action" id="btnEditarDocumentos" type="button">
+       <i class="fas fa-edit"></i> Editar archivos
+       </button>
+
+      <button class="btn-action" id="btnSubirDocumentos">
+      <i class="fas fa-cloud-upload-alt"></i> Subir todos
+     </button>
+
+</div>
         </button>
       </div>
     </div>
@@ -552,6 +582,21 @@
   const fileRazonSocial = document.getElementById('fileRazonSocial')
   const fileUsoCFDI = document.getElementById('fileUsoCFDI')
   const btnSubirDocumentos = document.getElementById('btnSubirDocumentos')
+  const btnEditarDocumentos = document.getElementById('btnEditarDocumentos')
+
+  btnEditarDocumentos.addEventListener('click', () => {
+
+  fileINE.disabled = false
+  fileRFC.disabled = false
+  fileDomicilio.disabled = false
+  fileRazonSocial.disabled = false
+  fileUsoCFDI.disabled = false
+
+  document
+    .querySelectorAll('.estado-subido')
+    .forEach(e => e.remove())
+
+})
 
   // Cerrar modal
   document.querySelector('#modalSubirArchivos .cerrar-modal').addEventListener('click', () => {
@@ -577,11 +622,44 @@
   })
 
   // Función para abrir el modal con los datos de la cotización
-  function abrirModalDocumentos(cotizacion) {
-    currentCotizacionId = cotizacion.id
-    document.getElementById('modalCotizacionFolio').innerText = cotizacion.folio || cotizacion.id
-    modalSubirArchivos.classList.add('active')
-  }
+    async function abrirModalDocumentos(cotizacion) {
+  currentCotizacionId = cotizacion.id
+
+  document.getElementById('modalCotizacionFolio').innerText =
+    cotizacion.folio || cotizacion.id
+
+  const { data } = await supabase
+    .from('documentos_cotizacion')
+    .select('tipo_documento')
+    .eq('cotizacion_id', currentCotizacionId)
+
+  const tiposSubidos = (data || []).map(doc => doc.tipo_documento)
+
+  const documentos = [
+    { tipo: 'INE', input: fileINE },
+    { tipo: 'RFC', input: fileRFC },
+    { tipo: 'Domicilio Fiscal', input: fileDomicilio },
+    { tipo: 'Razon Social', input: fileRazonSocial },
+    { tipo: 'Uso CFDI', input: fileUsoCFDI }
+  ]
+
+  documentos.forEach(doc => {
+    const grupo = doc.input.closest('.form-group')
+    const label = grupo.querySelector('label')
+
+    label.querySelector('.badge-confirmada')?.remove()
+
+    if (tiposSubidos.includes(doc.tipo)) {
+      doc.input.disabled = true
+      label.innerHTML +=
+        ' <span class="badge badge-confirmada">Subido</span>'
+    } else {
+      doc.input.disabled = false
+    }
+  })
+
+  modalSubirArchivos.classList.add('active')
+}
 
   // Subir documentos
   btnSubirDocumentos.addEventListener('click', async () => {
@@ -661,13 +739,50 @@
   })
 
   // --------------------------------------------------------
+   async function descargarArchivo(url, nombreArchivo) {
+  const respuesta = await fetch(url)
+  const blob = await respuesta.blob()
 
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = nombreArchivo || 'documento.pdf'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(link.href)
+}
+
+window.descargarArchivo = descargarArchivo
+
+async function cargarDescargasCotizacion(cotizacionId, cell) {
+  const { data, error } = await supabase
+    .from('documentos_cotizacion')
+    .select('*')
+    .eq('cotizacion_id', cotizacionId)
+
+  if (error || !data || data.length === 0) {
+    cell.innerHTML = 'Sin archivos'
+    return
+  }
+
+  cell.innerHTML = data.map(doc => `
+    <button
+      type="button"
+      class="btn-descarga"
+      onclick="descargarArchivo('${doc.url}', '${doc.nombre_archivo || doc.tipo_documento + '.pdf'}')"
+    >
+      ${doc.tipo_documento}
+    </button>
+  `).join('')
+}
+   
   async function cargarOrdenes() {
     const tbody = document.getElementById('tbodyOrdenes')
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="9">Cargando cotizaciones...</td>
+        <td colspan="10">Cargando cotizaciones...</td>
       </tr>
     `
 
@@ -679,7 +794,7 @@
     if (error) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9">Error: ${error.message}</td>
+          <td colspan="10">Error: ${error.message}</td>
         </tr>
       `
       return
@@ -688,7 +803,7 @@
     if (!data || data.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9">No hay cotizaciones registradas.</td>
+          <td colspan="10">No hay cotizaciones registradas.</td>
         </tr>
       `
       return
@@ -741,7 +856,15 @@
         evidenciaCell.innerHTML = 'Sin evidencia'
       }
 
-      const accionCell = row.insertCell(8)
+      const descargasCell = row.insertCell(8)
+      descargasCell.className = 'descargas-cell'
+
+      cargarDescargasCotizacion(cot.id, descargasCell)
+
+      const accionCell = row.insertCell(9)
+      accionCell.className = 'acciones-cell'
+
+      
 
       // Botón original de evidencia de aprobación
       if (cot.evidencia_aprobacion) {
