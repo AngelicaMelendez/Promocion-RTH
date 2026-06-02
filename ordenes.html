@@ -233,6 +233,83 @@
       color: white;
     }
 
+    /* ---------- MODAL ---------- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 700px;
+      max-height: 80vh;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      background: var(--vino);
+      color: white;
+      padding: 18px 28px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 20px 28px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--vino);
+    }
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-upload-group {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    /* ------------------------- */
+
     .footer {
       background: var(--vino);
       color: white;
@@ -373,6 +450,48 @@
 
 </main>
 
+<!-- MODAL SUBIR ARCHIVOS -->
+<div class="modal" id="modalSubirArchivos">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span><i class="fas fa-upload"></i> Subir documentos por orden</span>
+      <button class="cerrar-modal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: 20px; color: var(--gris);">
+        Cotización <strong id="modalCotizacionFolio">-</strong>
+      </p>
+
+      <div class="form-group">
+        <label><i class="fas fa-id-card"></i> INE (PDF)</label>
+        <input type="file" id="fileINE" accept=".pdf">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-file-alt"></i> RFC (PDF)</label>
+        <input type="file" id="fileRFC" accept=".pdf">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-home"></i> Domicilio Fiscal (PDF)</label>
+        <input type="file" id="fileDomicilio" accept=".pdf">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-building"></i> Razón Social (PDF)</label>
+        <input type="file" id="fileRazonSocial" accept=".pdf">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-file-invoice"></i> Uso CFDI (PDF)</label>
+        <input type="file" id="fileUsoCFDI" accept=".pdf">
+      </div>
+
+      <div class="btn-upload-group">
+        <button class="btn-action" id="btnSubirDocumentos">
+          <i class="fas fa-cloud-upload-alt"></i> Subir todos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer class="footer">
   <div class="footer-content">
     <div class="footer-logo">
@@ -421,6 +540,127 @@
       maximumFractionDigits: 2
     });
   }
+
+  // ---------- NUEVO: Modal para subir documentos ----------
+  const modalSubirArchivos = document.getElementById('modalSubirArchivos')
+  let currentCotizacionId = null
+
+  // Referencias a los inputs de archivo
+  const fileINE = document.getElementById('fileINE')
+  const fileRFC = document.getElementById('fileRFC')
+  const fileDomicilio = document.getElementById('fileDomicilio')
+  const fileRazonSocial = document.getElementById('fileRazonSocial')
+  const fileUsoCFDI = document.getElementById('fileUsoCFDI')
+  const btnSubirDocumentos = document.getElementById('btnSubirDocumentos')
+
+  // Cerrar modal
+  document.querySelector('#modalSubirArchivos .cerrar-modal').addEventListener('click', () => {
+    modalSubirArchivos.classList.remove('active')
+    // Limpiar inputs
+    fileINE.value = ''
+    fileRFC.value = ''
+    fileDomicilio.value = ''
+    fileRazonSocial.value = ''
+    fileUsoCFDI.value = ''
+  })
+
+  // Cerrar al hacer clic fuera del contenido
+  modalSubirArchivos.addEventListener('click', (e) => {
+    if (e.target === modalSubirArchivos) {
+      modalSubirArchivos.classList.remove('active')
+      fileINE.value = ''
+      fileRFC.value = ''
+      fileDomicilio.value = ''
+      fileRazonSocial.value = ''
+      fileUsoCFDI.value = ''
+    }
+  })
+
+  // Función para abrir el modal con los datos de la cotización
+  function abrirModalDocumentos(cotizacion) {
+    currentCotizacionId = cotizacion.id
+    document.getElementById('modalCotizacionFolio').innerText = cotizacion.folio || cotizacion.id
+    modalSubirArchivos.classList.add('active')
+  }
+
+  // Subir documentos
+  btnSubirDocumentos.addEventListener('click', async () => {
+    if (!currentCotizacionId) {
+      alert('No se ha seleccionado una cotización.')
+      return
+    }
+
+    const documentos = [
+      { tipo: 'INE', input: fileINE },
+      { tipo: 'RFC', input: fileRFC },
+      { tipo: 'Domicilio Fiscal', input: fileDomicilio },
+      { tipo: 'Razon Social', input: fileRazonSocial },
+      { tipo: 'Uso CFDI', input: fileUsoCFDI }
+    ]
+
+    let subidos = 0
+    btnSubirDocumentos.disabled = true
+    btnSubirDocumentos.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Subiendo...'
+
+    for (const doc of documentos) {
+      const archivo = doc.input.files[0]
+      if (!archivo) continue
+
+      const extension = archivo.name.split('.').pop()
+      const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${doc.tipo}_${Date.now()}.${extension}`
+
+      // Subir a Supabase Storage (bucket 'documentos')
+      const { error: uploadError } = await supabase.storage
+        .from('documentos')
+        .upload(nombreArchivo, archivo)
+
+      if (uploadError) {
+        alert(`Error al subir ${doc.tipo}: ${uploadError.message}`)
+        continue
+      }
+
+      // Obtener URL pública
+      const { data } = supabase.storage
+        .from('documentos')
+        .getPublicUrl(nombreArchivo)
+
+      // Insertar registro en tabla 'documentos_cotizacion'
+      const { error: insertError } = await supabase
+        .from('documentos_cotizacion')
+        .insert([
+          {
+            cotizacion_id: currentCotizacionId,
+            tipo_documento: doc.tipo,
+            url: data.publicUrl,
+            nombre_archivo: archivo.name
+          }
+        ])
+
+      if (insertError) {
+        alert(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`)
+      } else {
+        subidos++
+      }
+    }
+
+    btnSubirDocumentos.disabled = false
+    btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
+
+    if (subidos > 0) {
+      alert(`Se subieron ${subidos} documento(s) correctamente.`)
+      modalSubirArchivos.classList.remove('active')
+      // Limpiar inputs
+      fileINE.value = ''
+      fileRFC.value = ''
+      fileDomicilio.value = ''
+      fileRazonSocial.value = ''
+      fileUsoCFDI.value = ''
+    } else {
+      alert('No se seleccionó ningún archivo.')
+    }
+  })
+
+  // --------------------------------------------------------
 
   async function cargarOrdenes() {
     const tbody = document.getElementById('tbodyOrdenes')
@@ -503,12 +743,13 @@
 
       const accionCell = row.insertCell(8)
 
+      // Botón original de evidencia de aprobación
       if (cot.evidencia_aprobacion) {
-        accionCell.innerHTML = `
-          <button class="btn-action" disabled>
-            Confirmada
-          </button>
-        `
+        const btnConfirmada = document.createElement('button')
+        btnConfirmada.className = 'btn-action'
+        btnConfirmada.disabled = true
+        btnConfirmada.innerText = 'Confirmada'
+        accionCell.appendChild(btnConfirmada)
       } else {
         const inputFile = document.createElement('input')
         inputFile.type = 'file'
@@ -527,6 +768,14 @@
         accionCell.appendChild(inputFile)
         accionCell.appendChild(boton)
       }
+
+      // Nuevo botón "Subir archivos"
+      const btnSubirArchivos = document.createElement('button')
+      btnSubirArchivos.className = 'btn-action'
+      btnSubirArchivos.style.marginLeft = '4px'
+      btnSubirArchivos.innerHTML = '<i class="fas fa-folder-open"></i> Subir archivos'
+      btnSubirArchivos.onclick = () => abrirModalDocumentos(cot)
+      accionCell.appendChild(btnSubirArchivos)
     })
   }
 
