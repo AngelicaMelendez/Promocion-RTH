@@ -484,6 +484,55 @@
     .descargas-cell {
       min-width: 220px;
     }
+
+
+  .modal-alerta-sistema {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.modal-alerta-card {
+  background: white;
+  width: 420px;
+  max-width: 90%;
+  border-radius: 20px;
+  text-align: center;
+  padding: 30px;
+  border-top: 6px solid #691b31;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+
+.modal-alerta-card h3 {
+  color: #691b31;
+  font-size: 2rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.modal-alerta-card p {
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+}
+
+.modal-alerta-card button {
+  background: #bc955b;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 35px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-alerta-card button:hover {
+  background: #a8813f;
+}
   </style>
 </head>
 
@@ -659,48 +708,27 @@
 
   // ---------- NUEVA NOTIFICACIÓN CENTRADA ----------
   function mostrarNotificacion(mensaje, tipo = 'info') {
-    // Eliminar notificación anterior si existe
-    const anterior = document.querySelector('.notificacion-centro')
-    if (anterior) anterior.remove()
-    const overlayAnterior = document.querySelector('.overlay-notificacion')
-    if (overlayAnterior) overlayAnterior.remove()
 
-    // Crear overlay
-    const overlay = document.createElement('div')
-    overlay.className = 'overlay-notificacion'
+  const anterior = document.querySelector('.modal-alerta-sistema')
+  if (anterior) anterior.remove()
 
-    // Crear contenedor
-    const noti = document.createElement('div')
-    noti.className = 'notificacion-centro'
+  const modal = document.createElement('div')
+  modal.className = 'modal-alerta-sistema'
 
-    let icono = ''
-    if (tipo === 'success') icono = '<i class="fas fa-check-circle"></i>'
-    else if (tipo === 'error') icono = '<i class="fas fa-times-circle"></i>'
-    else if (tipo === 'warning') icono = '<i class="fas fa-exclamation-circle"></i>'
-    else icono = '<i class="fas fa-info-circle"></i>'
+  modal.innerHTML = `
+    <div class="modal-alerta-card">
+      <h3>Aviso</h3>
+      <p>${mensaje}</p>
+      <button id="btnAceptarAlerta">Aceptar</button>
+    </div>
+  `
 
-    noti.innerHTML = `
-      ${icono}
-      <div class="mensaje">${mensaje}</div>
-      <button id="btnCerrarNotificacion">Aceptar</button>
-    `
+  document.body.appendChild(modal)
 
-    document.body.appendChild(overlay)
-    document.body.appendChild(noti)
-
-    // Cerrar al hacer clic en botón o en el overlay
-    const cerrar = () => {
-      noti.remove()
-      overlay.remove()
-    }
-    document.getElementById('btnCerrarNotificacion').addEventListener('click', cerrar)
-    overlay.addEventListener('click', cerrar)
-
-    // Cerrar automáticamente después de 4 segundos (opcional)
-    setTimeout(() => {
-      if (document.body.contains(noti)) cerrar()
-    }, 4000)
-  }
+  document.getElementById('btnAceptarAlerta').addEventListener('click', () => {
+    modal.remove()
+  })
+}
 
   // ---------- NUEVO: Modal para subir documentos ----------
   const modalSubirArchivos = document.getElementById('modalSubirArchivos')
@@ -816,12 +844,15 @@
       if (!archivo) continue
 
       const extension = archivo.name.split('.').pop()
-      const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${doc.tipo}_${Date.now()}.${extension}`
-
+      const tipoLimpio = doc.tipo.replaceAll(' ', '_')
+      const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${tipoLimpio}_${Date.now()}.${extension}`
       // Subir a Supabase Storage (bucket 'documentos')
       const { error: uploadError } = await supabase.storage
         .from('documentos')
-        .upload(nombreArchivo, archivo)
+        .upload(nombreArchivo, archivo, {
+       cacheControl: '0',
+       upsert: true
+      })
 
       if (uploadError) {
         mostrarNotificacion(`Error al subir ${doc.tipo}: ${uploadError.message}`, 'error')
@@ -833,17 +864,37 @@
         .from('documentos')
         .getPublicUrl(nombreArchivo)
 
-      // Insertar registro en tabla 'documentos_cotizacion'
-      const { error: insertError } = await supabase
-        .from('documentos_cotizacion')
-        .insert([
-          {
-            cotizacion_id: currentCotizacionId,
-            tipo_documento: doc.tipo,
-            url: data.publicUrl,
-            nombre_archivo: archivo.name
-          }
-        ])
+      
+      const { data: existe, error: existeError } = await supabase
+  .from('documentos_cotizacion')
+  .select('id')
+  .eq('cotizacion_id', currentCotizacionId)
+  .eq('tipo_documento', doc.tipo)
+  .order('id', { ascending: false })
+  .limit(1)
+  .maybeSingle()
+
+if (existeError) {
+  mostrarNotificacion(`Error al revisar ${doc.tipo}: ${existeError.message}`, 'error')
+  continue
+}
+
+  const { error: deleteError } = await supabase
+  .from('documentos_cotizacion')
+  .delete()
+  .eq('cotizacion_id', currentCotizacionId)
+  .eq('tipo_documento', doc.tipo)
+
+const { error: insertError } = await supabase
+  .from('documentos_cotizacion')
+  .insert([
+    {
+      cotizacion_id: currentCotizacionId,
+      tipo_documento: doc.tipo,
+      url: data.publicUrl,
+      nombre_archivo: archivo.name
+    }
+  ])
 
       if (insertError) {
         mostrarNotificacion(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`, 'error')
@@ -858,13 +909,15 @@
     if (subidos > 0) {
       mostrarNotificacion(`Se subieron ${subidos} documento(s) correctamente.`, 'success')
       modalSubirArchivos.classList.remove('active')
+
+     await cargarOrdenes()
       // Limpiar inputs
       fileINE.value = ''
       fileRFC.value = ''
       fileDomicilio.value = ''
       fileRazonSocial.value = ''
       fileUsoCFDI.value = ''
-    } else {
+    } else {62
       mostrarNotificacion('No se seleccionó ningún archivo.', 'warning')
     }
   })
