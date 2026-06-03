@@ -334,6 +334,53 @@
   opacity: .9;
 }
 
+/* NOTIFICACIÓN CENTRADA */
+.notificacion-centro {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  padding: 25px 35px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+  min-width: 280px;
+  max-width: 90%;
+  text-align: center;
+}
+.notificacion-centro i {
+  font-size: 2.2rem;
+}
+.notificacion-centro .mensaje {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--vino);
+}
+.notificacion-centro button {
+  background: var(--dorado);
+  color: var(--vino);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.overlay-notificacion {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 2999;
+}
+.notificacion-centro i.fa-check-circle { color: #155724; }
+.notificacion-centro i.fa-exclamation-circle { color: #856404; }
+.notificacion-centro i.fa-times-circle { color: #a02142; }
+
     .footer {
       background: var(--vino);
       color: white;
@@ -536,6 +583,51 @@
     });
   }
 
+  // ---------- NUEVA NOTIFICACIÓN CENTRADA ----------
+  function mostrarNotificacion(mensaje, tipo = 'info') {
+    // Eliminar notificación anterior si existe
+    const anterior = document.querySelector('.notificacion-centro')
+    if (anterior) anterior.remove()
+    const overlayAnterior = document.querySelector('.overlay-notificacion')
+    if (overlayAnterior) overlayAnterior.remove()
+
+    // Crear overlay
+    const overlay = document.createElement('div')
+    overlay.className = 'overlay-notificacion'
+
+    // Crear contenedor
+    const noti = document.createElement('div')
+    noti.className = 'notificacion-centro'
+
+    let icono = ''
+    if (tipo === 'success') icono = '<i class="fas fa-check-circle"></i>'
+    else if (tipo === 'error') icono = '<i class="fas fa-times-circle"></i>'
+    else if (tipo === 'warning') icono = '<i class="fas fa-exclamation-circle"></i>'
+    else icono = '<i class="fas fa-info-circle"></i>'
+
+    noti.innerHTML = `
+      ${icono}
+      <div class="mensaje">${mensaje}</div>
+      <button id="btnCerrarNotificacion">Aceptar</button>
+    `
+
+    document.body.appendChild(overlay)
+    document.body.appendChild(noti)
+
+    // Cerrar al hacer clic en botón o en el overlay
+    const cerrar = () => {
+      noti.remove()
+      overlay.remove()
+    }
+    document.getElementById('btnCerrarNotificacion').addEventListener('click', cerrar)
+    overlay.addEventListener('click', cerrar)
+
+    // Cerrar automáticamente después de 4 segundos
+    setTimeout(() => {
+      if (document.body.contains(noti)) cerrar()
+    }, 4000)
+  }
+
   // ---------- NUEVO: Modal para descargar documentos ----------
   const modalDescargar = document.getElementById('modalDescargarDocumentos')
   const modalDocumentosContenido = document.getElementById('modalDocumentosContenido')
@@ -592,9 +684,42 @@ window.descargarArchivo = descargarArchivo
       return
     }
 
-    // Mostrar lista de documentos con enlaces de descarga
-    let html = ''
+    // --- NUEVA LIMPIEZA DE DUPLICADOS POR TIPO ---
+    // Agrupar por tipo_documento y conservar solo el más reciente (created_at)
+    const grupos = {}
     documentos.forEach(doc => {
+      if (!grupos[doc.tipo_documento]) {
+        grupos[doc.tipo_documento] = []
+      }
+      grupos[doc.tipo_documento].push(doc)
+    })
+
+    const docsLimpios = []
+    for (const tipo in grupos) {
+      const lista = grupos[tipo]
+      // Ordenar por created_at descendente (el más reciente primero)
+      lista.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      // Conservar el primero (más reciente)
+      const conservar = lista[0]
+      docsLimpios.push(conservar)
+
+      // Eliminar los demás (registros y archivos)
+      for (let i = 1; i < lista.length; i++) {
+        const antiguo = lista[i]
+        // Eliminar archivo del bucket si existe ruta
+        const urlPartes = antiguo.url.split('/documentos/')
+        if (urlPartes.length > 1) {
+          const ruta = urlPartes[1]
+          await supabase.storage.from('documentos').remove([ruta])
+        }
+        // Eliminar registro de la BD
+        await supabase.from('documentos_cotizacion').delete().eq('id', antiguo.id)
+      }
+    }
+
+    // Mostrar lista de documentos limpios
+    let html = ''
+    docsLimpios.forEach(doc => {
       html += `
   <div class="doc-item">
     <span>
@@ -771,7 +896,7 @@ window.descargarArchivo = descargarArchivo
       return
     }
 
-    alert('Factura registrada correctamente.')
+    mostrarNotificacion('Factura registrada correctamente.', 'success')
     cargarFacturas()
   }
 

@@ -310,6 +310,53 @@
     }
     /* ------------------------- */
 
+    /* NOTIFICACIÓN CENTRADA */
+    .notificacion-centro {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+      padding: 25px 35px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+      min-width: 280px;
+      max-width: 90%;
+      text-align: center;
+    }
+    .notificacion-centro i {
+      font-size: 2.2rem;
+    }
+    .notificacion-centro .mensaje {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--vino);
+    }
+    .notificacion-centro button {
+      background: var(--dorado);
+      color: var(--vino);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .overlay-notificacion {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 2999;
+    }
+    .notificacion-centro i.fa-check-circle { color: #155724; }
+    .notificacion-centro i.fa-exclamation-circle { color: #856404; }
+    .notificacion-centro i.fa-times-circle { color: #a02142; }
+
     .footer {
       background: var(--vino);
       color: white;
@@ -378,26 +425,65 @@
       }
     }
 
+    /* Estilos para los dropdown de archivos */
+    .archivo-item {
+      position: relative;
+      display: inline-block;
+      margin: 3px;
+    }
+
     .btn-descarga {
-  border: none;
-  background: var(--dorado);
-  color: var(--vino);
-  padding: 6px 12px;
-  border-radius: 30px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin: 3px;
-  cursor: pointer;
-}
+      border: none;
+      background: var(--dorado);
+      color: var(--vino);
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-.btn-descarga:hover{
-  background:#a8813f;
-  color:white;
-}
+    .btn-descarga:hover {
+      background: #a8813f;
+      color: white;
+    }
 
-.descargas-cell{
-  min-width:220px;
-}
+    .archivo-dropdown {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 130px;
+      border-radius: 12px;
+      top: 100%;
+      left: 0;
+      z-index: 50;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .archivo-dropdown.show {
+      display: block;
+    }
+
+    .archivo-dropdown a {
+      color: var(--vino);
+      padding: 8px 16px;
+      display: block;
+      text-decoration: none;
+      font-size: 0.8rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .archivo-dropdown a:last-child {
+      border-bottom: none;
+    }
+
+    .archivo-dropdown a:hover {
+      background: var(--fondo);
+    }
+
+    .descargas-cell {
+      min-width: 220px;
+    }
   </style>
 </head>
 
@@ -571,6 +657,51 @@
     });
   }
 
+  // ---------- NUEVA NOTIFICACIÓN CENTRADA ----------
+  function mostrarNotificacion(mensaje, tipo = 'info') {
+    // Eliminar notificación anterior si existe
+    const anterior = document.querySelector('.notificacion-centro')
+    if (anterior) anterior.remove()
+    const overlayAnterior = document.querySelector('.overlay-notificacion')
+    if (overlayAnterior) overlayAnterior.remove()
+
+    // Crear overlay
+    const overlay = document.createElement('div')
+    overlay.className = 'overlay-notificacion'
+
+    // Crear contenedor
+    const noti = document.createElement('div')
+    noti.className = 'notificacion-centro'
+
+    let icono = ''
+    if (tipo === 'success') icono = '<i class="fas fa-check-circle"></i>'
+    else if (tipo === 'error') icono = '<i class="fas fa-times-circle"></i>'
+    else if (tipo === 'warning') icono = '<i class="fas fa-exclamation-circle"></i>'
+    else icono = '<i class="fas fa-info-circle"></i>'
+
+    noti.innerHTML = `
+      ${icono}
+      <div class="mensaje">${mensaje}</div>
+      <button id="btnCerrarNotificacion">Aceptar</button>
+    `
+
+    document.body.appendChild(overlay)
+    document.body.appendChild(noti)
+
+    // Cerrar al hacer clic en botón o en el overlay
+    const cerrar = () => {
+      noti.remove()
+      overlay.remove()
+    }
+    document.getElementById('btnCerrarNotificacion').addEventListener('click', cerrar)
+    overlay.addEventListener('click', cerrar)
+
+    // Cerrar automáticamente después de 4 segundos (opcional)
+    setTimeout(() => {
+      if (document.body.contains(noti)) cerrar()
+    }, 4000)
+  }
+
   // ---------- NUEVO: Modal para subir documentos ----------
   const modalSubirArchivos = document.getElementById('modalSubirArchivos')
   let currentCotizacionId = null
@@ -664,7 +795,7 @@
   // Subir documentos
   btnSubirDocumentos.addEventListener('click', async () => {
     if (!currentCotizacionId) {
-      alert('No se ha seleccionado una cotización.')
+      mostrarNotificacion('No se ha seleccionado una cotización.', 'warning')
       return
     }
 
@@ -693,7 +824,7 @@
         .upload(nombreArchivo, archivo)
 
       if (uploadError) {
-        alert(`Error al subir ${doc.tipo}: ${uploadError.message}`)
+        mostrarNotificacion(`Error al subir ${doc.tipo}: ${uploadError.message}`, 'error')
         continue
       }
 
@@ -715,7 +846,7 @@
         ])
 
       if (insertError) {
-        alert(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`)
+        mostrarNotificacion(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`, 'error')
       } else {
         subidos++
       }
@@ -725,7 +856,7 @@
     btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
 
     if (subidos > 0) {
-      alert(`Se subieron ${subidos} documento(s) correctamente.`)
+      mostrarNotificacion(`Se subieron ${subidos} documento(s) correctamente.`, 'success')
       modalSubirArchivos.classList.remove('active')
       // Limpiar inputs
       fileINE.value = ''
@@ -734,48 +865,64 @@
       fileRazonSocial.value = ''
       fileUsoCFDI.value = ''
     } else {
-      alert('No se seleccionó ningún archivo.')
+      mostrarNotificacion('No se seleccionó ningún archivo.', 'warning')
     }
   })
 
   // --------------------------------------------------------
-   async function descargarArchivo(url, nombreArchivo) {
-  const respuesta = await fetch(url)
-  const blob = await respuesta.blob()
+  // Función para descargar un archivo (sin modificar la original)
+  window.descargarArchivo = async function(url, nombreArchivo) {
+    const respuesta = await fetch(url)
+    const blob = await respuesta.blob()
 
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = nombreArchivo || 'documento.pdf'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = nombreArchivo || 'documento.pdf'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 
-  URL.revokeObjectURL(link.href)
-}
-
-window.descargarArchivo = descargarArchivo
-
-async function cargarDescargasCotizacion(cotizacionId, cell) {
-  const { data, error } = await supabase
-    .from('documentos_cotizacion')
-    .select('*')
-    .eq('cotizacion_id', cotizacionId)
-
-  if (error || !data || data.length === 0) {
-    cell.innerHTML = 'Sin archivos'
-    return
+    URL.revokeObjectURL(link.href)
   }
 
-  cell.innerHTML = data.map(doc => `
-    <button
-      type="button"
-      class="btn-descarga"
-      onclick="descargarArchivo('${doc.url}', '${doc.nombre_archivo || doc.tipo_documento + '.pdf'}')"
-    >
-      ${doc.tipo_documento}
-    </button>
-  `).join('')
-}
+  // Cierra cualquier dropdown de archivos abierto
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.archivo-item')) {
+      document.querySelectorAll('.archivo-dropdown.show').forEach(d => d.classList.remove('show'))
+    }
+  })
+
+  async function cargarDescargasCotizacion(cotizacionId, cell) {
+    const { data, error } = await supabase
+      .from('documentos_cotizacion')
+      .select('*')
+      .eq('cotizacion_id', cotizacionId)
+
+    if (error || !data || data.length === 0) {
+      cell.innerHTML = 'Sin archivos'
+      return
+    }
+
+    cell.innerHTML = data.map(doc => {
+      // Escape de las URLs para el onclick
+      const url = doc.url.replace(/'/g, "\\'")
+      const nombre = (doc.nombre_archivo || doc.tipo_documento + '.pdf').replace(/'/g, "\\'")
+      return `
+        <div class="archivo-item">
+          <button class="btn-descarga" onclick="
+            const dropdown = this.nextElementSibling;
+            document.querySelectorAll('.archivo-dropdown.show').forEach(d => { if (d !== dropdown) d.classList.remove('show') });
+            dropdown.classList.toggle('show');
+            event.stopPropagation();
+          ">${doc.tipo_documento}</button>
+          <div class="archivo-dropdown">
+            <a href="#" onclick="event.preventDefault(); window.open('${url}', '_blank')"><i class="fas fa-eye"></i> Ver</a>
+            <a href="#" onclick="event.preventDefault(); descargarArchivo('${url}', '${nombre}')"><i class="fas fa-download"></i> Descargar</a>
+          </div>
+        </div>
+      `
+    }).join('')
+  }
    
   async function cargarOrdenes() {
     const tbody = document.getElementById('tbodyOrdenes')
@@ -914,7 +1061,7 @@ async function cargarDescargasCotizacion(cotizacionId, cell) {
       .upload(nombreArchivo, archivo)
 
     if (uploadError) {
-      alert('Error al subir evidencia: ' + uploadError.message)
+      mostrarNotificacion('Error al subir evidencia: ' + uploadError.message, 'error')
       return
     }
 
@@ -931,11 +1078,11 @@ async function cargarDescargasCotizacion(cotizacionId, cell) {
       .eq('id', cotizacionId)
 
     if (updateError) {
-      alert('Error al confirmar cotización: ' + updateError.message)
+      mostrarNotificacion('Error al confirmar cotización: ' + updateError.message, 'error')
       return
     }
 
-    alert('Evidencia subida correctamente. Cotización confirmada.')
+    mostrarNotificacion('Evidencia subida correctamente. Cotización confirmada.', 'success')
     cargarOrdenes()
   }
 
