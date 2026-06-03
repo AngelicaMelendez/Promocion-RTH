@@ -346,6 +346,7 @@
       color: white;
       position: relative;
       z-index: 100;
+      padding:8px 12px; ;
     }
 
     .btn-danger {
@@ -659,6 +660,7 @@
         <th>Precio Unitario</th>
         <th>Importe</th>
         <th>Eliminar</th>
+        <th>Editar</th>
       </tr>
     </thead>
 
@@ -805,6 +807,7 @@ async function cargarClientes() {
 
   let detalle = []
   let servicios = []
+  let editandoIndex = null // Índice de la fila en edición
 
   const servicioSelect = document.getElementById('servicio')
   const mensaje = document.getElementById('mensaje')
@@ -1038,25 +1041,127 @@ async function cargarClientes() {
     tbody.innerHTML = ''
 
     detalle.forEach((item, index) => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${item.nombre}</td>
-          <td>${item.cantidad}</td>
-          <td>$${formatoMoneda(item.precio_unitario)}</td>
-          <td>$${formatoMoneda(item.importe)}</td>
-          <td>
-            <button type="button" class="btn-danger" onclick="eliminarFila(${index})">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      `
+      if (editandoIndex === index) {
+        // Modo edición: renderizar inputs
+        tbody.innerHTML += `
+          <tr id="fila-editar-${index}">
+            <td>
+              <select id="editar_servicio_${index}" style="width:100%">
+                ${servicios.map(s => `<option value="${s.id}" ${s.id === item.servicio_id ? 'selected' : ''}>${s.clave} - ${s.nombre}</option>`).join('')}
+              </select>
+            </td>
+            <td>
+              <input type="number" id="editar_cantidad_${index}" value="${item.cantidad}" min="1" style="width:80px">
+            </td>
+            <td>
+              <input type="number" id="editar_precio_${index}" value="${item.precio_unitario}" step="0.01" style="width:100px">
+            </td>
+            <td id="editar_importe_${index}">$${formatoMoneda(item.importe)}</td>
+            <td>
+              <button type="button" class="btn-danger" onclick="eliminarFila(${index})">
+                Eliminar
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn-dorado" onclick="guardarEdicion(${index})">Guardar</button>
+              <button type="button" class="btn-vino" onclick="cancelarEdicion()">Cancelar</button>
+            </td>
+          </tr>
+        `
+        // Actualizar el importe cuando cambien cantidad o precio
+        setTimeout(() => {
+          const cantInput = document.getElementById(`editar_cantidad_${index}`)
+          const precInput = document.getElementById(`editar_precio_${index}`)
+          const impCelda = document.getElementById(`editar_importe_${index}`)
+          const actualizarImporte = () => {
+            const cant = Number(cantInput.value) || 0
+            const prec = Number(precInput.value) || 0
+            const imp = cant * prec
+            impCelda.textContent = '$' + formatoMoneda(imp)
+          }
+          cantInput.addEventListener('input', actualizarImporte)
+          precInput.addEventListener('input', actualizarImporte)
+        }, 0)
+      } else {
+        // Modo normal
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.nombre}</td>
+            <td>${item.cantidad}</td>
+            <td>$${formatoMoneda(item.precio_unitario)}</td>
+            <td>$${formatoMoneda(item.importe)}</td>
+            <td>
+              <button type="button" class="btn-danger" onclick="eliminarFila(${index})">
+                Eliminar
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn-dorado" onclick="editarFila(${index})">
+                Editar
+              </button>
+            </td>
+          </tr>
+        `
+      }
     })
 
     calcularTotales()
   }
 
+  // Función para iniciar la edición de una fila
+  window.editarFila = function(index) {
+    editandoIndex = index
+    pintarTabla()
+  }
+
+  // Función para guardar los cambios de una fila editada
+  window.guardarEdicion = function(index) {
+    const servicioSelect = document.getElementById(`editar_servicio_${index}`)
+    const cantidadInput = document.getElementById(`editar_cantidad_${index}`)
+    const precioInput = document.getElementById(`editar_precio_${index}`)
+
+    const servicioId = Number(servicioSelect.value)
+    const servicio = servicios.find(s => s.id === servicioId)
+
+    if (!servicio) {
+      mostrarAlerta('Selecciona un servicio válido', 'vino')
+      return
+    }
+
+    const cantidad = Number(cantidadInput.value)
+    const precio = Number(precioInput.value)
+
+    if (cantidad <= 0 || precio <= 0) {
+      mostrarAlerta('Cantidad y precio deben ser mayores a 0', 'vino')
+      return
+    }
+
+    const importe = cantidad * precio
+
+    // Actualizar el detalle
+    detalle[index] = {
+      servicio_id: servicio.id,
+      nombre: `${servicio.clave} - ${servicio.nombre}`,
+      cantidad,
+      precio_unitario: precio,
+      importe
+    }
+
+    editandoIndex = null
+    pintarTabla()
+  }
+
+  // Función para cancelar la edición
+  window.cancelarEdicion = function() {
+    editandoIndex = null
+    pintarTabla()
+  }
+
   window.eliminarFila = function (index) {
+    // Si estamos editando, salimos del modo edición antes de eliminar
+    if (editandoIndex !== null) {
+      editandoIndex = null
+    }
     detalle.splice(index, 1)
     pintarTabla()
   }
