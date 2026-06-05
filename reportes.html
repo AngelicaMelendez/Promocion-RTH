@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -314,18 +315,6 @@
   </div>
 
   <div class="card">
-    <div class="card-header"><i class="fas fa-exclamation-triangle"></i> Cartera vencida (facturas pendientes > 30 días)</div>
-    <div class="card-body">
-      <div style="overflow-x: auto;">
-        <table>
-          <thead><tr><th>Folio</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Días vencidos</th></tr></thead>
-          <tbody id="tbodyCartera"><tr><td colspan="5">Cargando...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
     <div class="card-header"><i class="fas fa-trophy"></i> Servicios más vendidos (por cantidad)</div>
     <div class="card-body">
       <div style="overflow-x: auto;">
@@ -534,7 +523,6 @@
       cargarEstadisticas(),
       cargarIngresosMensuales(),
       cargarIngresosPorCategoria(),
-      cargarCarteraVencida(),
       cargarTopServicios()
     ])
   }
@@ -809,34 +797,6 @@
         datasets: [{ data: valores, backgroundColor: ['#691b31','#a02142','#bc955b','#ddc9a3','#7d7d7d','#c9a15f'] }]
       },
       options: { responsive: true, plugins: { legend: { position: 'right' } } }
-    })
-  }
-
-  async function cargarCarteraVencida() {
-    const hoy = new Date()
-    const hace30Dias = new Date()
-    hace30Dias.setDate(hoy.getDate() - 30)
-    const fechaLimite = hace30Dias.toISOString().slice(0, 10)
-    const { data: vencidas } = await supabase
-      .from('cotizaciones')
-      .select('folio, cliente_nombre, fecha, total')
-      .eq('estatus_factura', 'Pendiente')
-      .lt('fecha', fechaLimite)
-      .order('fecha', { ascending: false })
-    const tbody = document.getElementById('tbodyCartera')
-    if (!vencidas || vencidas.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5">No hay facturas vencidas.</td></tr>'
-      return
-    }
-    tbody.innerHTML = ''
-    vencidas.forEach(c => {
-      const dias = Math.floor((new Date() - new Date(c.fecha)) / (1000*60*60*24))
-      const row = tbody.insertRow()
-      row.insertCell(0).innerText = c.folio || '-'
-      row.insertCell(1).innerText = c.cliente_nombre || '-'
-      row.insertCell(2).innerText = c.fecha
-      row.insertCell(3).innerText = formatoMoneda(c.total)
-      row.insertCell(4).innerText = `${dias} días`
     })
   }
 

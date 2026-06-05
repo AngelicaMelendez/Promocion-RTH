@@ -592,13 +592,14 @@
             <th>Estatus</th>
             <th>Evidencia</th>
             <th>Archivos</th>
+            <th>Generado por</th>
             <th>Acción</th>
           </tr>
         </thead>
 
         <tbody id="tbodyOrdenes">
           <tr>
-            <td colspan="10">Cargando cotizaciones...</td>
+            <td colspan="11">Cargando cotizaciones...</td>
           </tr>
         </tbody>
       </table>
@@ -917,7 +918,7 @@ const { error: insertError } = await supabase
       fileDomicilio.value = ''
       fileRazonSocial.value = ''
       fileUsoCFDI.value = ''
-    } else {62
+    } else {
       mostrarNotificacion('No se seleccionó ningún archivo.', 'warning')
     }
   })
@@ -982,7 +983,7 @@ const { error: insertError } = await supabase
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="10">Cargando cotizaciones...</td>
+        <td colspan="11">Cargando cotizaciones...</td>
       </tr>
     `
 
@@ -994,7 +995,7 @@ const { error: insertError } = await supabase
     if (error) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="10">Error: ${error.message}</td>
+          <td colspan="11">Error: ${error.message}</td>
         </tr>
       `
       return
@@ -1003,7 +1004,7 @@ const { error: insertError } = await supabase
     if (!data || data.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="10">No hay cotizaciones registradas.</td>
+          <td colspan="11">No hay cotizaciones registradas.</td>
         </tr>
       `
       return
@@ -1061,7 +1062,11 @@ const { error: insertError } = await supabase
 
       cargarDescargasCotizacion(cot.id, descargasCell)
 
-      const accionCell = row.insertCell(9)
+      // Nueva columna "Generado por"
+      const generadoPorCell = row.insertCell(9)
+      generadoPorCell.innerText = cot.user_id || cot.creado_por || cot.usuario || '-'
+
+      const accionCell = row.insertCell(10)
       accionCell.className = 'acciones-cell'
 
       
