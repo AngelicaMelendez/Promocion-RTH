@@ -1195,6 +1195,28 @@ async function cargarClientes() {
 
     const { subtotal, iva, total } = calcularTotales()
 
+    // ----- Obtener el correo del usuario de forma robusta -----
+    let userId = 'Sin identificar'
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.email) {
+        userId = user.email
+      }
+    } catch (e) {
+      console.warn('No se pudo obtener el usuario autenticado:', e)
+    }
+
+    // Si después de intentar con getUser() sigue sin identificarse,
+    // usamos el nombre que aparece en el navbar (ya que initAuth lo escribe)
+    if (userId === 'Sin identificar') {
+      const nombreSpan = document.getElementById('nav-user-name')
+      if (nombreSpan && nombreSpan.innerText.trim() !== 'Usuario' && nombreSpan.innerText.trim() !== '') {
+        userId = nombreSpan.innerText.trim()
+      }
+    }
+    // -----------------------------------------------------------
+
     const { data: cotizacion, error } = await supabase
       .from('cotizaciones')
       .insert([{
@@ -1207,7 +1229,8 @@ async function cargarClientes() {
         estatus: 'Borrador',
         estatus_orden: 'Pendiente',
         estatus_factura: 'Pendiente',
-        estatus_pago: 'Pendiente'
+        estatus_pago: 'Pendiente',
+        user_id: userId   // ← siempre tiene un valor
       }])
       .select()
       .single()
@@ -1238,7 +1261,7 @@ async function cargarClientes() {
     mensaje.textContent = 'Cotización guardada correctamente'
     mensaje.style.color = 'green'
 
-    // Limpiar formulario y cargar el SIGUIENTE folio automáticamente
+    // Limpiar formulario y cargar el siguiente folio
     detalle = []
     pintarTabla()
 
@@ -1252,9 +1275,8 @@ async function cargarClientes() {
     fechaInput.value = formatoFechaVisible(selectedDate)
     renderCalendar()
     
-    // Generar el siguiente número de folio para la próxima cotización
-    generarSiguienteFolio();
-  }
+    generarSiguienteFolio()
+}
 
   async function cargarImagenBase64(url) {
     try {
