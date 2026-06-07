@@ -987,10 +987,10 @@ const { error: insertError } = await supabase
       </tr>
     `
 
-    const { data, error } = await supabase
-      .from('cotizaciones')
-      .select('*')
-      .order('id', { ascending: false })
+   const { data, error } = await supabase
+  .from('cotizaciones')
+  .select('*')
+  .order('id', { ascending: false })
 
     if (error) {
       tbody.innerHTML = `
@@ -1010,6 +1010,19 @@ const { error: insertError } = await supabase
       return
     }
 
+    const userIds = [...new Set(data.map(cot => cot.user_id).filter(Boolean))]
+
+    const { data: usuariosData } = await supabase
+  .from('usuarios')
+  .select('correo, nombres')
+
+    const usuariosMap = {}
+
+ if (usuariosData) {
+  usuariosData.forEach(usuario => {
+    usuariosMap[usuario.correo] = usuario.nombres
+  })
+}
     tbody.innerHTML = ''
 
     data.forEach(cot => {
@@ -1064,7 +1077,10 @@ const { error: insertError } = await supabase
 
       // Nueva columna "Generado por"
       const generadoPorCell = row.insertCell(9)
-      generadoPorCell.innerText = cot.user_id || cot.creado_por || cot.usuario || '-'
+      generadoPorCell.innerText =
+      usuariosMap[cot.user_id] ||
+      cot.user_id ||
+      '-'
 
       const accionCell = row.insertCell(10)
       accionCell.className = 'acciones-cell'
