@@ -561,7 +561,7 @@
 
 </main>
 
-<!-- MODAL PARA DESCARGAR DOCUMENTOS -->
+<!-- MODAL PARA DESCARGAR DOCUMENTOS (ya no incluye el XML) -->
 <div class="modal" id="modalDescargarDocumentos">
   <div class="modal-content">
     <div class="modal-header">
@@ -675,10 +675,12 @@
     modalDescargar.classList.add('active')
     modalDocumentosContenido.innerHTML = '<p style="text-align:center; color:var(--gris);">Cargando documentos...</p>'
 
+    // Excluir los documentos de tipo 'Factura XML' porque ya se muestran en la columna de Evidencia
     const { data: documentos, error } = await supabase
       .from('documentos_cotizacion')
       .select('*')
       .eq('cotizacion_id', cotizacionId)
+      .neq('tipo_documento', 'Factura XML')   // ← NO mostrar el XML aquí
 
     if (error) {
       modalDocumentosContenido.innerHTML = `<p style="text-align:center; color:red;">Error: ${error.message}</p>`
@@ -686,7 +688,7 @@
     }
 
     if (!documentos || documentos.length === 0) {
-      modalDocumentosContenido.innerHTML = '<p style="text-align:center; color:var(--gris);">No hay documentos subidos para esta cotización.</p>'
+      modalDocumentosContenido.innerHTML = '<p style="text-align:center; color:var(--gris);">No hay documentos adicionales subidos para esta cotización.</p>'
       return
     }
 
@@ -721,7 +723,7 @@
       html += `
         <div class="doc-item">
           <span>
-            <i class="fas ${doc.tipo_documento === 'Factura XML' ? 'fa-file-code' : 'fa-file-pdf'}"></i>
+            <i class="fas fa-file-pdf"></i>
             <strong>${doc.tipo_documento}</strong> - ${doc.nombre_archivo || 'archivo'}
           </span>
           <div class="doc-actions">
@@ -771,7 +773,7 @@
     return true
   }
 
-  // Función para subir XML (almacenar en documentos_cotizacion)
+  // Función para subir XML (ahora se guarda igual pero se mostrará en la columna Evidencia)
   async function subirFacturaXML(cotizacionId, archivo) {
     if (!archivo) return false
 
@@ -789,7 +791,7 @@
 
     const { data } = supabase.storage.from('documentos').getPublicUrl(nombreArchivo)
 
-    // Verificar si ya existe un XML para esta cotización y eliminarlo para mantener solo el más reciente
+    // Eliminar XML anterior si existe (para mantener solo el más reciente)
     const { data: existente } = await supabase
       .from('documentos_cotizacion')
       .select('id')
@@ -878,6 +880,24 @@
       })
     }
 
+    // --- Obtener los XML asociados a cada cotización (para mostrarlos en la columna Evidencia) ---
+    const cotizacionIds = data.map(cot => cot.id)
+    const { data: xmlDocs, error: xmlError } = await supabase
+      .from('documentos_cotizacion')
+      .select('cotizacion_id, url, nombre_archivo')
+      .eq('tipo_documento', 'Factura XML')
+      .in('cotizacion_id', cotizacionIds)
+
+    const xmlMap = new Map() // cotizacion_id -> { url, nombre_archivo }
+    if (xmlDocs && !xmlError) {
+      xmlDocs.forEach(doc => {
+        // Si hay varios, nos quedamos con el primero (el más reciente, pero como ya limpiamos antes, solo habrá uno)
+        if (!xmlMap.has(doc.cotizacion_id)) {
+          xmlMap.set(doc.cotizacion_id, { url: doc.url, nombre: doc.nombre_archivo })
+        }
+      })
+    }
+
     tbody.innerHTML = ''
     data.forEach(cot => {
       const row = tbody.insertRow()
@@ -895,15 +915,31 @@
         estatusFacturaCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>'
       }
 
+      // Celda de Evidencia Factura: mostramos PDF (si existe) y XML (si existe)
       const evidenciaFacturaCell = row.insertCell(6)
+      let evidenciaHtml = ''
+
+      // PDF (de la cotización)
       if (cot.evidencia_factura) {
-        evidenciaFacturaCell.innerHTML = `
+        evidenciaHtml += `
           <a class="btn-ver" href="${cot.evidencia_factura}" target="_blank">Abrir PDF</a>
           <a class="btn-ver" href="${cot.evidencia_factura}" download>Descargar PDF</a>
         `
-      } else {
-        evidenciaFacturaCell.innerHTML = 'Sin evidencia'
       }
+
+      // XML (si existe en el mapa)
+      const xmlInfo = xmlMap.get(cot.id)
+      if (xmlInfo) {
+        evidenciaHtml += `
+          <a class="btn-ver" href="${xmlInfo.url}" target="_blank">Abrir XML</a>
+          <a class="btn-ver" onclick="descargarArchivo('${xmlInfo.url}', '${xmlInfo.nombre || 'factura.xml'}')" style="cursor:pointer;">Descargar XML</a>
+        `
+      }
+
+      if (evidenciaHtml === '') {
+        evidenciaHtml = 'Sin evidencia'
+      }
+      evidenciaFacturaCell.innerHTML = evidenciaHtml
 
       const accionCell = row.insertCell(7)
 
@@ -946,7 +982,7 @@
       dropdownDiv.appendChild(menuDiv)
       accionCell.appendChild(dropdownDiv)
 
-      // Botón de descarga de documentos (siempre visible)
+      // Botón de descarga de documentos (ya no incluye el XML, solo los documentos adicionales)
       const btnDescargarDocs = document.createElement('button')
       btnDescargarDocs.className = 'btn-action'
       btnDescargarDocs.style.marginLeft = '4px'
