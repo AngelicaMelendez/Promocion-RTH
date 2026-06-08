@@ -300,86 +300,125 @@
     /* ------------------------- */
 
     .doc-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-.btn-doc-ver {
-  background: var(--vino-claro);
-  color: white;
-  border: none;
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 30px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
-}
+    .btn-doc-ver {
+      background: var(--vino-claro);
+      color: white;
+      border: none;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-.btn-doc-descargar {
-  background: var(--dorado);
-  color: var(--vino);
-  border: none;
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 30px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
-}
+    .btn-doc-descargar {
+      background: var(--dorado);
+      color: var(--vino);
+      border: none;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-.btn-doc-ver:hover,
-.btn-doc-descargar:hover {
-  opacity: .9;
-}
+    .btn-doc-ver:hover,
+    .btn-doc-descargar:hover {
+      opacity: .9;
+    }
 
-/* NOTIFICACIÓN CENTRADA */
-.notificacion-centro {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
-  padding: 25px 35px;
-  z-index: 3000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  animation: fadeIn 0.3s ease;
-  min-width: 280px;
-  max-width: 90%;
-  text-align: center;
-}
-.notificacion-centro i {
-  font-size: 2.2rem;
-}
-.notificacion-centro .mensaje {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--vino);
-}
-.notificacion-centro button {
-  background: var(--dorado);
-  color: var(--vino);
-  border: none;
-  padding: 8px 20px;
-  border-radius: 30px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.overlay-notificacion {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 2999;
-}
-.notificacion-centro i.fa-check-circle { color: #155724; }
-.notificacion-centro i.fa-exclamation-circle { color: #856404; }
-.notificacion-centro i.fa-times-circle { color: #a02142; }
+    /* Estilos para el modal de notificación (igual que en órdenes) */
+    .modal-alerta-sistema {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
+
+    .modal-alerta-card {
+      background: white;
+      width: 420px;
+      max-width: 90%;
+      border-radius: 20px;
+      text-align: center;
+      padding: 30px;
+      border-top: 6px solid #691b31;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .modal-alerta-card h3 {
+      color: #691b31;
+      font-size: 2rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .modal-alerta-card p {
+      color: #333;
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+    }
+
+    .modal-alerta-card button {
+      background: #bc955b;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 35px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-alerta-card button:hover {
+      background: #a8813f;
+    }
+
+    /* Dropdown personalizado para el botón de subir factura */
+    .dropdown-factura {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-factura .btn-action {
+      margin: 0;
+    }
+    .dropdown-menu-factura {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 180px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      z-index: 100;
+      left: 0;
+      top: 100%;
+      margin-top: 4px;
+    }
+    .dropdown-menu-factura a {
+      color: var(--vino);
+      padding: 8px 16px;
+      text-decoration: none;
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .dropdown-menu-factura a:hover {
+      background-color: var(--gris-claro);
+    }
+    .dropdown-factura.active .dropdown-menu-factura {
+      display: block;
+    }
 
     .footer {
       background: var(--vino);
@@ -504,6 +543,7 @@
             <th>Cliente</th>
             <th>Fecha</th>
             <th>Total</th>
+            <th>Generado por</th>
             <th>Estatus Factura</th>
             <th>Evidencia Factura</th>
             <th>Acción</th>
@@ -512,7 +552,7 @@
 
         <tbody id="tbodyFacturas">
           <tr>
-            <td colspan="7">Cargando cotizaciones confirmadas...</td>
+            <td colspan="8">Cargando cotizaciones confirmadas......</td>
           </tr>
         </tbody>
       </table>
@@ -566,15 +606,10 @@
 </footer>
 
 <script type="module">
-  // Importamos todo desde el archivo central app.js
   import { initAuth, supabase } from './app.js'
 
-  // Inicializamos la autenticación (navbar, listener, cierre de sesión, etc.)
   await initAuth()
 
-  // ---------- Funciones originales de facturas ----------
-  
-  // Función auxiliar para formatear cantidades con separador de miles
   function formatoMoneda(cantidad) {
     const numero = Number(cantidad) || 0;
     return '$' + numero.toLocaleString('en-US', {
@@ -583,56 +618,32 @@
     });
   }
 
-  // ---------- NUEVA NOTIFICACIÓN CENTRADA ----------
-  function mostrarNotificacion(mensaje, tipo = 'info') {
-    // Eliminar notificación anterior si existe
-    const anterior = document.querySelector('.notificacion-centro')
+  // ---------- NOTIFICACIÓN CENTRADA (ESTILO ÓRDENES) ----------
+  function mostrarNotificacion(mensaje) {
+    const anterior = document.querySelector('.modal-alerta-sistema')
     if (anterior) anterior.remove()
-    const overlayAnterior = document.querySelector('.overlay-notificacion')
-    if (overlayAnterior) overlayAnterior.remove()
 
-    // Crear overlay
-    const overlay = document.createElement('div')
-    overlay.className = 'overlay-notificacion'
+    const modal = document.createElement('div')
+    modal.className = 'modal-alerta-sistema'
 
-    // Crear contenedor
-    const noti = document.createElement('div')
-    noti.className = 'notificacion-centro'
-
-    let icono = ''
-    if (tipo === 'success') icono = '<i class="fas fa-check-circle"></i>'
-    else if (tipo === 'error') icono = '<i class="fas fa-times-circle"></i>'
-    else if (tipo === 'warning') icono = '<i class="fas fa-exclamation-circle"></i>'
-    else icono = '<i class="fas fa-info-circle"></i>'
-
-    noti.innerHTML = `
-      ${icono}
-      <div class="mensaje">${mensaje}</div>
-      <button id="btnCerrarNotificacion">Aceptar</button>
+    modal.innerHTML = `
+      <div class="modal-alerta-card">
+        <h3>Aviso</h3>
+        <p>${mensaje}</p>
+        <button id="btnAceptarAlerta">Aceptar</button>
+      </div>
     `
 
-    document.body.appendChild(overlay)
-    document.body.appendChild(noti)
+    document.body.appendChild(modal)
 
-    // Cerrar al hacer clic en botón o en el overlay
-    const cerrar = () => {
-      noti.remove()
-      overlay.remove()
-    }
-    document.getElementById('btnCerrarNotificacion').addEventListener('click', cerrar)
-    overlay.addEventListener('click', cerrar)
-
-    // Cerrar automáticamente después de 4 segundos
-    setTimeout(() => {
-      if (document.body.contains(noti)) cerrar()
-    }, 4000)
+    document.getElementById('btnAceptarAlerta').addEventListener('click', () => {
+      modal.remove()
+    })
   }
 
-  // ---------- NUEVO: Modal para descargar documentos ----------
   const modalDescargar = document.getElementById('modalDescargarDocumentos')
   const modalDocumentosContenido = document.getElementById('modalDocumentosContenido')
 
-  // Cerrar modal
   document.querySelector('#modalDescargarDocumentos .cerrar-modal').addEventListener('click', () => {
     modalDescargar.classList.remove('active')
   })
@@ -643,32 +654,27 @@
   })
 
   async function descargarArchivo(url, nombreArchivo) {
-  try {
-    const response = await fetch(url)
-    const blob = await response.blob()
-
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = nombreArchivo
-
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-
-    URL.revokeObjectURL(link.href)
-  } catch (error) {
-    alert('Error al descargar el archivo')
+    try {
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = nombreArchivo
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(link.href)
+    } catch (error) {
+      mostrarNotificacion('Error al descargar el archivo: ' + error.message)
+    }
   }
-}
 
-window.descargarArchivo = descargarArchivo
+  window.descargarArchivo = descargarArchivo
 
-  // Función para abrir el modal de descarga y cargar los documentos
   async function abrirDescargarDocumentos(cotizacionId) {
     modalDescargar.classList.add('active')
     modalDocumentosContenido.innerHTML = '<p style="text-align:center; color:var(--gris);">Cargando documentos...</p>'
 
-    // Consultar documentos asociados a la cotización
     const { data: documentos, error } = await supabase
       .from('documentos_cotizacion')
       .select('*')
@@ -684,8 +690,6 @@ window.descargarArchivo = descargarArchivo
       return
     }
 
-    // --- NUEVA LIMPIEZA DE DUPLICADOS POR TIPO ---
-    // Agrupar por tipo_documento y conservar solo el más reciente (created_at)
     const grupos = {}
     documentos.forEach(doc => {
       if (!grupos[doc.tipo_documento]) {
@@ -697,191 +701,60 @@ window.descargarArchivo = descargarArchivo
     const docsLimpios = []
     for (const tipo in grupos) {
       const lista = grupos[tipo]
-      // Ordenar por created_at descendente (el más reciente primero)
       lista.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      // Conservar el primero (más reciente)
       const conservar = lista[0]
       docsLimpios.push(conservar)
 
-      // Eliminar los demás (registros y archivos)
       for (let i = 1; i < lista.length; i++) {
         const antiguo = lista[i]
-        // Eliminar archivo del bucket si existe ruta
         const urlPartes = antiguo.url.split('/documentos/')
         if (urlPartes.length > 1) {
           const ruta = urlPartes[1]
           await supabase.storage.from('documentos').remove([ruta])
         }
-        // Eliminar registro de la BD
         await supabase.from('documentos_cotizacion').delete().eq('id', antiguo.id)
       }
     }
 
-    // Mostrar lista de documentos limpios
     let html = ''
     docsLimpios.forEach(doc => {
       html += `
-  <div class="doc-item">
-    <span>
-      <i class="fas fa-file-pdf"></i>
-      <strong>${doc.tipo_documento}</strong> - ${doc.nombre_archivo || 'archivo'}
-    </span>
-
-    <div class="doc-actions">
-
-      <a
-        href="${doc.url}"
-        target="_blank"
-        rel="noopener"
-        class="btn-doc-ver"
-      >
-        <i class="fas fa-eye"></i> Ver archivo
-      </a>
-
-      <button
-        type="button"
-        class="btn-doc-descargar"
-        onclick="descargarArchivo('${doc.url}','${doc.nombre_archivo || 'documento.pdf'}')"
-      >
-        <i class="fas fa-download"></i> Descargar
-      </button>
-
-    </div>
-  </div>
-`
+        <div class="doc-item">
+          <span>
+            <i class="fas ${doc.tipo_documento === 'Factura XML' ? 'fa-file-code' : 'fa-file-pdf'}"></i>
+            <strong>${doc.tipo_documento}</strong> - ${doc.nombre_archivo || 'archivo'}
+          </span>
+          <div class="doc-actions">
+            <a href="${doc.url}" target="_blank" class="btn-doc-ver">
+              <i class="fas fa-eye"></i> Ver archivo
+            </a>
+            <button type="button" class="btn-doc-descargar" onclick="descargarArchivo('${doc.url}','${doc.nombre_archivo || 'documento.pdf'}')">
+              <i class="fas fa-download"></i> Descargar
+            </button>
+          </div>
+        </div>
+      `
     })
     modalDocumentosContenido.innerHTML = html
   }
 
-  // --------------------------------------------------------
-
-  async function cargarFacturas() {
-    const tbody = document.getElementById('tbodyFacturas')
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7">Cargando cotizaciones confirmadas...</td>
-      </tr>
-    `
-
-    const { data, error } = await supabase
-      .from('cotizaciones')
-      .select('*')
-      .eq('estatus_orden', 'Confirmada')
-      .order('id', { ascending: false })
-
-    if (error) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7">Error: ${error.message}</td>
-        </tr>
-      `
-      return
-    }
-
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7">No hay cotizaciones confirmadas para facturar.</td>
-        </tr>
-      `
-      return
-    }
-
-    tbody.innerHTML = ''
-
-    data.forEach(cot => {
-      const row = tbody.insertRow()
-
-      row.insertCell(0).innerText = cot.folio || '-'
-      row.insertCell(1).innerText = cot.cliente_nombre || '-'
-      row.insertCell(2).innerText =
-        cot.fecha ||
-        cot.created_at?.split('T')[0] ||
-        '-'
-
-      // Total con separador de miles
-      row.insertCell(3).innerText = formatoMoneda(cot.total)
-
-      const estatusFacturaCell = row.insertCell(4)
-      if (cot.estatus_factura === 'Facturado') {
-        estatusFacturaCell.innerHTML =
-          '<span class="badge badge-facturado">Facturado</span>'
-      } else {
-        estatusFacturaCell.innerHTML =
-          '<span class="badge badge-pendiente">Pendiente</span>'
-      }
-
-      const evidenciaFacturaCell = row.insertCell(5)
-      if (cot.evidencia_factura) {
-        evidenciaFacturaCell.innerHTML = `
-          <a class="btn-ver" href="${cot.evidencia_factura}" target="_blank" rel="noopener">
-            Abrir
-          </a>
-          <a class="btn-ver" href="${cot.evidencia_factura}" download>
-            Descargar
-          </a>
-        `
-      } else {
-        evidenciaFacturaCell.innerHTML = 'Sin evidencia'
-      }
-
-      const accionCell = row.insertCell(6)
-
-      if (cot.estatus_factura === 'Facturado') {
-        const btnFacturado = document.createElement('button')
-        btnFacturado.className = 'btn-action'
-        btnFacturado.disabled = true
-        btnFacturado.innerText = 'Facturado'
-        accionCell.appendChild(btnFacturado)
-      } else {
-        const inputFile = document.createElement('input')
-        inputFile.type = 'file'
-        inputFile.accept = '.pdf,.jpg,.jpeg,.png,.xml'
-        inputFile.style.display = 'none'
-
-        inputFile.onchange = () => {
-          subirFactura(cot.id, inputFile.files[0])
-        }
-
-        const boton = document.createElement('button')
-        boton.className = 'btn-action'
-        boton.innerHTML = '<i class="fas fa-upload"></i> Subir factura'
-        boton.onclick = () => inputFile.click()
-
-        accionCell.appendChild(inputFile)
-        accionCell.appendChild(boton)
-      }
-
-      // NUEVO BOTÓN: Descargar archivos (documentos fiscales)
-      const btnDescargarDocs = document.createElement('button')
-      btnDescargarDocs.className = 'btn-action'
-      btnDescargarDocs.style.marginLeft = '4px'
-      btnDescargarDocs.innerHTML = '<i class="fas fa-download"></i> Descargar archivos'
-      btnDescargarDocs.onclick = () => abrirDescargarDocumentos(cot.id)
-      accionCell.appendChild(btnDescargarDocs)
-    })
-  }
-
-  async function subirFactura(cotizacionId, archivo) {
-    if (!archivo) return
+  // Función para subir PDF (factura principal)
+  async function subirFacturaPDF(cotizacionId, archivo) {
+    if (!archivo) return false
 
     const extension = archivo.name.split('.').pop()
-    const nombreArchivo =
-      `facturas/cotizacion_${cotizacionId}_${Date.now()}.${extension}`
+    const nombreArchivo = `facturas/cotizacion_${cotizacionId}_${Date.now()}.${extension}`
 
     const { error: uploadError } = await supabase.storage
       .from('evidencias')
       .upload(nombreArchivo, archivo)
 
     if (uploadError) {
-      alert('Error al subir factura: ' + uploadError.message)
-      return
+      mostrarNotificacion('Error al subir PDF: ' + uploadError.message)
+      return false
     }
 
-    const { data } = supabase.storage
-      .from('evidencias')
-      .getPublicUrl(nombreArchivo)
+    const { data } = supabase.storage.from('evidencias').getPublicUrl(nombreArchivo)
 
     const { error: updateError } = await supabase
       .from('cotizaciones')
@@ -892,18 +765,206 @@ window.descargarArchivo = descargarArchivo
       .eq('id', cotizacionId)
 
     if (updateError) {
-      alert('Error al registrar factura: ' + updateError.message)
+      mostrarNotificacion('Error al registrar PDF: ' + updateError.message)
+      return false
+    }
+    return true
+  }
+
+  // Función para subir XML (almacenar en documentos_cotizacion)
+  async function subirFacturaXML(cotizacionId, archivo) {
+    if (!archivo) return false
+
+    const extension = archivo.name.split('.').pop()
+    const nombreArchivo = `facturas_xml/cotizacion_${cotizacionId}_${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('documentos')
+      .upload(nombreArchivo, archivo, { cacheControl: '0', upsert: true })
+
+    if (uploadError) {
+      mostrarNotificacion('Error al subir XML: ' + uploadError.message)
+      return false
+    }
+
+    const { data } = supabase.storage.from('documentos').getPublicUrl(nombreArchivo)
+
+    // Verificar si ya existe un XML para esta cotización y eliminarlo para mantener solo el más reciente
+    const { data: existente } = await supabase
+      .from('documentos_cotizacion')
+      .select('id')
+      .eq('cotizacion_id', cotizacionId)
+      .eq('tipo_documento', 'Factura XML')
+      .maybeSingle()
+
+    if (existente) {
+      await supabase.from('documentos_cotizacion').delete().eq('id', existente.id)
+    }
+
+    const { error: insertError } = await supabase
+      .from('documentos_cotizacion')
+      .insert([{
+        cotizacion_id: cotizacionId,
+        tipo_documento: 'Factura XML',
+        url: data.publicUrl,
+        nombre_archivo: archivo.name
+      }])
+
+    if (insertError) {
+      mostrarNotificacion('Error al guardar XML: ' + insertError.message)
+      return false
+    }
+    return true
+  }
+
+  // Función helper para crear input file temporal y subir según tipo
+  function crearInputFile(cotizacionId, tipo) {
+    const input = document.createElement('input')
+    input.type = 'file'
+    if (tipo === 'pdf') {
+      input.accept = '.pdf'
+    } else {
+      input.accept = '.xml'
+    }
+    input.style.display = 'none'
+    input.onchange = async (e) => {
+      const archivo = e.target.files[0]
+      if (!archivo) return
+      let exito = false
+      if (tipo === 'pdf') {
+        exito = await subirFacturaPDF(cotizacionId, archivo)
+      } else {
+        exito = await subirFacturaXML(cotizacionId, archivo)
+      }
+      if (exito) {
+        mostrarNotificacion(`${tipo.toUpperCase()} subido correctamente.`)
+        cargarFacturas()
+      }
+    }
+    document.body.appendChild(input)
+    input.click()
+    document.body.removeChild(input)
+  }
+
+  async function cargarFacturas() {
+    const tbody = document.getElementById('tbodyFacturas')
+    tbody.innerHTML = `<tr><td colspan="8">Cargando cotizaciones confirmadas...</td></tr>`
+
+    const { data, error } = await supabase
+      .from('cotizaciones')
+      .select('*')
+      .eq('estatus_orden', 'Confirmada')
+      .order('id', { ascending: false })
+
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="8">Error: ${error.message}</td></tr>`
       return
     }
 
-    mostrarNotificacion('Factura registrada correctamente.', 'success')
-    cargarFacturas()
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8">No hay cotizaciones confirmadas para facturar.</td></tr>`
+      return
+    }
+
+    // Mapeo de usuarios (correo → nombres)
+    const userIds = [...new Set(data.map(cot => cot.user_id).filter(Boolean))]
+    const { data: usuariosData } = await supabase
+      .from('usuarios')
+      .select('correo, nombres')
+    const usuariosMap = {}
+    if (usuariosData) {
+      usuariosData.forEach(usuario => {
+        usuariosMap[usuario.correo] = usuario.nombres
+      })
+    }
+
+    tbody.innerHTML = ''
+    data.forEach(cot => {
+      const row = tbody.insertRow()
+
+      row.insertCell(0).innerText = cot.folio || '-'
+      row.insertCell(1).innerText = cot.cliente_nombre || '-'
+      row.insertCell(2).innerText = cot.fecha || cot.created_at?.split('T')[0] || '-'
+      row.insertCell(3).innerText = formatoMoneda(cot.total)
+      row.insertCell(4).innerText = usuariosMap[cot.user_id] || cot.user_id || '-'
+
+      const estatusFacturaCell = row.insertCell(5)
+      if (cot.estatus_factura === 'Facturado') {
+        estatusFacturaCell.innerHTML = '<span class="badge badge-facturado">Facturado</span>'
+      } else {
+        estatusFacturaCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>'
+      }
+
+      const evidenciaFacturaCell = row.insertCell(6)
+      if (cot.evidencia_factura) {
+        evidenciaFacturaCell.innerHTML = `
+          <a class="btn-ver" href="${cot.evidencia_factura}" target="_blank">Abrir PDF</a>
+          <a class="btn-ver" href="${cot.evidencia_factura}" download>Descargar PDF</a>
+        `
+      } else {
+        evidenciaFacturaCell.innerHTML = 'Sin evidencia'
+      }
+
+      const accionCell = row.insertCell(7)
+
+      // Siempre mostramos el dropdown con las dos opciones (PDF y XML)
+      const dropdownDiv = document.createElement('div')
+      dropdownDiv.className = 'dropdown-factura'
+
+      const btnMain = document.createElement('button')
+      btnMain.className = 'btn-action'
+      btnMain.innerHTML = '<i class="fas fa-upload"></i> Subir factura <i class="fas fa-caret-down"></i>'
+      btnMain.onclick = (e) => {
+        e.stopPropagation()
+        document.querySelectorAll('.dropdown-factura.active').forEach(d => {
+          if (d !== dropdownDiv) d.classList.remove('active')
+        })
+        dropdownDiv.classList.toggle('active')
+      }
+
+      const menuDiv = document.createElement('div')
+      menuDiv.className = 'dropdown-menu-factura'
+      const opcionPDF = document.createElement('a')
+      opcionPDF.innerHTML = '<i class="fas fa-file-pdf"></i> Subir PDF (Factura)'
+      opcionPDF.onclick = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        dropdownDiv.classList.remove('active')
+        crearInputFile(cot.id, 'pdf')
+      }
+      const opcionXML = document.createElement('a')
+      opcionXML.innerHTML = '<i class="fas fa-file-code"></i> Subir XML (Factura)'
+      opcionXML.onclick = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        dropdownDiv.classList.remove('active')
+        crearInputFile(cot.id, 'xml')
+      }
+      menuDiv.appendChild(opcionPDF)
+      menuDiv.appendChild(opcionXML)
+      dropdownDiv.appendChild(btnMain)
+      dropdownDiv.appendChild(menuDiv)
+      accionCell.appendChild(dropdownDiv)
+
+      // Botón de descarga de documentos (siempre visible)
+      const btnDescargarDocs = document.createElement('button')
+      btnDescargarDocs.className = 'btn-action'
+      btnDescargarDocs.style.marginLeft = '4px'
+      btnDescargarDocs.innerHTML = '<i class="fas fa-download"></i> Descargar archivos'
+      btnDescargarDocs.onclick = () => abrirDescargarDocumentos(cot.id)
+      accionCell.appendChild(btnDescargarDocs)
+    })
+
+    // Cerrar dropdowns al hacer clic fuera
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown-factura')) {
+        document.querySelectorAll('.dropdown-factura.active').forEach(d => d.classList.remove('active'))
+      }
+    })
   }
 
   window.cargarFacturas = cargarFacturas
-  window.subirFactura = subirFactura
 
-  // Inicializar facturas
   cargarFacturas()
 </script>
 </body>
