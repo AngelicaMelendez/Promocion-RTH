@@ -957,7 +957,25 @@ const { error: insertError } = await supabase
       return
     }
 
-    cell.innerHTML = data.map(doc => {
+     
+     const tiposOrden = [
+    'INE',
+    'RFC',
+    'Domicilio Fiscal',
+    'Razon Social',
+    'Uso CFDI'
+]
+
+    const archivosOrden = data.filter(doc =>
+     tiposOrden.includes(doc.tipo_documento)
+)
+
+    if (archivosOrden.length === 0) {
+    cell.innerHTML = 'Sin archivos'
+    return
+}
+
+    cell.innerHTML = archivosOrden.map(doc => {
       // Escape de las URLs para el onclick
       const url = doc.url.replace(/'/g, "\\'")
       const nombre = (doc.nombre_archivo || doc.tipo_documento + '.pdf').replace(/'/g, "\\'")
