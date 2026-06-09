@@ -66,18 +66,44 @@ if (loginForm) {
       }
 
       if (data.user) {
-        const nombre = obtenerNombreUsuario(data.user)
+      // Obtener el registro del usuario desde la tabla 'usuarios'
+        const { data: usuarioData, error: usuarioError } = await supabase
+          .from('usuarios')
+          .select('id, nombres, apellido_paterno, area, foto_url')
+          .eq('id', data.user.id)  // 👈 usar el ID del auth
+          .single();
 
-        localStorage.setItem('navUserName', nombre)
-
-        try {
-          localStorage.setItem('usuario', JSON.stringify({ Nombre: nombre }))
-        } catch (e) {
-          console.warn('No se pudo guardar objeto usuario en localStorage', e)
-        }
-
-        window.location.href = 'primerContacto.html'
+      if (usuarioError) {
+        console.error('Error al obtener datos del usuario:', usuarioError);
+        // Puedes mostrar un mensaje o continuar con datos mínimos
       }
+
+      let nombreCompleto = 'Usuario';
+      let area = '';
+      let fotoUrl = '';
+
+  if (usuarioData) {
+    nombreCompleto = `${usuarioData.nombres || ''} ${usuarioData.apellido_paterno || ''}`.trim();
+    area = usuarioData.area || '';
+    fotoUrl = usuarioData.foto_url || '';
+    // Guardamos el ID correcto
+    localStorage.setItem('usuario_id', usuarioData.id);
+  } else {
+    // Fallback: guardar el ID del auth
+    localStorage.setItem('usuario_id', data.user.id);
+  }
+
+  // Guardar en localStorage y sessionStorage
+  localStorage.setItem('navUserName', nombreCompleto);
+  localStorage.setItem('navUserArea', area);
+  localStorage.setItem('navUserPhoto', fotoUrl);
+  sessionStorage.setItem('navUserName', nombreCompleto);
+  sessionStorage.setItem('navUserArea', area);
+  sessionStorage.setItem('navUserPhoto', fotoUrl);
+
+  // Redirigir
+  window.location.href = 'primerContacto.html';
+}
     } catch (err) {
       errorMessage.textContent = 'Error al iniciar sesión'
       errorMessage.style.display = 'block'
@@ -125,53 +151,66 @@ function obtenerNombreUsuario(user) {
 
 
 async function actualizarNombreDesdeUsuario(user) {
-  const nombreEl = document.getElementById('nav-user-name')
-  const areaEl = document.getElementById('nav-user-area')
-  const avatarEl = document.getElementById('nav-avatar')
+  const nombreEl = document.getElementById('nav-user-name');
+  const areaEl = document.getElementById('nav-user-area');
+  const avatarEl = document.getElementById('nav-avatar');
 
-  if (!nombreEl || !avatarEl) return
+  if (!nombreEl || !avatarEl) return;
 
   if (!user) {
-    nombreEl.innerText = 'Usuario'
-    if (areaEl) areaEl.innerText = ''
-    avatarEl.innerText = 'U'
-    return
+    // No hay usuario: poner valores por defecto (pero mantener cache si existe)
+    nombreEl.innerText = localStorage.getItem('navUserName') || 'Usuario';
+    if (areaEl) areaEl.innerText = localStorage.getItem('navUserArea') || '';
+    const cachedPhoto = localStorage.getItem('navUserPhoto');
+    if (cachedPhoto) {
+      avatarEl.innerHTML = `<img src="${cachedPhoto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    } else {
+      avatarEl.innerText = (localStorage.getItem('navUserName') || 'U').charAt(0).toUpperCase();
+    }
+    return;
   }
 
-  const { data: usuario } = await supabase
+  // Usar el ID del usuario autenticado para buscar en la tabla 'usuarios'
+  const userId = user.id;
+  const { data: usuario, error } = await supabase
     .from('usuarios')
     .select('nombres, area, foto_url')
-    .eq('id', localStorage.getItem('usuario_id'))
-    .single()
+    .eq('id', userId)
+    .single();
 
-  let nombre = 'Usuario'
-  let area = ''
-  let fotoUrl = ''
+  let nombre = 'Usuario';
+  let area = '';
+  let fotoUrl = '';
 
-  if (usuario) {
-    nombre = `${usuario.nombres || ''} ${usuario.apellido_paterno || ''}`.trim()
-    area = usuario.area || ''
-    fotoUrl = usuario.foto_url || ''
+  if (!error && usuario) {
+    nombre = `${usuario.nombres || ''} ${usuario.apellido_paterno || ''}`.trim();
+    if (!nombre) nombre = 'Usuario';
+    area = usuario.area || '';
+    fotoUrl = usuario.foto_url || '';
+  } else {
+    // Si hay error o no existe, mantener lo que ya había en cache
+    nombre = localStorage.getItem('navUserName') || nombre;
+    area = localStorage.getItem('navUserArea') || area;
+    fotoUrl = localStorage.getItem('navUserPhoto') || fotoUrl;
+    console.warn('No se encontró perfil en DB para user', userId, error);
   }
 
-  nombreEl.innerText = nombre
-  if (areaEl) areaEl.innerText = area
+  nombreEl.innerText = nombre;
+  if (areaEl) areaEl.innerText = area;
 
   if (fotoUrl) {
-    avatarEl.innerHTML = `
-      <img src="${fotoUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
-    `
+    avatarEl.innerHTML = `<img src="${fotoUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
   } else {
-    avatarEl.innerText = nombre.charAt(0).toUpperCase()
+    avatarEl.innerText = nombre.charAt(0).toUpperCase();
   }
 
-  localStorage.setItem('navUserName', nombre)
-  localStorage.setItem('navUserArea', area)
-  localStorage.setItem('navUserPhoto', fotoUrl)
-
-  sessionStorage.setItem('navUserName', nombre)
-  sessionStorage.setItem('navUserArea', area)
-  sessionStorage.setItem('navUserPhoto', fotoUrl)
+  // Actualizar cache
+  localStorage.setItem('navUserName', nombre);
+  localStorage.setItem('navUserArea', area);
+  localStorage.setItem('navUserPhoto', fotoUrl);
+  sessionStorage.setItem('navUserName', nombre);
+  sessionStorage.setItem('navUserArea', area);
+  sessionStorage.setItem('navUserPhoto', fotoUrl);
 }
 
 async function inicializarSesion() {
@@ -183,7 +222,9 @@ async function inicializarSesion() {
     actualizarNombreDesdeUsuario(null)
   }
 }
-
+document.addEventListener('DOMContentLoaded', () => {
+  initAuth();
+});
 export async function initAuth() {
   inicializarNombreDesdeCache()
 
