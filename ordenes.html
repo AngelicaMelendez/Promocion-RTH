@@ -466,73 +466,75 @@
     .notificacion-centro i.fa-exclamation-circle { color: #856404; }
     .notificacion-centro i.fa-times-circle { color: #a02142; }
 
-    .footer {
-      background: var(--vino);
-      color: white;
-      margin-top: 70px;
-      padding: 40px 55px 35px;
-    }
+   .footer {
+            background: var(--vino);
+            color: white;
+            margin-top: 70px;
+            padding: 50px 55px 35px;
+        }
 
-    .footer-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.2fr;
-      gap: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 50px;
+        }
 
-    .footer-logo img {
-      width: 140px;
-      filter: brightness(0) invert(1);
-    }
+        .footer-logo img {
+            width: 150px;
+            filter: brightness(0) invert(1);
+        }
 
-    .footer-emergencias {
-      display: flex;
-      gap: 50px;
-      justify-content: center;
-    }
+        .footer-emergencias {
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+            text-align: center;
+        }
 
-    .emergencia-item strong {
-      font-size: 1.3rem;
-      display: block;
-    }
+        .emergencia-item strong {
+            display: block;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
 
-    .footer-contacto p {
-      margin: 0 0 12px;
-    }
+        .footer-line {
+            width: 100%;
+            height: 1px;
+            background: var(--dorado);
+            margin: 40px 0 30px;
+        }
 
-    .footer-line {
-      height: 1px;
-      background: var(--dorado);
-      margin: 30px 0 20px;
-    }
-
-    .footer-copy {
-      text-align: center;
-    }
-
-    @media (max-width:850px) {
-      .navbar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 15px 20px;
-      }
-
-      .nav-links {
-        justify-content: center;
-      }
-
-      .footer-content {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: 25px;
-      }
-
-      .footer-emergencias {
-        flex-direction: column;
-        gap: 15px;
-      }
-    }
+        @media (max-width: 850px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .navbar {
+                flex-wrap: nowrap !important;
+                justify-content: flex-start;
+                gap: 10px;
+                padding: 15px 20px;
+            }
+            .nav-links {
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .nav-profile {
+                flex-shrink: 0;
+            }
+            .dropdown-content {
+                right: auto;
+                left: 0;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 30px;
+            }
+            .footer-emergencias {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
 
     /* Estilos para los dropdown de archivos */
     .archivo-item {
@@ -832,7 +834,7 @@
   </div>
 
   <div class="footer-line"></div>
-  <div class="footer-copy">© 2026 Radio y Televisión de Hidalgo - Todos los derechos reservados</div>
+  <div class="footer-copy">Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
 </footer>
 
 <script type="module">
