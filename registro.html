@@ -412,12 +412,21 @@
         return
       }
 
-      const { data: authData, error: authError } =
-        await supabase.auth.signUp({
-          email: correo,
-          password: clave
-        })
+     const nombreCompleto = `${nombres} ${apellido_paterno} ${apellido_materno}`.trim()
 
+     const { data: authData, error: authError } =
+     await supabase.auth.signUp({
+     email: correo,
+     password: clave,
+     options: {
+      data: {
+        nombre: nombreCompleto,
+        nombres: nombres,
+        apellido_paterno: apellido_paterno,
+        apellido_materno: apellido_materno
+      }
+    }
+  })
       if (authError) {
         mostrarMensaje(authError.message, 'error')
         return
