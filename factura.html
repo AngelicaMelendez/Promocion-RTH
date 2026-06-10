@@ -23,24 +23,43 @@
       --fondo: #f7f3ed;
     }
 
+    html {
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
+
+    html::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+
     body {
       font-family: 'Montserrat', sans-serif;
       background: var(--fondo);
       color: #2c3e4e;
+      overflow-x: hidden;
     }
 
     .navbar {
       background: var(--vino);
       color: var(--beige);
-      padding: 12px 40px;
+      padding: 12px 30px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
+      flex-wrap: nowrap !important;
       gap: 20px;
       position: sticky;
       top: 0;
       z-index: 1000;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .navbar::-webkit-scrollbar {
+      width: 0;
+      height: 0;
     }
 
     .nav-logo {
@@ -48,6 +67,7 @@
       align-items: center;
       gap: 16px;
       font-weight: 700;
+      flex-shrink: 0;
     }
 
     .nav-logo img {
@@ -59,6 +79,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+      flex-shrink: 0;
     }
 
     .nav-links a {
@@ -107,7 +128,8 @@
     .nav-profile {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .avatar {
@@ -120,6 +142,7 @@
       justify-content: center;
       font-weight: bold;
       color: white;
+      flex-shrink: 0;
     }
 
     #nav-user-info{
@@ -617,7 +640,6 @@
     <div class="dropdown">
       <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes ▼</a>
       <div class="dropdown-content">
-        <a href="reportes.html"><i class="fas fa-chart-bar"></i> Dashboard</a>
       </div>
     </div>
   </div>
