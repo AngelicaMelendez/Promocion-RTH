@@ -1054,38 +1054,69 @@
     if (detalle.length === 0) { mostrarAlerta('Agrega al menos un servicio antes de generar PDF', 'vino'); btnPDF.disabled = false; btnPDF.textContent = 'Generar PDF'; return; }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'letter');
-    let logoIzq = null, logoDer = null;
-    try { logoIzq = await cargarImagenBase64('img/logos-vryt.png'); logoDer = await cargarImagenBase64('img/logos-vryt1.png'); } catch (error) { console.warn('No se pudieron cargar los logos:', error); }
-    if (logoIzq) doc.addImage(logoIzq, 'PNG', 12, 6, 42, 20);
-    if (logoDer) doc.addImage(logoDer, 'PNG', 172, 6, 24, 20);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(120, 0, 20);
-    doc.text('COTIZACIÓN', 105, 36, { align: 'center' });
+    let logoIzq = null, logoDer = null, logoISO = null, iconMic = null, iconTV = null, iconRadio = null;
+    try { logoIzq = await cargarImagenBase64('img/logos-vryt.png'); logoDer = await cargarImagenBase64('img/logos-vryt1.png'); logoISO = await cargarImagenBase64('img/logoISO.png'); iconMic = await cargarImagenBase64('img/logoMicrofono.png'); iconTV = await cargarImagenBase64('img/logoTv.png'); iconRadio = await cargarImagenBase64('img/logoRadio.png'); } catch (error) { console.warn('No se pudieron cargar los logos:', error); }
     const folio = folioInput.value.trim() || '00001';
-    const cliente = document.getElementById('cliente_nombre').value.trim() || 'SIN CLIENTE';
+    const clienteCompleto = document.getElementById('cliente_nombre').value.trim() || 'SIN CLIENTE';
+    const cliente = clienteCompleto.split('-')[0].trim()
     const fecha = fechaInput.value || formatoFechaVisible(new Date());
     const { subtotal, iva, total } = calcularTotales();
     const formato = (val) => Number(val).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const encabezado = () => {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(105,27,49); doc.setTextColor(0); doc.setFontSize(9);
-      doc.rect(154,52,52,10); doc.rect(154,62,52,10); doc.line(180,52,180,72);
-      doc.text('FOLIO',160,58); doc.text(folio,193,58,{align:'center'});
-      doc.text('FECHA',160,68); doc.text(fecha,193,68,{align:'center'});
-      doc.text('Nombre:',15,82); doc.text(cliente.toUpperCase(),42,82);
-      doc.text('Ciudad:',115,82); doc.text('CDMX',145,82);
-      doc.text('Apreciable:',115,88); doc.text(cliente.split(' ')[0].toUpperCase(),145,88);
-    };
+
+    if (logoIzq) doc.addImage(logoIzq, 'PNG', 12, 6, 42, 20);
+    if (logoDer) doc.addImage(logoDer, 'PNG', 172, 6, 24, 20);  
+    if (logoISO) doc.addImage(logoISO, 'PNG', 18, 255, 28, 14)
+
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(22)
+  doc.setTextColor(120, 0, 20)
+  doc.text('COTIZACIÓN', 105, 32, { align: 'center' })
+    doc.setTextColor(0)
+    doc.setFontSize(9)
+
+    doc.rect(154,38,52,10)
+    doc.rect(154,48,52,10)
+    doc.line(180,38,180,58)
+
+    doc.text('FOLIO',160,44)
+    doc.text(folio,193,44,{align:'center'})
+
+    doc.text('FECHA',160,54)
+    doc.text(fecha,193,54,{align:'center'})
+
+      doc.text('Nombre:',15,65)
+      doc.text(cliente.toUpperCase(),42,65)
+
+      doc.text('Ciudad:',115,65)
+      doc.text('Pachuca',145,65)
+
+      doc.text('Apreciable:',115,71)
+      doc.text(cliente.split(' ')[0].toUpperCase(),145,71)
+}
     const encabezadoTabla = (y) => {
       doc.setFillColor(120,0,20); doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(8);
-      [10,28,86,108,130,162,184].forEach(x => doc.rect(x,y, x===10?18: x===28?58: x===86?22: x===108?22: x===130?32: x===162?22:22,12,'F'));
+      doc.rect(10,y,18,12,'F')
+      doc.rect(28,y,58,12,'F')
+      doc.rect(86,y,22,12,'F')
+      doc.rect(108,y,22,12,'F')
+      doc.rect(130,y,40,12,'F')
+      doc.rect(170,y,30,12,'F')
       doc.text('NO. DE',19,y+5,{align:'center'}); doc.text('SERVICIO',19,y+10,{align:'center'});
       doc.text('CONCEPTO',57,y+8,{align:'center'}); doc.text('P/U',97,y+8,{align:'center'});
-      doc.text('UNIDADES',119,y+8,{align:'center'}); doc.text('SUB TOTAL',146,y+8,{align:'center'});
-      doc.text('IVA',173,y+8,{align:'center'}); doc.text('TOTAL',195,y+8,{align:'center'});
+      doc.text('UNIDADES',119,y+8,{align:'center'}); doc.text('SUB TOTAL',150,y+8,{align:'center'});
+      doc.text('TOTAL',185,y+8,{align:'center'});
       return y+12;
     };
-    const nuevaPagina = () => { doc.addPage(); encabezado(); return encabezadoTabla(105); };
+    const nuevaPagina = () => { 
+    doc.addPage(); 
+    encabezado(); 
+    return encabezadoTabla(73); 
+    };
+
     encabezado();
-    let y = encabezadoTabla(105);
+    let y = encabezadoTabla(73);
     doc.setTextColor(0); doc.setFont('helvetica','normal'); doc.setFontSize(8);
     detalle.forEach(item => {
       const concepto = item.nombre.replace(/^RTVH-\d+\s*-\s*/i,'');
@@ -1097,42 +1128,84 @@
       const lineas = doc.splitTextToSize(concepto,54);
       const alto = Math.max(10, lineas.length*4+2);
       if (y+alto > 245) y = nuevaPagina();
-      doc.rect(10,y,18,alto); doc.rect(28,y,58,alto); doc.rect(86,y,22,alto); doc.rect(108,y,22,alto); doc.rect(130,y,32,alto); doc.rect(162,y,22,alto); doc.rect(184,y,22,alto);
+      doc.rect(10,y,18,alto); doc.rect(28,y,58,alto); doc.rect(86,y,22,alto); doc.rect(108,y,22,alto); doc.rect(130,y,40,alto); doc.rect(170,y,30,alto);
       const textoY = y + (alto/2) + 1.5;
       doc.text(String(numeroServicio),19,textoY,{align:'center'});
       doc.text(lineas,30,y+5);
       doc.text(`$${formato(item.precio_unitario)}`,106,textoY,{align:'right'});
       doc.text(String(item.cantidad),119,textoY,{align:'center'});
-      doc.text(`$${formato(sub)}`,160,textoY,{align:'right'});
-      doc.text(`$${formato(ivaItem)}`,182,textoY,{align:'right'});
-      doc.text(`$${formato(totalItem)}`,204,textoY,{align:'right'});
+      doc.text(`$${formato(sub)}`,168,textoY,{align:'right'});
+      doc.text(`$${formato(totalItem)}`,198,textoY,{align:'right'});
       y += alto;
     });
-    y += 12;
+    y += 2;
     if (y+35 > 245) { doc.addPage(); y=35; }
-    doc.setFillColor(120,0,20); doc.setDrawColor(0); doc.setLineWidth(0.3); doc.setFont('helvetica','bold'); doc.setFontSize(9);
-    const boxX=130, boxY=y+10, rowH=8, labelW=32, valueW=44;
-    doc.rect(boxX,boxY,labelW,rowH,'F'); doc.rect(boxX+labelW,boxY,valueW,rowH);
-    doc.setTextColor(255,255,255); doc.text('SUBTOTAL',boxX+4,boxY+5.5);
-    doc.setTextColor(0,0,0); doc.text(`$ ${formato(subtotal)}`,boxX+labelW+valueW-2,boxY+5.5,{align:'right'});
-    doc.rect(boxX,boxY+rowH,labelW,rowH,'F'); doc.rect(boxX+labelW,boxY+rowH,valueW,rowH);
-    doc.setTextColor(255,255,255); doc.text('IVA',boxX+11,boxY+rowH+5.5);
-    doc.setTextColor(0,0,0); doc.text(`$ ${formato(iva)}`,boxX+labelW+valueW-2,boxY+rowH+5.5,{align:'right'});
-    doc.rect(boxX,boxY+(rowH*2),labelW,rowH,'F'); doc.rect(boxX+labelW,boxY+(rowH*2),valueW,rowH);
-    doc.setTextColor(255,255,255); doc.text('TOTAL',boxX+8,boxY+(rowH*2)+5.5);
-    doc.setTextColor(0,0,0); doc.text(`$ ${formato(total)}`,boxX+labelW+valueW-2,boxY+(rowH*2)+5.5,{align:'right'});
-    y = boxY+34;
-    if (y+95>270) { doc.addPage(); y=45; }
-    doc.setTextColor(0); doc.setFont('helvetica','bold'); doc.setFontSize(9);
-    doc.text('TERMINOS Y CONDICIONES',20,y);
+
+doc.setDrawColor(0);
+doc.setLineWidth(0.3);
+doc.setFont('helvetica','bold');
+doc.setFontSize(9);
+
+const boxX=124, boxY=y+2, rowH=8, labelW=32, valueW=44;
+
+// SUBTOTAL
+doc.setFillColor(120,0,20);
+doc.rect(boxX,boxY,labelW,rowH,'F');
+doc.rect(boxX+labelW,boxY,valueW,rowH);
+doc.setTextColor(255,255,255);
+doc.text('SUBTOTAL',boxX+4,boxY+5.5);
+doc.setTextColor(0,0,0);
+doc.text(`$ ${formato(subtotal)}`,boxX+labelW+valueW-2,boxY+5.5,{align:'right'});
+
+// IVA
+doc.setFillColor(120,0,20);
+doc.rect(boxX,boxY+rowH,labelW,rowH,'F');
+doc.rect(boxX+labelW,boxY+rowH,valueW,rowH);
+doc.setTextColor(255,255,255);
+doc.text('IVA',boxX+11,boxY+rowH+5.5);
+doc.setTextColor(0,0,0);
+doc.text(`$ ${formato(iva)}`,boxX+labelW+valueW-2,boxY+rowH+5.5,{align:'right'});
+
+// TOTAL
+doc.setFillColor(120,0,20);
+doc.rect(boxX,boxY+(rowH*2),labelW,rowH,'F');
+doc.rect(boxX+labelW,boxY+(rowH*2),valueW,rowH);
+doc.setTextColor(255,255,255);
+doc.text('TOTAL',boxX+8,boxY+(rowH*2)+5.5);
+doc.setTextColor(0,0,0);
+doc.text(`$ ${formato(total)}`,boxX+labelW+valueW-2,boxY+(rowH*2)+5.5,{align:'right'});
+
+y = boxY + 24;
+
+const ylconos = boxY + 2;
+
+if (iconMic) doc.addImage(iconMic, 'PNG', 25, ylconos, 20, 20);
+    if (iconTV) doc.addImage(iconTV, 'PNG', 60, ylconos, 20, 20);
+    if (iconRadio) doc.addImage(iconRadio, 'PNG', 95, ylconos, 20, 20);
+    y += 10;
+
+const espacioNecesarioTerminos = 70;
+
+if (y + espacioNecesarioTerminos > 265) {
+  doc.addPage();
+  y = 35;
+} else {
+  y += 2;
+}
+    doc.setTextColor(0)
+   
+
+    doc.setFont('helvetica','bold')
+    doc.setFontSize(9)
+    doc.text('TERMINOS Y CONDICIONES',20,y)
     doc.setFont('helvetica','normal'); doc.setFontSize(8);
-    y+=10; doc.text('1.- TARIFAS EXPRESADAS EN PESOS M.N. EQUIVALENTES A UMAS SEGÚN CRITERIOS PUBLICADOS EN EL POEH DEL 31 DE',20,y);
-    y+=5; doc.text('DICIEMBRE DE 2025 PARA EL EJERCICIO FISCAL 2026',20,y);
-    y+=12; doc.text('2.- FORMA DE PAGO: ANTICIPADO MEDIANTE TRANSFERENCIA BANCARIA',20,y);
-    y+=12; doc.text('3.- LOS PRECIOS DESCRITOS DE ESTA COTIZACIÓN, SON AUTORIZADOS POR LA CÁMARA DE DIPUTADOS DEL ESTADO DE',20,y);
-    y+=5; doc.text('HIDALGO',20,y);
-    y+=12; doc.text('4.- VÁLIDO ÚNICAMENTE DURANTE EL PRESENTE AÑO EN QUE SE REALIZÓ LA SOLICITUD.',20,y);
-    y+=34; doc.text('ATENTAMENTE',55,y); doc.text('Vo.Bo',150,y);
+    y+=7; doc.text('1.- TARIFAS EXPRESADAS EN PESOS M.N. EQUIVALENTES A UMAS SEGÚN CRITERIOS PUBLICADOS EN EL POEH DEL 31 DE',20,y);
+    y+=4; doc.text('DICIEMBRE DE 2025 PARA EL EJERCICIO FISCAL 2026',20,y);
+    y+=8; doc.text('2.- FORMA DE PAGO: ANTICIPADO MEDIANTE TRANSFERENCIA BANCARIA',20,y);
+    y+=8; doc.text('3.- LOS PRECIOS DESCRITOS DE ESTA COTIZACIÓN, SON AUTORIZADOS POR LA CÁMARA DE DIPUTADOS DEL ESTADO DE',20,y);
+    y+=4; doc.text('HIDALGO',20,y);
+    y+=8; doc.text('4.- VÁLIDO ÚNICAMENTE DURANTE EL PRESENTE AÑO EN QUE SE REALIZÓ LA SOLICITUD.',20,y);
+    y+=10; doc.text('ATENTAMENTE',55,y); doc.text('Vo.Bo',150,y);
     y+=22; doc.line(35,y,95,y); doc.line(125,y,185,y);
     y+=6; doc.setFont('helvetica','bold'); doc.setTextColor(120,0,20);
     doc.text('LEM. ANGELICA PALAFOX ALPIZAR',65,y,{align:'center'});
@@ -1143,13 +1216,16 @@
     y+=5; doc.text('EN RADIO Y TELEVISIÓN DE HIDALGO',65,y,{align:'center'});
     doc.text('PROMOCIÓN Y MEJORA CONTINUA',155,y,{align:'center'});
     y+=5; doc.text('EN RADIO Y TELEVISIÓN DE HIDALGO.',155,y,{align:'center'});
-    y+=12;
-    if (y>258) { doc.addPage(); y=245; } else if (y<245) y=245;
+    y+=15;
+    
     doc.setFont('helvetica','bolditalic'); doc.setTextColor(120,0,20); doc.setFontSize(13);
     doc.text('¡Gracias por su preferencia!',108,y,{align:'center'});
     doc.setFont('helvetica','normal'); doc.setTextColor(0); doc.setFontSize(7);
     y+=7; doc.text('Si usted tiene alguna pregunta sobre esta cotización favor, póngase en contacto con nosotros',108,y,{align:'center'});
     y+=5; doc.text('Teléfono: 71-79000 Ext. 9651 | E-mail: rtvpromocion@hidalgo.gob.mx',108,y,{align:'center'});
+    if (logoISO) {
+    doc.addImage(logoISO, 'PNG', 18, 255, 28, 14);
+}
     try { doc.save(`${folio}.pdf`); setTimeout(() => { btnPDF.disabled = false; btnPDF.textContent = 'Generar PDF'; },1000); } catch(error) { console.error('Error al guardar PDF:', error); mostrarAlerta('Error al generar PDF: ' + error.message, 'vino'); }
   };
 
