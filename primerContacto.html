@@ -591,13 +591,13 @@
         </div>
 
         <div class="grupo">
-            <label for="apellido_paterno">Apellido Paterno</label>
-            <input type="text" id="apellido_paterno" placeholder="Apellido paterno">
+            <label for="apellido_paterno">Apellido Paterno *</label>
+            <input type="text" id="apellido_paterno" placeholder="Apellido paterno" required>
         </div>
 
         <div class="grupo">
-            <label for="apellido_materno">Apellido Materno</label>
-            <input type="text" id="apellido_materno" placeholder="Apellido materno">
+            <label for="apellido_materno">Apellido Materno *</label>
+            <input type="text" id="apellido_materno" placeholder="Apellido materno" required> 
         </div>
 
         <div class="grupo">
@@ -606,38 +606,38 @@
         </div>
 
         <div class="grupo">
-            <label for="correo">Correo electrónico</label>
-            <input type="email" id="correo" placeholder="cliente@correo.com">
+            <label for="correo">Correo electrónico *</label>
+            <input type="email" id="correo" placeholder="cliente@correo.com" required>
         </div>
 
         <div class="grupo">
-            <label for="representante">Puesto / Representante</label>
-            <input type="text" id="representante" placeholder="Ej. Director General">
+            <label for="representante">Puesto / Representante *</label>
+            <input type="text" id="representante" placeholder="Ej. Director General" required>
         </div>
 
         <div class="grupo">
-            <label for="razon_social">Razón Social</label>
-            <input type="text" id="razon_social" placeholder="Ej. Empresa SA de CV">
+            <label for="razon_social">Razón Social *</label>
+            <input type="text" id="razon_social" placeholder="Ej. Empresa SA de CV" required>
         </div>
 
         <div class="grupo">
-            <label for="rfc">RFC</label>
-            <input type="text" id="rfc" placeholder="Ej. XAXX010101000">
+            <label for="rfc">RFC *</label>
+            <input type="text" id="rfc" placeholder="Ej. XAXX010101000" required>
         </div>
 
         <div class="grupo">
-            <label for="domicilio_fiscal">Domicilio Fiscal</label>
-            <input type="text" id="domicilio_fiscal" placeholder="Calle, número, colonia, CP">
+            <label for="domicilio_fiscal">Domicilio Fiscal *</label>
+            <input type="text" id="domicilio_fiscal" placeholder="Calle, número, colonia, CP" required>
         </div>
 
         <div class="grupo">
-            <label for="regimen_fiscal">Régimen Fiscal</label>
-            <input type="text" id="regimen_fiscal" placeholder="Ej. 601 General de Ley Personas Morales">
+            <label for="regimen_fiscal">Régimen Fiscal *</label>
+            <input type="text" id="regimen_fiscal" placeholder="Ej. 601 General de Ley Personas Morales" required>
         </div>
 
         <div class="grupo">
-            <label for="uso_cfdi">Uso CFDI</label>
-            <input type="text" id="uso_cfdi" placeholder="Ej. G03 Gastos en general">
+            <label for="uso_cfdi">Uso CFDI *</label>
+            <input type="text" id="uso_cfdi" placeholder="Ej. G03 Gastos en general" required>
         </div>
     </div>
 
@@ -825,9 +825,19 @@
     window.guardarCliente = async function () {
         const nombre = document.getElementById('nombre').value.trim();
         const telefono = document.getElementById('telefono').value.trim();
+        const apellido_paterno = document.getElementById('apellido_paterno').value.trim();
+        const apellido_materno = document.getElementById('apellido_materno').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const representante = document.getElementById('representante').value.trim();
+        const razon_social = document.getElementById('razon_social').value.trim();
+        const rfc = document.getElementById('rfc').value.trim();
+        const domicilio_fiscal = document.getElementById('domicilio_fiscal').value.trim();
+        const regimen_fiscal = document.getElementById('regimen_fiscal').value.trim();
+        const uso_cfdi = document.getElementById('uso_cfdi').value.trim();
 
-        if (!nombre || !telefono) {
-            mostrarAlertaSistema('El Nombre y el Teléfono son obligatorios.');
+
+        if (!nombre || !telefono || !apellido_paterno || !apellido_materno || !correo || !representante || !razon_social || !rfc || !domicilio_fiscal || !regimen_fiscal || !uso_cfdi) {
+            mostrarAlertaSistema('TODOS LOS CAMPOS SON OBLIGATORIOS.');
             return;
         }
 
