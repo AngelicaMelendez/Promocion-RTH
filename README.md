@@ -6,3 +6,5 @@ Usando supabase como base de datos inicial para guardar los datos en supabase de
 
 se permiten crear nuevos usuarios autorizados mediante por el login y registro del sistema.
 los id de cliente y folio de cotizacion se crean auntomaticamente los datos se guardan en supabase y se guardan en las tablas conrrespondientes , teniendo botones para editar y con mensajes en pantalla se modifcaron los mensajes con mejor diseño y se agrega la columna donde dice quien cotizo la cotizacion ademas del recuperar, nueva-password en el sistema RTH. terminando asi los requerimentos de la minuta 2 se corrigo el archivo ordenes.y terminando las pantallas para su funcionamiento se agrego el nombre de usuario como area y en igual el perfil se modicaron los footer de cada archivo ademas se corrigio el navbar en los archivos, se corrigio el archivo cotizacion del apartado generar PDF ademas se agregaron los icons y el ISO.
+
+23/06/2026 se presento la cversion hasta la rama fase29, comenzando asi con los nuevos cambios que se llegaron a un acuerdo
