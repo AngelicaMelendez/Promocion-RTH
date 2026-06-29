@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <style>
-    /* ========== TUS ESTILOS EXISTENTES (NO MODIFICADOS) ========== */
+    /* ========== TUS ESTILOS EXISTENTES (SOLO SE MODIFICAN LOS TAMAÑOS DE INPUTS) ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
@@ -244,7 +245,7 @@
       max-width: 1300px;
       margin: 30px auto;
       background: white;
-      padding: 35px;
+      padding: 25px; /* antes 35px */
       border-radius: 24px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.05);
     }
@@ -256,13 +257,13 @@
 
     .subtitle {
       color: var(--gris);
-      margin-bottom: 30px;
+      margin-bottom: 20px; /* antes 30px */
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
+      gap: 12px; /* antes 18px */
     }
 
     .grupo {
@@ -272,16 +273,17 @@
 
     .grupo label {
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px; /* antes 8px */
       color: var(--vino);
     }
 
+    /* --- NUEVO TAMAÑO DE INPUTS Y SELECTS --- */
     input,
     select {
-      padding: 13px;
+      padding: 8px 10px; /* antes 13px */
       border: 1px solid #ddd;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: 0.9rem; /* antes 1rem */
       outline: none;
       font-family: 'Montserrat', sans-serif;
     }
@@ -291,7 +293,6 @@
       border-color: var(--vino);
     }
 
-    /* Estilo para el input de folio automático */
     #folio {
       background-color: #eee;
       font-weight: bold;
@@ -464,6 +465,28 @@
       color: white;
       padding: 8px 12px;
       font-size: 0.85rem;
+    }
+
+    /* nuevos estilos para botones pequeños junto al precio */
+    .precio-botones {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .precio-botones button {
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      background: var(--gris-claro);
+      color: var(--vino);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .precio-botones button:hover {
+      background: var(--dorado);
+      color: white;
     }
 
     table {
@@ -651,6 +674,7 @@
   </style>
 </head>
 
+
 <body>
 
 <nav class="navbar">
@@ -709,6 +733,12 @@
     <div class="grupo">
       <label>Precio Unitario</label>
       <input type="number" id="precio" placeholder="0.00" step="0.01">
+      <!-- BOTONES PARA CAMBIAR PRECIO -->
+      <div class="precio-botones">
+        <button type="button" id="btnPrecioUnitario" title="Usar precio unitario">Unitario</button>
+        <button type="button" id="btnPrecioMinimo" title="Usar precio mínimo">Mínimo</button>
+        <button type="button" id="btnEditarPrecio" title="Solicitar aprobación para editar">Editar precio</button>
+      </div>
     </div>
     <div class="grupo calendario-grupo">
       <label>Fecha de Cotización</label>
@@ -837,6 +867,7 @@
   const mensaje = document.getElementById('mensaje');
   const fechaInput = document.getElementById('fecha_cotizacion');
   const folioInput = document.getElementById('folio');
+  const precioInput = document.getElementById('precio');
 
   let currentDate = new Date();
   let selectedDate = new Date();
@@ -878,6 +909,115 @@
     document.body.appendChild(modal);
     document.getElementById('btnAceptarAlerta').addEventListener('click', () => modal.remove());
   }
+
+  // ========== NUEVAS FUNCIONES PARA PRECIO UNITARIO/MÍNIMO ==========
+  let servicioActualSeleccionado = null;
+
+  function actualizarBotonesPrecio(servicio) {
+    servicioActualSeleccionado = servicio;
+    const btnUnitario = document.getElementById('btnPrecioUnitario');
+    const btnMinimo = document.getElementById('btnPrecioMinimo');
+    if (!servicio) {
+      btnUnitario.disabled = true;
+      btnMinimo.disabled = true;
+    } else {
+      btnUnitario.disabled = false;
+      btnMinimo.disabled = false;
+    }
+  }
+
+  // Al cambiar el servicio
+  servicioSelect.addEventListener('change', () => {
+    const servicioId = Number(servicioSelect.value);
+    const servicio = servicios.find(s => s.id === servicioId);
+    if (servicio) {
+      document.getElementById('precio').value = servicio.precio_unitario || servicio.cuota_min || 0;
+      actualizarBotonesPrecio(servicio);
+    } else {
+      actualizarBotonesPrecio(null);
+    }
+  });
+
+  // Funciones de los botones (ahora con event listeners directos)
+  function usarPrecioUnitario() {
+    if (servicioActualSeleccionado) {
+      precioInput.value = servicioActualSeleccionado.precio_unitario || servicioActualSeleccionado.cuota_min || 0;
+    }
+  }
+
+  function usarPrecioMinimo() {
+    if (servicioActualSeleccionado) {
+      precioInput.value = servicioActualSeleccionado.precio_minimo || servicioActualSeleccionado.precio_unitario || 0;
+    }
+  }
+
+  // Conectar los botones una vez que el DOM esté listo
+  document.getElementById('btnPrecioUnitario').addEventListener('click', usarPrecioUnitario);
+  document.getElementById('btnPrecioMinimo').addEventListener('click', usarPrecioMinimo);
+
+  // ========== NUEVO FLUJO DE EDICIÓN DE PRECIO CON ENVÍO DE CÓDIGO POR SUPABASE EDGE FUNCTION ==========
+  let codigoPrecio = null;
+
+  async function enviarCodigoEdicionPrecio() {
+    codigoPrecio = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const correoDestino = '240428@utxicotepec.edu.mx'; // correo que recibirá el código
+
+    const { data, error } = await supabase.functions.invoke('enviar-codigo', {
+      body: {
+        email: correoDestino,
+        codigo: codigoPrecio
+      }
+    });
+
+    if (error) {
+      console.error('Error enviando código:', error);
+      mostrarAlerta('No se pudo enviar el código de verificación', 'vino');
+      return false;
+    }
+
+    mostrarAlerta('Código enviado al correo autorizado', 'dorado');
+    return true;
+  }
+
+  document.getElementById('btnEditarPrecio').addEventListener('click', async () => {
+    const enviado = await enviarCodigoEdicionPrecio();
+
+    if (!enviado) return;
+
+    const codigoIngresado = prompt('Ingrese el código enviado al correo');
+
+    if (codigoIngresado === codigoPrecio) {
+      document.getElementById('precio').removeAttribute('readonly');
+      alert('Ahora puede editar el precio');
+    } else {
+      alert('Código incorrecto');
+    }
+  });
+
+  // Inicializar botones al cargar servicios
+  async function cargarServicios() {
+    const { data, error } = await supabase.from('servicios').select('*').order('id', { ascending: true });
+    if (error) {
+      mensaje.textContent = 'Error al cargar servicios: ' + error.message;
+      mensaje.style.color = 'red';
+      return;
+    }
+    servicios = data || [];
+    servicioSelect.innerHTML = '<option value="">Seleccionar servicio</option>';
+    servicios.forEach(servicio => {
+      servicioSelect.innerHTML += `<option value="${servicio.id}">${servicio.clave} - ${servicio.nombre}</option>`;
+    });
+    // Deshabilitar botones hasta seleccionar
+    actualizarBotonesPrecio(null);
+  }
+
+  // Resto de funciones sin cambios...
+  window.addEventListener('DOMContentLoaded', () => {
+    cargarServicios();
+    generarSiguienteFolio();
+    fechaInput.value = formatoFechaVisible(new Date());
+  });
 
   function formatoFechaVisible(fecha) {
     return `${String(fecha.getDate()).padStart(2,'0')}/${String(fecha.getMonth()+1).padStart(2,'0')}/${fecha.getFullYear()}`;
@@ -921,32 +1061,6 @@
       calendarDates.appendChild(btn);
     }
   }
-
-  async function cargarServicios() {
-    const { data, error } = await supabase.from('servicios').select('*').order('id', { ascending: true });
-    if (error) {
-      mensaje.textContent = 'Error al cargar servicios: ' + error.message;
-      mensaje.style.color = 'red';
-      return;
-    }
-    servicios = data || [];
-    servicioSelect.innerHTML = '<option value="">Seleccionar servicio</option>';
-    servicios.forEach(servicio => {
-      servicioSelect.innerHTML += `<option value="${servicio.id}">${servicio.clave} - ${servicio.nombre}</option>`;
-    });
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    cargarServicios();
-    generarSiguienteFolio();
-    fechaInput.value = formatoFechaVisible(new Date());
-  });
-
-  servicioSelect.addEventListener('change', () => {
-    const servicioId = Number(servicioSelect.value);
-    const servicio = servicios.find(s => s.id === servicioId);
-    if (servicio) document.getElementById('precio').value = servicio.precio_unitario || servicio.cuota_min || 0;
-  });
 
   window.agregarServicio = function() {
     const servicioId = Number(servicioSelect.value);
@@ -1039,6 +1153,7 @@
     servicioSelect.value = '';
     document.getElementById('cantidad').value = 1;
     document.getElementById('precio').value = '';
+    actualizarBotonesPrecio(null);
     selectedDate = new Date(); currentDate = new Date();
     fechaInput.value = formatoFechaVisible(selectedDate);
     renderCalendar();

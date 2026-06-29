@@ -502,6 +502,19 @@
       </div>
     </div>
   </div>
+
+  <!-- NUEVA TABLA: Servicios con mayor ingreso generado -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-trophy"></i> Servicios con mayor ingreso generado</div>
+    <div class="card-body">
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>Clave</th><th>Nombre</th><th>Cantidad vendida</th><th>Ingreso generado</th></tr></thead>
+          <tbody id="tbodyTopServiciosIngreso"><tr><td colspan="4">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </main>
 
 <!-- ===================== MODALES ===================== -->
@@ -731,7 +744,8 @@
       cargarEstadisticas(),
       cargarIngresosMensuales(),
       cargarIngresosPorCategoria(),
-      cargarTopServicios()
+      cargarTopServicios(),
+      cargarTopServiciosPorIngreso()   // <-- NUEVA FUNCIÓN AGREGADA
     ])
   }
 
@@ -1035,6 +1049,45 @@
     }
     const ranking = Array.from(mapa.values()).sort((a,b) => b.cantidad - a.cantidad).slice(0, 10)
     const tbody = document.getElementById('tbodyTopServicios')
+    tbody.innerHTML = ''
+    ranking.forEach(r => {
+      const row = tbody.insertRow()
+      row.insertCell(0).innerText = r.clave
+      row.insertCell(1).innerText = r.nombre
+      row.insertCell(2).innerText = formatoNumero(r.cantidad)
+      row.insertCell(3).innerText = formatoMoneda(r.importe)
+    })
+  }
+
+  // NUEVA FUNCIÓN: Servicios con mayor ingreso generado
+  async function cargarTopServiciosPorIngreso() {
+    const { data: cotizacionesConfirmadas } = await supabase
+      .from('cotizaciones')
+      .select('id')
+      .eq('estatus_orden', 'Confirmada')
+    const ids = cotizacionesConfirmadas?.map(c => c.id) || []
+    if (ids.length === 0) {
+      document.getElementById('tbodyTopServiciosIngreso').innerHTML = '<tr><td colspan="4">Sin servicios vendidos.</td></tr>'
+      return
+    }
+    const { data: detalles } = await supabase
+      .from('cotizacion_detalle')
+      .select('servicio_id, cantidad, precio_unitario')
+      .in('cotizacion_id', ids)
+    const mapa = new Map()
+    for (let det of detalles) {
+      const importe = det.cantidad * det.precio_unitario
+      if (!mapa.has(det.servicio_id)) {
+        const { data: serv } = await supabase.from('servicios').select('clave, nombre').eq('id', det.servicio_id).single()
+        mapa.set(det.servicio_id, { cantidad: 0, importe: 0, clave: serv?.clave || '', nombre: serv?.nombre || '' })
+      }
+      const item = mapa.get(det.servicio_id)
+      item.cantidad += det.cantidad
+      item.importe += importe
+    }
+    // Ordenar por importe (ingreso generado) de mayor a menor
+    const ranking = Array.from(mapa.values()).sort((a,b) => b.importe - a.importe).slice(0, 10)
+    const tbody = document.getElementById('tbodyTopServiciosIngreso')
     tbody.innerHTML = ''
     ranking.forEach(r => {
       const row = tbody.insertRow()
