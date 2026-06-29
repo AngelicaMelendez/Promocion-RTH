@@ -13,6 +13,7 @@ export const supabase = createClient(
   }
 )
 
+// ===== FUNCIÓN GLOBAL DE ALERTA (USADA POR VARIAS PÁGINAS) =====
 window.mostrarAlertaSistema = function (mensaje) {
   const anterior = document.querySelector('.modal-alerta-sistema')
   if (anterior) anterior.remove()
@@ -29,61 +30,12 @@ window.mostrarAlertaSistema = function (mensaje) {
 }
 
 /* ==================================================
-   LOGIN
-   ================================================== */
-const loginForm = document.getElementById('loginForm')
-const errorMessage = document.getElementById('error-message')
-if (loginForm) {
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault()
-    const correo = document.getElementById('correo').value.trim()
-    const clave = document.getElementById('clave').value
-    if (!correo || !clave) {
-      errorMessage.textContent = 'Completa todos los campos'
-      errorMessage.style.display = 'block'
-      return
-    }
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email: correo, password: clave })
-      if (error) throw error
-      if (data.user) {
-        const { data: usuarioData, error: usuarioError } = await supabase
-          .from('usuarios')
-          .select('id, nombres, apellido_paterno, area, foto_url')
-          .eq('id', data.user.id)
-          .single()
-        if (usuarioError) console.error('Error al obtener datos del usuario:', usuarioError)
-        let nombreCompleto = 'Usuario', area = '', fotoUrl = ''
-        if (usuarioData) {
-          nombreCompleto = `${usuarioData.nombres || ''} ${usuarioData.apellido_paterno || ''}`.trim()
-          area = usuarioData.area || ''
-          fotoUrl = usuarioData.foto_url || ''
-          localStorage.setItem('usuario_id', usuarioData.id)
-        } else {
-          localStorage.setItem('usuario_id', data.user.id)
-        }
-        localStorage.setItem('navUserName', nombreCompleto)
-        localStorage.setItem('navUserArea', area)
-        localStorage.setItem('navUserPhoto', fotoUrl)
-        sessionStorage.setItem('navUserName', nombreCompleto)
-        sessionStorage.setItem('navUserArea', area)
-        sessionStorage.setItem('navUserPhoto', fotoUrl)
-        window.location.href = 'primerContacto.html'
-      }
-    } catch (err) {
-      errorMessage.textContent = err.message || 'Error al iniciar sesión'
-      errorMessage.style.display = 'block'
-      console.error(err)
-    }
-  })
-}
-
-/* ==================================================
    AUTENTICACIÓN COMPARTIDA
    ================================================== */
 let cerrandoSesionExplicitamente = false
 const CACHE_KEY = 'perfil_cache'
 const CACHE_DURATION = 5 * 60 * 1000
+let autenticacionInicializada = false
 
 function guardarCachePerfil(nombre, area, fotoUrl) {
   sessionStorage.setItem(CACHE_KEY, JSON.stringify({ nombre, area, fotoUrl, timestamp: Date.now() }))
@@ -163,7 +115,7 @@ async function actualizarNombreDesdeUsuario(user) {
   if (!error && usuario) {
     nombre = `${usuario.nombres || ''} ${usuario.apellido_paterno || ''}`.trim()
     if (!nombre) nombre = 'Usuario'
-    area = usuario.area || ''
+    area = (usuario.area || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
     fotoUrl = usuario.foto_url || ''
   } else {
     nombre = localStorage.getItem('navUserName') || nombre
@@ -194,9 +146,103 @@ async function inicializarSesion() {
     actualizarNombreDesdeUsuario(null)
   }
 }
-document.addEventListener('DOMContentLoaded', () => { initAuth() })
+
+// ==================== RESTRICCIÓN DE ACCESO ====================
+function aplicarRestriccionesDeAcceso() {
+  let area = localStorage.getItem('navUserArea') || ''
+  area = area.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
+
+  const paginasPermitidas = {
+    promocion: ['primerContacto', 'cotizacion', 'ordenes', 'factura', 'reportes'],
+    juridico: ['ordenes', 'factura'],
+    administracion: ['ordenes', 'factura'],
+    director: ['primerContacto', 'cotizacion', 'ordenes', 'factura', 'reportes']
+  }
+
+  if (!area || !paginasPermitidas[area]) return
+
+  const permitidas = paginasPermitidas[area]
+  const path = window.location.pathname
+  const paginaActual = path.substring(path.lastIndexOf('/') + 1).replace('.html', '').toLowerCase()
+
+  // Redirigir solo si es jurídico/administración y está en primerContacto
+  if ((area === 'juridico' || area === 'administracion') && paginaActual === 'primercontacto') {
+    setTimeout(() => {
+      window.location.replace('ordenes.html')
+    }, 200)
+    return
+  }
+
+  // Para juridico/administracion en otras páginas: deshabilitar enlaces no permitidos
+  if (area === 'juridico' || area === 'administracion') {
+    const navLinks = document.querySelectorAll('.nav-links a')
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href')
+      if (!href) return
+      const destino = href.replace('.html', '').toLowerCase()
+      if (!permitidas.includes(destino)) {
+        link.style.pointerEvents = 'none'
+        link.style.opacity = '0.5'
+        link.title = 'Acceso restringido'
+      } else {
+        link.style.pointerEvents = 'auto'
+        link.style.opacity = '1'
+        link.title = ''
+      }
+    })
+  }
+
+  // Para director: modo solo lectura
+  if (area === 'director') {
+    document.querySelectorAll('button').forEach(btn => {
+      if (btn.classList.contains('logout-btn')) return
+      btn.disabled = true
+      btn.style.pointerEvents = 'none'
+      btn.style.opacity = '0.6'
+    })
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+      if (input.hasAttribute('readonly')) return
+      input.disabled = true
+      input.style.backgroundColor = '#f5f5f5'
+    })
+    document.querySelectorAll('a.btn-ver, a.btn-action').forEach(a => {
+      a.style.pointerEvents = 'none'
+      a.style.opacity = '0.6'
+    })
+  }
+}
+
 export async function initAuth() {
+  if (autenticacionInicializada) return
+  autenticacionInicializada = true
+
   inicializarNombreDesdeCache()
+
+  // Obtener área desde BD (por si login.html no la guardó)
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const { data: usuario, error } = await supabase
+        .from('usuarios')
+        .select('area')
+        .eq('id', session.user.id)
+        .single()
+      if (!error && usuario?.area) {
+        const areaNormalizada = usuario.area
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim()
+          .toLowerCase()
+        localStorage.setItem('navUserArea', areaNormalizada)
+        sessionStorage.setItem('navUserArea', areaNormalizada)
+      }
+    }
+  } catch (e) {
+    console.warn('No se pudo obtener el área del usuario:', e)
+  }
+
+  aplicarRestriccionesDeAcceso()
+
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
       if (cerrandoSesionExplicitamente) {
@@ -223,13 +269,17 @@ export async function initAuth() {
       }
     }
   })
+
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
       inicializarNombreDesdeCache()
       inicializarSesion()
+      setTimeout(aplicarRestriccionesDeAcceso, 300)
     }
   })
+
   await inicializarSesion()
+
   window.cerrarSesion = async function () {
     cerrandoSesionExplicitamente = true
     await supabase.auth.signOut()
@@ -238,7 +288,7 @@ export async function initAuth() {
 }
 
 // ==================================================
-// PERFIL DE USUARIO (USA CACHÉ SIEMPRE QUE SEA POSIBLE)
+// PERFIL DE USUARIO (CÓDIGO ORIGINAL SIN CAMBIOS)
 // ==================================================
 let usuarioActualPerfil = null
 let fotoSeleccionadaPerfil = null
@@ -248,7 +298,6 @@ window.abrirPerfilUsuario = async function () {
   if (actualizandoPerfil) return
   actualizandoPerfil = true
   try {
-    // Intentar abrir con caché primero (aunque no haya sesión)
     const cache = obtenerCachePerfil()
     if (cache && cache.nombre && document.getElementById('perfilNombre')) {
       document.getElementById('perfilNombre').innerText = cache.nombre
@@ -257,7 +306,6 @@ window.abrirPerfilUsuario = async function () {
       if (cache.fotoUrl) perfilFoto.src = cache.fotoUrl
       else perfilFoto.src = ''
       document.getElementById('modalPerfilUsuario').classList.add('active')
-      // Guardar referencia del usuario para edición (usamos el ID del caché, pero necesitamos el ID real)
       const storedId = localStorage.getItem('usuario_id')
       if (storedId) {
         usuarioActualPerfil = { id: storedId }
@@ -265,10 +313,8 @@ window.abrirPerfilUsuario = async function () {
       return
     }
 
-    // Si no hay caché, intentar obtener sesión
     const { data: { session } } = await supabase.auth.getSession()
     if (!session || !session.user) {
-      // Sin sesión y sin caché: no se puede abrir, pero no mostramos alerta
       return
     }
     const user = session.user
@@ -325,33 +371,30 @@ document.addEventListener('change', function (e) {
 
 window.guardarFotoPerfil = async function () {
   if (!usuarioActualPerfil) {
-    mostrarAlertaSistema('No se pudo identificar tu sesión. Recarga la página.')
+    window.mostrarAlertaSistema('No se pudo identificar tu sesión. Recarga la página.')
     return
   }
   if (!fotoSeleccionadaPerfil) {
-    mostrarAlertaSistema('Selecciona una foto primero.')
+    window.mostrarAlertaSistema('Selecciona una foto primero.')
     return
   }
 
-  // Verificar sesión activa
   const { data: { session } } = await supabase.auth.getSession()
   if (!session || !session.user) {
-    mostrarAlertaSistema('Tu sesión expiró. Recarga la página y vuelve a intentar.')
+    window.mostrarAlertaSistema('Tu sesión expiró. Recarga la página y vuelve a intentar.')
     return
   }
 
   const extension = fotoSeleccionadaPerfil.name.split('.').pop()
-  // Usamos un nombre único basado en timestamp para evitar conflictos
   const timestamp = Date.now()
   const ruta = `perfiles/${usuarioActualPerfil.id}_${timestamp}.${extension}`
 
-  // Subir directamente sin eliminar (nunca habrá conflicto porque el nombre es único)
   const { error: uploadError } = await supabase.storage
     .from('documentos')
     .upload(ruta, fotoSeleccionadaPerfil)
 
   if (uploadError) {
-    mostrarAlertaSistema('Error al subir foto: ' + uploadError.message)
+    window.mostrarAlertaSistema('Error al subir foto: ' + uploadError.message)
     return
   }
 
@@ -365,12 +408,10 @@ window.guardarFotoPerfil = async function () {
     .eq('id', usuarioId)
 
   if (updateError) {
-    mostrarAlertaSistema('Error al guardar foto: ' + updateError.message)
+    window.mostrarAlertaSistema('Error al guardar foto: ' + updateError.message)
     return
   }
 
-  // Opcional: eliminar la foto antigua (si quieres limpiar el storage)
-  // Obtener la URL anterior del perfil y extraer la ruta para eliminarla
   const oldPhotoUrl = localStorage.getItem('navUserPhoto')
   if (oldPhotoUrl && oldPhotoUrl.includes('/perfiles/')) {
     try {
@@ -379,7 +420,6 @@ window.guardarFotoPerfil = async function () {
     } catch (e) { console.warn('No se pudo eliminar foto antigua', e) }
   }
 
-  // Actualizar cachés y UI
   localStorage.setItem('navUserPhoto', fotoFinal)
   sessionStorage.setItem('navUserPhoto', fotoFinal)
   guardarCachePerfil(
@@ -394,13 +434,10 @@ window.guardarFotoPerfil = async function () {
   const perfilFoto = document.getElementById('perfilFoto')
   if (perfilFoto) perfilFoto.src = fotoFinal
 
-  mostrarAlertaSistema('Foto actualizada correctamente.')
+  window.mostrarAlertaSistema('Foto actualizada correctamente.')
   cerrarPerfilUsuario()
 }
 
-// ==================================================
-// ASIGNAR CLICK AL AVATAR (de forma robusta)
-// ==================================================
 function asignarClickAvatar() {
   const avatar = document.getElementById('nav-avatar')
   if (avatar && !avatar.hasAttribute('data-perfil-listener')) {
