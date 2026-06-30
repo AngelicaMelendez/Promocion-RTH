@@ -811,6 +811,19 @@
   </div>
 </div>
 
+<div id="modalCodigo" class="modal-alerta-sistema" style="display:none;">
+  <div class="modal-alerta-card">
+    <h3>Verificación</h3>
+    <p>Ingrese el código enviado al correo</p>
+
+    <input id="inputCodigoVerificacion" type="text" maxlength="6"
+      style="width:100%;padding:13px;border-radius:10px;border:1px solid #ccc;text-align:center;font-size:1.2rem;margin-bottom:18px;">
+
+    <button type="button" id="btnValidarCodigo">Aceptar</button>
+    <button type="button" id="btnCancelarCodigo" style="margin-left:10px;background:#b91c1c;">Cancelar</button>
+  </div>
+</div>
+
 <footer class="footer">
   <div class="footer-content">
     <div class="footer-logo"><img src="img/logo_RYT.png" alt="Gobierno Hidalgo"></div>
@@ -892,23 +905,37 @@
   }
 
   // ========== MOSTRAR ALERTA (modal dinámico que sí funciona) ==========
-  function mostrarAlerta(mensaje, tipo = 'vino') {
-    const anterior = document.querySelector('.modal-alerta-sistema');
-    if (anterior) anterior.remove();
+ function mostrarAlerta(mensaje, tipo = 'vino', callback = null) {
+  const anterior = document.querySelector('.modal-alerta-dinamica');
+  if (anterior) anterior.remove();
 
-    const modal = document.createElement('div');
-    modal.className = 'modal-alerta-sistema';
-    const borderColor = tipo === 'dorado' ? '#bc955b' : '#691b31';
-    modal.innerHTML = `
-      <div class="modal-alerta-card" style="border-top-color: ${borderColor};">
-        <h3>Aviso</h3>
-        <p>${mensaje}</p>
-        <button id="btnAceptarAlerta">Aceptar</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    document.getElementById('btnAceptarAlerta').addEventListener('click', () => modal.remove());
-  }
+  const modal = document.createElement('div');
+  modal.className = 'modal-alerta-sistema modal-alerta-dinamica';
+
+  const borderColor = tipo === 'dorado'
+    ? '#bc955b'
+    : tipo === 'verde'
+      ? '#16a34a'
+      : '#691b31';
+
+  modal.innerHTML = `
+    <div class="modal-alerta-card" style="border-top-color:${borderColor};">
+      <h3>Aviso</h3>
+      <p>${mensaje}</p>
+      <button id="btnAceptarAlerta">Aceptar</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById("btnAceptarAlerta").addEventListener("click", () => {
+    modal.remove();
+
+    if (typeof callback === "function") {
+      callback();
+    }
+  });
+}
 
   // ========== NUEVAS FUNCIONES PARA PRECIO UNITARIO/MÍNIMO ==========
   let servicioActualSeleccionado = null;
@@ -956,44 +983,106 @@
   document.getElementById('btnPrecioMinimo').addEventListener('click', usarPrecioMinimo);
 
   // ========== NUEVO FLUJO DE EDICIÓN DE PRECIO CON ENVÍO DE CÓDIGO POR SUPABASE EDGE FUNCTION ==========
+  let precioAutorizado = false;
   let codigoPrecio = null;
+  let codigoExpiraEn = null;
 
   async function enviarCodigoEdicionPrecio() {
-    codigoPrecio = Math.floor(100000 + Math.random() * 900000).toString();
+  codigoPrecio = Math.floor(100000 + Math.random() * 900000).toString();
+  codigoExpiraEn = Date.now() + (5 * 60 * 1000);
 
-    const correoDestino = '240428@utxicotepec.edu.mx'; // correo que recibirá el código
+  const correoDestino = 'luisdavidcruzflores@gmail.com';
 
-    const { data, error } = await supabase.functions.invoke('enviar-codigo', {
-      body: {
-        email: correoDestino,
-        codigo: codigoPrecio
-      }
-    });
-
-    if (error) {
-      console.error('Error enviando código:', error);
-      mostrarAlerta('No se pudo enviar el código de verificación', 'vino');
-      return false;
-    }
-
-    mostrarAlerta('Código enviado al correo autorizado', 'dorado');
-    return true;
-  }
-
-  document.getElementById('btnEditarPrecio').addEventListener('click', async () => {
-    const enviado = await enviarCodigoEdicionPrecio();
-
-    if (!enviado) return;
-
-    const codigoIngresado = prompt('Ingrese el código enviado al correo');
-
-    if (codigoIngresado === codigoPrecio) {
-      document.getElementById('precio').removeAttribute('readonly');
-      alert('Ahora puede editar el precio');
-    } else {
-      alert('Código incorrecto');
+  const { data, error } = await supabase.functions.invoke('enviar-codigo', {
+    body: {
+      email: correoDestino,
+      codigo: codigoPrecio
     }
   });
+
+  if (error) {
+    console.error('Error completo:', error);
+    mostrarAlerta('No se pudo enviar el código de verificación', 'vino');
+    return false;
+  }
+  return true;
+  }
+
+const modalCodigo = document.getElementById("modalCodigo");
+const inputCodigo = document.getElementById("inputCodigoVerificacion");
+const btnValidarCodigo = document.getElementById("btnValidarCodigo");
+const btnCancelarCodigo = document.getElementById("btnCancelarCodigo");
+const inputPrecio = document.getElementById("precio");
+
+inputPrecio.setAttribute("readonly", "readonly");
+document.getElementById("btnEditarPrecio").addEventListener("click", async () => {
+
+const servicioSeleccionado = document.getElementById("servicio").value;
+const precioActual = inputPrecio.value.trim();
+
+console.log("Servicio:", servicioSeleccionado);
+console.log("Precio:", precioActual);
+  
+  if (!servicioSeleccionado) {
+    mostrarAlerta("Primero selecciona un servicio.", "vino");
+    return;
+}
+
+if (!precioActual || Number(precioActual) <= 0) {
+    mostrarAlerta("Primero selecciona precio unitario o mínimo.", "vino");
+    return;
+}
+
+if (precioAutorizado) {
+  inputPrecio.readOnly = false;
+  mostrarAlerta("El precio ya está autorizado para edición.", "vino");
+  return;
+}
+  const enviado = await enviarCodigoEdicionPrecio();
+  if (!enviado) return;
+
+  mostrarAlerta(
+  "Se envió un código de verificación al correo electrónico.",
+  "vino",
+  () => {
+    
+  inputCodigo.value = "";
+  modalCodigo.style.display = "flex";
+
+  setTimeout(() => {
+    inputCodigo.focus();
+  }, 100);
+  }
+);
+});
+
+btnValidarCodigo.onclick = function () {
+  const codigoIngresado = inputCodigo.value.trim();
+
+  if (Date.now() > codigoExpiraEn) {
+    mostrarAlerta("El código expiró", "vino");
+    return;
+  }
+
+  if (codigoIngresado !== codigoPrecio) {
+    mostrarAlerta("Código incorrecto", "vino");
+    return;
+  }
+
+  modalCodigo.style.display = "none";
+  inputPrecio.removeAttribute("readonly");
+
+ precioAutorizado = true;
+ codigoPrecio = null;
+ codigoExpiraEn = null;
+
+  mostrarAlerta("Ya puede editar el precio", "vino");
+};
+
+btnCancelarCodigo.onclick = function () {
+  modalCodigo.style.display = "none";
+  inputCodigo.value = "";
+};
 
   // Inicializar botones al cargar servicios
   async function cargarServicios() {
