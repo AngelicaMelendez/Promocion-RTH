@@ -689,8 +689,7 @@
     <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
     <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
     <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Creación Trabajo</a>
-    <a href="entregables.html"><i class="fas fa-cloud-upload-alt"></i> Entregables</a>
-    <a href="reportes.html" class="active"><i class="fas fa-chart-line"></i> Reportes</a>
+    <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
   </div>
 
   <div class="nav-profile">
@@ -1252,27 +1251,49 @@ btnCancelarCodigo.onclick = function () {
     try { const response = await fetch(url); if (!response.ok) return null; const blob = await response.blob(); return await new Promise(resolve => { const reader = new FileReader(); reader.onloadend = () => resolve(reader.result); reader.readAsDataURL(blob); }); } catch { return null; }
   }
 
-  window.generarPDF = async function() {
+ window.generarPDF = async function() {
     const btnPDF = document.getElementById('btnGenerarPDF');
-    btnPDF.disabled = true; btnPDF.textContent = 'Generando...';
-    if (detalle.length === 0) { mostrarAlerta('Agrega al menos un servicio antes de generar PDF', 'vino'); btnPDF.disabled = false; btnPDF.textContent = 'Generar PDF'; return; }
+    btnPDF.disabled = true;
+    btnPDF.textContent = 'Generando...';
+
+    if (detalle.length === 0) {
+        mostrarAlerta('Agrega al menos un servicio antes de generar PDF', 'vino');
+        btnPDF.disabled = false;
+        btnPDF.textContent = 'Generar PDF';
+        return;
+    }
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'letter');
-    let logoIzq = null, logoDer = null, logoISO = null, iconMic = null, iconTV = null, iconRadio = null;
-    try { logoIzq = await cargarImagenBase64('img/logos-vryt.png'); logoDer = await cargarImagenBase64('img/logos-vryt1.png'); logoISO = await cargarImagenBase64('img/logoISO.png'); iconMic = await cargarImagenBase64('img/logoMicrofono.png'); iconTV = await cargarImagenBase64('img/logoTv.png'); iconRadio = await cargarImagenBase64('img/logoRadio.png'); } catch (error) { console.warn('No se pudieron cargar los logos:', error); }
+
+    let logoRTH = null, logoISO = null, iconMic = null, iconTV = null, iconRadio = null;
+
+    try {
+        logoRTH = await cargarImagenBase64('img/Logo-rth1.png');
+        logoISO = await cargarImagenBase64('img/logoISO.png');
+        iconMic = await cargarImagenBase64('img/logoMicrofono.png');
+        iconTV = await cargarImagenBase64('img/logoTv.png');
+        iconRadio = await cargarImagenBase64('img/logoRadio.png');
+    } catch (error) {
+        console.warn('No se pudieron cargar los logos:', error);
+    }
+
     const folio = folioInput.value.trim() || '00001';
     const clienteCompleto = document.getElementById('cliente_nombre').value.trim() || 'SIN CLIENTE';
-    const cliente = clienteCompleto.split('-')[0].trim()
+    const cliente = clienteCompleto.split('-')[0].trim();
     const fecha = fechaInput.value || formatoFechaVisible(new Date());
     const { subtotal, iva, total } = calcularTotales();
-    const formato = (val) => Number(val).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const formato = (val) => Number(val).toLocaleString('es-MX', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
     const encabezado = () => {
+        if (logoRTH) doc.addImage(logoRTH, 'PNG', 130, 6, 68, 21);
+        if (logoISO) doc.addImage(logoISO, 'PNG', 18, 255, 28, 14);
 
-    if (logoIzq) doc.addImage(logoIzq, 'PNG', 12, 6, 42, 20);
-    if (logoDer) doc.addImage(logoDer, 'PNG', 172, 6, 24, 20);  
-    if (logoISO) doc.addImage(logoISO, 'PNG', 18, 255, 28, 14)
-
-
+      
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(22)
   doc.setTextColor(120, 0, 20)

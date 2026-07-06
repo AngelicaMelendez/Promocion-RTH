@@ -1,417 +1,948 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RYTH | Entregables</title>
-    <link rel="icon" type="image/x-icon" href="img/star.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --vino: #691b31;
-            --vino-claro: #a02142;
-            --dorado: #bc955b;
-            --beige: #ddc9a3;
-            --gris: #7d7d7d;
-            --gris-claro: #f4f4f4;
-            --blanco: #ffffff;
-            --fondo: #f7f3ed;
-        }
-        html { overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
-        html::-webkit-scrollbar { width: 0; height: 0; }
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--fondo);
-            color: #2c3e4e;
-            overflow-x: hidden;
-        }
-        .navbar {
-            background: var(--vino);
-            color: var(--beige);
-            padding: 12px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: nowrap !important;
-            gap: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .navbar::-webkit-scrollbar { width: 0; height: 0; }
-        .nav-logo { display: flex; align-items: center; gap: 16px; font-weight: 700; flex-shrink: 0; }
-        .nav-logo img { width: 90px; height: auto; }
-        .nav-links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
-        .nav-links a {
-            color: var(--beige);
-            text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: 0.2s;
-        }
-        .nav-links a.active, .nav-links a:hover {
-            background-color: var(--dorado);
-            color: var(--vino);
-        }
-        .dropdown { position: relative; }
-        .nav-profile { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .avatar {
-            background: var(--dorado);
-            width: 38px; height: 38px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: white; flex-shrink: 0; cursor: pointer;
-        }
-        #nav-user-info { display: flex; flex-direction: column; line-height: 1.1; }
-        #nav-user-name { font-weight: 600; }
-        #nav-user-area { font-size: 0.75rem; opacity: .8; color: var(--beige); }
-        .logout-btn {
-            background: transparent; border: none;
-            color: var(--beige); font-size: 1.2rem; cursor: pointer; padding: 8px;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-        h1 { color: var(--vino); margin-bottom: 10px; }
-        .subtitle { color: var(--gris); margin-bottom: 25px; }
-        .upload-area {
-            border: 2px dashed var(--dorado);
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 25px;
-            background: var(--fondo);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .upload-area:hover { background: #e8dcc8; }
-        .upload-area i { font-size: 3rem; color: var(--dorado); margin-bottom: 15px; }
-        .upload-area p { font-weight: 600; color: var(--vino); }
-        .upload-area input { display: none; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px 10px;
-            text-align: left;
-            font-size: 0.85rem;
-        }
-        th {
-            background: var(--gris-claro);
-            color: var(--vino);
-        }
-        .btn-action {
-            background: var(--vino-claro);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            margin: 2px;
-        }
-        .btn-action:hover { background: var(--vino); }
-        #mensaje { margin-top: 20px; font-weight: bold; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RYTH | Entregables</title>
+<link rel="icon" type="image/x-icon" href="img/star.ico">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-        /* Perfil modal */
-        #modalPerfilUsuario {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.55);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        #modalPerfilUsuario.active { display: flex; }
-        #modalPerfilUsuario .modal-content {
-            background: #f7f3ed;
-            border-radius: 28px;
-            width: 90%;
-            max-width: 520px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0,0,0,.35);
-        }
-        #modalPerfilUsuario .modal-header {
-            background: linear-gradient(90deg, #691b31, #a02142);
-            color: white;
-            padding: 24px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.7rem;
-            font-weight: 800;
-        }
-        #modalPerfilUsuario .modal-header button {
-            background: none; border: none; color: white; font-size: 2rem; cursor: pointer;
-        }
-        #modalPerfilUsuario .modal-body {
-            padding: 38px 30px 34px;
-            text-align: center;
-        }
-        #perfilFoto {
-            width: 140px !important; height: 140px !important;
-            border-radius: 50%; object-fit: cover; background: #ddd;
-            margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0,0,0,.18);
-        }
-        #perfilNombre, #perfilArea { color: #2c3e4e; font-size: 1.05rem; }
-        #modalPerfilUsuario .modal-body p { margin: 4px 0; font-size: 1.05rem; }
-        #modalPerfilUsuario .modal-body strong { color: var(--vino); font-weight: 800; }
-        #modalPerfilUsuario .btn-action {
-            background: var(--vino-claro);
-            color: white;
-            border: none;
-            padding: 9px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: .9rem;
-            font-weight: 700;
-        }
-        #modalPerfilUsuario .btn-action:hover { background: var(--vino); }
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .footer {
-            background: var(--vino); color: white; margin-top: 70px;
-            padding: 50px 55px 35px;
-        }
-        .footer-content {
-            display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 50px;
-            max-width: 1200px; margin: 0 auto;
-        }
-        .footer-logo img { width: 150px; filter: brightness(0) invert(1); }
-        .footer-emergencias { display: flex; justify-content: center; gap: 70px; text-align: center; }
-        .emergencia-item strong { display: block; font-size: 1.3rem; margin-bottom: 15px; }
-        .footer-line { width: 100%; height: 1px; background: var(--dorado); margin: 40px 0 30px; }
-        @media (max-width: 850px) {
-            .navbar { padding: 15px 20px; }
-            .nav-links { justify-content: center; }
-            .footer-content { grid-template-columns: 1fr; text-align: center; gap: 30px; }
-            .footer-emergencias { flex-direction: column; gap: 20px; }
-        }
-    </style>
+:root {
+    --vino: #691b31;
+    --vino-claro: #a02142;
+    --dorado: #bc955b;
+    --beige: #ddc9a3;
+    --gris: #7d7d7d;
+    --gris-claro: #f4f4f4;
+    --blanco: #ffffff;
+    --fondo: #f7f3ed;
+}
+
+html {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--fondo);
+    color: #2c3e4e;
+    overflow-x: hidden;
+}
+
+.navbar {
+    background: var(--vino);
+    color: var(--beige);
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap !important;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.navbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.nav-logo img {
+    width: 90px;
+    height: auto;
+}
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.nav-links a {
+    color: var(--beige);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+    background-color: var(--dorado);
+    color: var(--vino);
+}
+
+.dropdown {
+    position: relative;
+}
+
+.nav-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.avatar {
+    background: var(--dorado);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+#nav-user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+#nav-user-name {
+    font-weight: 600;
+}
+
+#nav-user-area {
+    font-size: 0.75rem;
+    opacity: .8;
+    color: var(--beige);
+}
+
+.logout-btn {
+    background: transparent;
+    border: none;
+    color: var(--beige);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+h1 {
+    color: var(--vino);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--gris);
+    margin-bottom: 25px;
+}
+
+.upload-area {
+    border: 2px dashed var(--dorado);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 25px;
+    background: var(--fondo);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.upload-area:hover {
+    background: #e8dcc8;
+}
+
+.upload-area i {
+    font-size: 3rem;
+    color: var(--dorado);
+    margin-bottom: 15px;
+}
+
+.upload-area p {
+    font-weight: 600;
+    color: var(--vino);
+}
+
+.upload-area input {
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+th {
+    background: var(--gris-claro);
+    color: var(--vino);
+}
+
+.btn-action {
+    background: var(--vino-claro);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    margin: 2px;
+}
+
+.btn-action:hover {
+    background: var(--vino);
+}
+
+#mensaje {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* Perfil modal */
+#modalPerfilUsuario {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalPerfilUsuario.active {
+    display: flex;
+}
+
+#modalPerfilUsuario .modal-content {
+    background: #f7f3ed;
+    border-radius: 28px;
+    width: 90%;
+    max-width: 520px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+}
+
+#modalPerfilUsuario .modal-header {
+    background: linear-gradient(90deg, #691b31, #a02142);
+    color: white;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.7rem;
+    font-weight: 800;
+}
+
+#modalPerfilUsuario .modal-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+#modalPerfilUsuario .modal-body {
+    padding: 38px 30px 34px;
+    text-align: center;
+}
+
+#perfilFoto {
+    width: 140px !important;
+    height: 140px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #ddd;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.18);
+}
+
+#perfilNombre,
+#perfilArea {
+    color: #2c3e4e;
+    font-size: 1.05rem;
+}
+
+#modalPerfilUsuario .modal-body p {
+    margin: 4px 0;
+    font-size: 1.05rem;
+}
+
+#modalPerfilUsuario .modal-body strong {
+    color: var(--vino);
+    font-weight: 800;
+}
+
+#modalPerfilUsuario .btn-action {
+    background: var(--vino-claro);
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+#modalPerfilUsuario .btn-action:hover {
+    background: var(--vino);
+}
+
+.footer {
+    background: var(--vino);
+    color: white;
+    margin-top: 70px;
+    padding: 50px 55px 35px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-logo img {
+    width: 150px;
+    filter: brightness(0) invert(1);
+}
+
+.footer-emergencias {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    text-align: center;
+}
+
+.emergencia-item strong {
+    display: block;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.footer-line {
+    width: 100%;
+    height: 1px;
+    background: var(--dorado);
+    margin: 40px 0 30px;
+}
+
+@media (max-width: 850px) {
+    .navbar {
+        padding: 15px 20px;
+    }
+
+    .nav-links {
+        justify-content: center;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .footer-emergencias {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+.alerta-sistema {
+    position: fixed;
+    top: 95px;
+    right: 28px;
+    z-index: 10000;
+    min-width: 280px;
+    max-width: 420px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.25);
+    font-weight: 700;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideAlerta .25s ease;
+    transition: .25s ease;
+}
+
+.alerta-sistema.success {
+    background: #198754;
+    color: white;
+}
+
+.alerta-sistema.error {
+    background: #dc3545;
+    color: white;
+}
+
+.alerta-sistema.info {
+    background: var(--vino);
+    color: white;
+}
+
+.alerta-sistema.warning {
+    background: var(--dorado);
+    color: var(--vino);
+}
+
+.alerta-sistema i {
+    font-size: 1.1rem;
+}
+
+@keyframes slideAlerta {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+.modal-confirmacion {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirmacion-box {
+    background: white;
+    width: 90%;
+    max-width: 390px;
+    border-radius: 20px;
+    border-top: 5px solid var(--dorado);
+    box-shadow: 0 14px 35px rgba(0,0,0,.25);
+    padding: 28px 28px 26px;
+    text-align: center;
+    animation: aparecerConfirmacion .25s ease;
+}
+
+.confirmacion-icono {
+    font-size: 1.8rem;
+    color: var(--vino);
+    margin-bottom: 8px;
+}
+
+.confirmacion-title {
+    color: var(--vino);
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.confirmacion-body {
+    color: #2c3e4e;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 22px;
+    line-height: 1.4;
+}
+
+.confirmacion-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-cancelar {
+    background: #bc955b;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 9px 22px;
+    font-size: .9rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-cancelar:hover {
+    background: #666;
+}
+
+.btn-confirmar {
+    background: var(--vino-claro);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 9px 22px;
+    font-size: .9rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-confirmar:hover {
+    background: var(--vino);
+}
+
+@keyframes aparecerConfirmacion {
+    from {
+        opacity: 0;
+        transform: scale(.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+</style>
 </head>
+
 <body>
-    <nav class="navbar">
-        <div class="nav-logo">
-            <img src="img/logo_RYT.png" alt="Logo">
-            <span>RADIO Y TELEVISIÓN HIDALGO</span>
-        </div>
-        <div class="nav-links">
-            <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
-            <a href="cotizacion.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-            <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
-            <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
-            <!-- Nuevos enlaces -->
-            <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Creación Trabajo</a>
-            <a href="entregables.html" class="active"><i class="fas fa-cloud-upload-alt"></i> Entregables</a>
-            <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
-        </div>
-        <div class="nav-profile">
-            <div class="avatar" id="nav-avatar">U</div>
-            <div id="nav-user-info">
-                <div id="nav-user-name">Usuario</div>
-                <div id="nav-user-area"></div>
-            </div>
-            <button class="logout-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i></button>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1><i class="fas fa-cloud-upload-alt"></i> Entregables</h1>
-        <p class="subtitle">Sube archivos multimedia (video, audio) relacionados con los proyectos</p>
-
-        <div class="upload-area" id="uploadArea">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <p>Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
-            <small>Formatos aceptados: MP4, AVI, MOV, MP3, WAV, etc. Tamaño máximo: 2GB</small>
-            <input type="file" id="fileInput" multiple accept="video/*,audio/*" />
-        </div>
-
-        <h2 style="color:var(--vino); margin-bottom:15px;">Archivos subidos</h2>
-        <table id="tablaEntregables">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Tamaño</th>
-                    <th>Fecha</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyEntregables">
-                <tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>
-            </tbody>
-        </table>
-        <p id="mensaje"></p>
+<nav class="navbar">
+    <div class="nav-logo">
+        <img src="img/logo_RYT.png" alt="Logo">
+        <span>RADIO Y TELEVISIÓN HIDALGO</span>
     </div>
 
-    <!-- Modal de perfil -->
-    <div class="modal" id="modalPerfilUsuario">
-        <div class="modal-content" style="max-width:420px;">
-            <div class="modal-header">
-                <span><i class="fas fa-user"></i> Perfil de usuario</span>
-                <button onclick="cerrarPerfilUsuario()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body" style="text-align:center;">
-                <img id="perfilFoto" src="" alt="Foto de perfil"
-                     style="width:110px;height:110px;border-radius:50%;object-fit:cover;background:#ddd;margin-bottom:15px;">
-                <p><strong>Nombre:</strong> <span id="perfilNombre">Usuario</span></p>
-                <p><strong>Área:</strong> <span id="perfilArea">-</span></p>
-                <input type="file" id="inputFotoPerfil" accept="image/*" style="display:none;">
-                <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">
-                    <button class="btn-action" onclick="document.getElementById('inputFotoPerfil').click()"><i class="fas fa-image"></i> Editar foto</button>
-                    <button class="btn-action" onclick="guardarFotoPerfil()"><i class="fas fa-save"></i> Guardar</button>
-                </div>
+    <div class="nav-links">
+        <a href="notificaciones.html">
+            <i class="fas fa-bell"></i> Notificaciones
+        </a>
+
+        <a href="entregables.html" class="active">
+            <i class="fas fa-cloud-upload-alt"></i> Entregables
+        </a>
+    </div>
+
+    <div class="nav-profile">
+        <div class="avatar" id="nav-avatar">U</div>
+
+        <div id="nav-user-info">
+            <div id="nav-user-name">Usuario</div>
+            <div id="nav-user-area"></div>
+        </div>
+
+        <button class="logout-btn" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+    <h1><i class="fas fa-cloud-upload-alt"></i> Entregables</h1>
+    <p class="subtitle">Sube archivos multimedia (video, audio) relacionados con los proyectos</p>
+
+    <div class="upload-area" id="uploadArea">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
+        <small>Formatos aceptados: MP4, AVI, MOV, MP3, WAV, etc. Tamaño máximo: 2GB</small>
+        <input type="file" id="fileInput" multiple accept="video/*,audio/*" />
+    </div>
+
+    <h2 style="color:var(--vino); margin-bottom:15px;">Archivos subidos</h2>
+
+    <table id="tablaEntregables">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Tamaño</th>
+                <th>Fecha</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody id="tbodyEntregables">
+            <tr>
+                <td colspan="5" style="text-align:center;">Cargando...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p id="mensaje"></p>
+</div>
+
+<!-- Modal de perfil -->
+<div class="modal" id="modalPerfilUsuario">
+    <div class="modal-content" style="max-width:420px;">
+        <div class="modal-header">
+            <span><i class="fas fa-user"></i> Perfil de usuario</span>
+            <button onclick="cerrarPerfilUsuario()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" style="text-align:center;">
+            <img id="perfilFoto" src="" alt="Foto de perfil"
+                 style="width:110px;height:110px;border-radius:50%;object-fit:cover;background:#ddd;margin-bottom:15px;">
+
+            <p><strong>Nombre:</strong> <span id="perfilNombre">Usuario</span></p>
+            <p><strong>Área:</strong> <span id="perfilArea">-</span></p>
+
+            <input type="file" id="inputFotoPerfil" accept="image/*" style="display:none;">
+
+            <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">
+                <button class="btn-action" onclick="document.getElementById('inputFotoPerfil').click()">
+                    <i class="fas fa-image"></i> Editar foto
+                </button>
+
+                <button class="btn-action" onclick="guardarFotoPerfil()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-logo"><img src="img/logo_RYT.png" alt="Gobierno Hidalgo"></div>
-            <div class="footer-emergencias">
-                <div class="emergencia-item"><strong>911</strong><span>Emergencia</span></div>
-                <div class="emergencia-item"><strong>089</strong><span>Denuncia Anónima</span></div>
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="img/logo_RYT.png" alt="Gobierno Hidalgo">
+        </div>
+
+        <div class="footer-emergencias">
+            <div class="emergencia-item">
+                <strong>911</strong>
+                <span>Emergencia</span>
             </div>
-            <div>
-                <p>Aviso de privacidad</p>
-                <p>Contacto: Carretera Federal México-Pachuca Km 84.5</p>
-                <p>Sector Primario, C.P. 42080</p>
-                <p>Pachuca de Soto, Hidalgo, México</p>
-                <p>+52 (771) 71 79000 Ext. 9211</p>
+
+            <div class="emergencia-item">
+                <strong>089</strong>
+                <span>Denuncia Anónima</span>
             </div>
         </div>
-        <div class="footer-line"></div>
-        <div>Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
-    </footer>
 
-    <script type="module">
-        import { initAuth, supabase } from './app.js';
+        <div>
+            <p>Aviso de privacidad</p>
+            <p>Contacto: Carretera Federal México-Pachuca Km 84.5</p>
+            <p>Sector Primario, C.P. 42080</p>
+            <p>Pachuca de Soto, Hidalgo, México</p>
+            <p>+52 (771) 71 79000 Ext. 9211</p>
+        </div>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initAuth();
+    <div class="footer-line"></div>
 
-            const uploadArea = document.getElementById('uploadArea');
-            const fileInput = document.getElementById('fileInput');
-            const tbody = document.getElementById('tbodyEntregables');
-            const mensaje = document.getElementById('mensaje');
+    <div>Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
+</footer>
 
-            async function cargarEntregables() {
-                tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) return;
+<script type="module">
+import { initAuth, supabase } from './app.js';
 
-                const { data, error } = await supabase
-                    .from('entregables')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false });
+function mostrarConfirmacion(mensaje){
+    return new Promise(resolve=>{
+        const modal=document.createElement('div');
+        modal.className='modal-confirmacion';
 
-                if (error) {
-                    console.error(error);
-                    tbody.innerHTML = '<tr><td colspan="5">Error al cargar archivos</td></tr>';
-                    return;
-                }
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5">No hay archivos subidos</td></tr>';
-                    return;
-                }
+        modal.innerHTML=`
+        <div class="confirmacion-box">
+            <div class="confirmacion-icono">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
 
-                tbody.innerHTML = '';
-                data.forEach(item => {
-                    const row = tbody.insertRow();
-                    const sizeMB = (item.tamano / (1024*1024)).toFixed(1);
-                    row.innerHTML = `
-                        <td>${item.nombre}</td>
-                        <td>${item.tipo}</td>
-                        <td>${sizeMB} MB</td>
-                        <td>${new Date(item.created_at).toLocaleDateString('es-MX')}</td>
-                        <td>
-                            <a class="btn-action" href="${item.url}" target="_blank"><i class="fas fa-download"></i> Descargar</a>
-                            <button class="btn-action" onclick="eliminarEntregable(${item.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    `;
-                });
-            }
+            <h2 class="confirmacion-title">Confirmar acción</h2>
 
-            async function subirArchivos(archivos) {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) {
-                    alert('Debes iniciar sesión');
-                    return;
-                }
+            <div class="confirmacion-body">
+                ${mensaje}
+            </div>
 
-                for (const archivo of archivos) {
-                    if (archivo.size > 2 * 1024 * 1024 * 1024) {
-                        alert(`El archivo ${archivo.name} supera los 2GB permitidos`);
-                        continue;
-                    }
+            <div class="confirmacion-actions">
+                <button class="btn-cancelar" id="btnCancelarConfirmacion">Cancelar</button>
+                <button class="btn-confirmar" id="btnAceptarConfirmacion">Eliminar</button>
+            </div>
+        </div>
+        `;
 
-                    const timestamp = Date.now();
-                    const ruta = `entregables/${user.id}/${timestamp}_${archivo.name}`;
-                    const { error } = await supabase.storage
-                        .from('entregables')
-                        .upload(ruta, archivo);
+        document.body.appendChild(modal);
 
-                    if (error) {
-                        console.error(error);
-                        alert('Error al subir ' + archivo.name);
-                        continue;
-                    }
+        document.getElementById('btnCancelarConfirmacion').onclick=()=>{
+            modal.remove();
+            resolve(false);
+        };
 
-                    const { data } = supabase.storage.from('entregables').getPublicUrl(ruta);
-                    await supabase.from('entregables').insert({
-                        user_id: user.id,
-                        nombre: archivo.name,
-                        tipo: archivo.type,
-                        tamano: archivo.size,
-                        url: data.publicUrl
-                    });
-                }
-                cargarEntregables();
-            }
+        document.getElementById('btnAceptarConfirmacion').onclick=()=>{
+            modal.remove();
+            resolve(true);
+        };
+    });
+}
 
-            window.eliminarEntregable = async function(id) {
-                if (!confirm('¿Eliminar este archivo?')) return;
-                const { data: item } = await supabase
-                    .from('entregables')
-                    .select('url')
-                    .eq('id', id)
-                    .single();
-                if (item) {
-                    const urlParts = item.url.split('/');
-                    const bucketIndex = urlParts.indexOf('entregables');
-                    const path = urlParts.slice(bucketIndex + 1).join('/');
-                    await supabase.storage.from('entregables').remove([path]);
-                }
-                const { error } = await supabase.from('entregables').delete().eq('id', id);
-                if (error) alert('Error al eliminar');
-                cargarEntregables();
-            };
+window.mostrarAlerta=function(mensaje,tipo='info'){
+    const anterior=document.querySelector('.alerta-sistema');
+    if(anterior)anterior.remove();
 
-            uploadArea.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) {
-                    subirArchivos(fileInput.files);
-                    fileInput.value = '';
-                }
-            });
+    const alerta=document.createElement('div');
+    alerta.className=`alerta-sistema ${tipo}`;
 
-            cargarEntregables();
+    let icono='fa-circle-info';
+
+    if(tipo==='success')icono='fa-circle-check';
+    if(tipo==='error')icono='fa-circle-xmark';
+    if(tipo==='warning')icono='fa-triangle-exclamation';
+
+    alerta.innerHTML=`<i class="fas ${icono}"></i><span>${mensaje}</span>`;
+
+    document.body.appendChild(alerta);
+
+    setTimeout(()=>{
+        alerta.style.opacity='0';
+        alerta.style.transform='translateX(30px)';
+
+        setTimeout(()=>{
+            alerta.remove();
+        },250);
+    },3000);
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await initAuth();
+    } catch (e) {
+        console.warn('initAuth:', e);
+    }
+
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const tbody = document.getElementById('tbodyEntregables');
+    const mensaje = document.getElementById('mensaje');
+
+    function obtenerUsuarioLocal(){
+        return {
+            id: localStorage.getItem('usuario_id') || '',
+            nombre: localStorage.getItem('usuario_nombre') || 'Usuario',
+            area: localStorage.getItem('navUserArea') || localStorage.getItem('usuario_area') || ''
+        };
+    }
+
+    async function obtenerUsuarioActual(){
+        const { data, error } = await supabase.auth.getUser();
+
+        if(error) {
+            console.warn('auth.getUser:', error);
+        }
+
+        const local = obtenerUsuarioLocal();
+
+        return {
+            authUser: data?.user || null,
+            id: data?.user?.id || local.id,
+            nombre: local.nombre,
+            area: local.area
+        };
+    }
+
+    async function cargarEntregables(){
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>';
+
+        const usuario = await obtenerUsuarioActual();
+
+        if(!usuario.id){
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No se pudo identificar el usuario.</td></tr>';
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('entregables')
+            .select('*')
+            .eq('user_id', usuario.id)
+            .order('created_at', { ascending:false });
+
+        if(error){
+            console.error('Error al cargar entregables:', error);
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Error al cargar archivos</td></tr>';
+            mostrarAlerta('Error al cargar archivos.','error');
+            return;
+        }
+
+        if(!data || data.length===0){
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay archivos subidos</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        data.forEach(item => {
+            const row = tbody.insertRow();
+            const sizeMB = item.tamano ? (item.tamano / (1024*1024)).toFixed(1) : '0.0';
+            const fecha = item.created_at ? new Date(item.created_at).toLocaleDateString('es-MX') : '-';
+
+            row.innerHTML = `
+            <td>${item.nombre || 'Sin nombre'}</td>
+            <td>${item.tipo || '-'}</td>
+            <td>${sizeMB} MB</td>
+            <td>${fecha}</td>
+            <td>
+                <a class="btn-action" href="${item.url}" target="_blank">
+                    <i class="fas fa-download"></i> Descargar
+                </a>
+
+                <button class="btn-action" onclick="eliminarEntregable(${item.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>`;
         });
-    </script>
+    }
+
+    async function subirArchivos(archivos){
+        const usuario = await obtenerUsuarioActual();
+
+        if(!usuario.id){
+            mostrarAlerta('Debes iniciar sesión para subir archivos.','error');
+            return;
+        }
+
+        if(!usuario.authUser){
+            mostrarAlerta('No hay sesión activa de Supabase Auth. Vuelve a iniciar sesión.','error');
+            return;
+        }
+
+        mensaje.style.color = 'var(--vino)';
+        mensaje.textContent = 'Subiendo archivo...';
+
+        for(const archivo of archivos){
+            if(archivo.size > 2 * 1024 * 1024 * 1024){
+                mostrarAlerta(`El archivo ${archivo.name} supera los 2GB permitidos.`,'error');
+                continue;
+            }
+
+            const nombreSeguro = archivo.name
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g,'')
+                .replace(/[^a-zA-Z0-9._-]/g,'_');
+
+            const ruta = `${usuario.id}/${Date.now()}_${nombreSeguro}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('entregables')
+                .upload(ruta, archivo, { cacheControl:'3600', upsert:false });
+
+            if(uploadError){
+                console.error('Error al subir a Storage:', uploadError);
+                mostrarAlerta('Error al subir el archivo al Storage.','error');
+                mensaje.style.color = 'red';
+                mensaje.textContent = 'Error al subir archivo.';
+                continue;
+            }
+
+            const { data: publicData } = supabase.storage
+                .from('entregables')
+                .getPublicUrl(ruta);
+
+            const { error: insertError } = await supabase
+                .from('entregables')
+                .insert({
+                    user_id: usuario.id,
+                    nombre: archivo.name,
+                    tipo: archivo.type,
+                    tamano: archivo.size,
+                    url: publicData.publicUrl
+                });
+
+            if(insertError){
+                console.error('Error al guardar en tabla entregables:', insertError);
+                mostrarAlerta('El archivo subió, pero no se guardó en la tabla.','error');
+                mensaje.style.color = 'red';
+                mensaje.textContent = 'Error al guardar registro.';
+                continue;
+            }
+
+            mostrarAlerta('Archivo subido correctamente.','success');
+        }
+
+        mensaje.style.color = 'green';
+        mensaje.textContent = 'Carga finalizada.';
+
+        await cargarEntregables();
+    }
+
+    window.eliminarEntregable = async function(id){
+        const confirmar=await mostrarConfirmacion('¿Deseas eliminar este archivo?');
+
+        if(!confirmar)return;
+
+        const { data: item, error: itemError } = await supabase
+            .from('entregables')
+            .select('url')
+            .eq('id', id)
+            .single();
+
+        if(itemError) {
+            console.warn('No se pudo obtener URL:', itemError);
+        }
+
+        if(item?.url){
+            const partes = item.url.split('/entregables/');
+            const path = partes.length > 1 ? partes[1] : '';
+
+            if(path) {
+                await supabase.storage.from('entregables').remove([path]);
+            }
+        }
+
+        const { error } = await supabase
+            .from('entregables')
+            .delete()
+            .eq('id', id);
+
+        if(error){
+            console.error('Error al eliminar:', error);
+            mostrarAlerta('Error al eliminar archivo.','error');
+            return;
+        }
+
+        mostrarAlerta('Archivo eliminado.','success');
+        await cargarEntregables();
+    };
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async () => {
+        if(fileInput.files.length){
+            await subirArchivos(fileInput.files);
+            fileInput.value = '';
+        }
+    });
+
+    await cargarEntregables();
+});
+</script>
 </body>
 </html>

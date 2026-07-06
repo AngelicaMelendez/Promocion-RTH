@@ -182,6 +182,46 @@
             .footer-content { grid-template-columns: 1fr; text-align: center; gap: 30px; }
             .footer-emergencias { flex-direction: column; gap: 20px; }
         }
+
+        .modal-alerta-sistema {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        }
+
+        .modal-alerta-card {
+        background: #fff;
+        width: 90%;
+        max-width: 430px;
+        padding: 34px 28px;
+        border-radius: 24px;
+        text-align: center;
+        border-top: 7px solid var(--vino);
+        box-shadow: 0 15px 35px rgba(0,0,0,.25);
+        }
+
+        .modal-alerta-card h3 {
+        color: var(--vino);
+        font-size: 2rem;
+        margin-bottom: 15px;
+        }
+
+        .modal-alerta-card p {
+        color: #555;
+        font-size: 1rem;
+        margin-bottom: 25px;
+        }
+
+        .modal-alerta-card button {
+        background: var(--dorado);
+        color: white;
+        border-radius: 30px;
+        padding: 12px 35px;
+        }
     </style>
 </head>
 <body>
@@ -197,7 +237,6 @@
             <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
             <!-- Nuevo enlace -->
             <a href="creacionTrabajo.html" class="active"><i class="fas fa-tools"></i> Creación Trabajo</a>
-            <a href="entregables.html"><i class="fas fa-cloud-upload-alt"></i> Entregables</a>
             <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
         </div>
         <div class="nav-profile">
@@ -296,6 +335,51 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await initAuth();
 
+            function mostrarAlerta(mensaje, tipo = "vino", callback = null){
+
+    const anterior=document.querySelector(".modal-alerta-sistema");
+    if(anterior) anterior.remove();
+
+    const modal=document.createElement("div");
+    modal.className="modal-alerta-sistema";
+
+    let color="#691b31";
+
+    if(tipo==="verde"){
+        color="#16a34a";
+    }
+
+    if(tipo==="dorado"){
+        color="#bc955b";
+    }
+
+    modal.innerHTML=`
+        <div class="modal-alerta-card" style="border-top-color:${color}">
+            <h3>Aviso</h3>
+            <p>${mensaje}</p>
+
+            <button id="btnAceptarAlerta">
+                Aceptar
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document
+        .getElementById("btnAceptarAlerta")
+        .addEventListener("click",()=>{
+
+            modal.remove();
+
+            if(callback){
+                callback();
+            }
+
+        });
+
+}
+
             const areaSelect = document.getElementById('areaDestino');
             const correosInput = document.getElementById('correosDestino');
             const mensajeDiv = document.getElementById('mensaje');
@@ -353,11 +437,11 @@
                 const correos = correosInput.value;
 
                 if (!area || !asunto || !mensaje) {
-                    alert('Completa los campos obligatorios (área, asunto, mensaje)');
+                    mostrarAlerta("Completa los campos obligatorios (área, asunto, mensaje)","vino");
                     return;
                 }
                 if (!correos || correos === 'No hay usuarios en esta área') {
-                    alert('No se encontraron destinatarios para esta área');
+                    mostrarAlerta("No se encontraron destinatarios para esta área","vino");
                     return;
                 }
 
@@ -372,35 +456,38 @@
                     archivoNombre = archivo.name;
                 }
 
-                mensajeDiv.textContent = 'Enviando correo...';
-                mensajeDiv.style.color = 'blue';
+                mensajeDiv.textContent = 'Enviando notificacion...';
+                mensajeDiv.style.color = 'green';
 
-                const { data, error } = await supabase.functions.invoke('enviar-correo-trabajo', {
-                    body: {
-                        area,
-                        correos: correos.split(',').map(e => e.trim()),
-                        asunto,
-                        mensaje,
-                        archivo: archivoBase64 ? {
-                            nombre: archivoNombre,
-                            contenido: archivoBase64
-                        } : null
-                    }
-                });
+                const { error } = await supabase
+                .from("notificaciones")
+                .insert([
+                {
+                area_destino: area.toLowerCase(),
+                asunto: asunto,
+                mensaje: mensaje,
+                leida: false
+                }
+                ]);
 
                 if (error) {
-                    console.error(error);
-                    mensajeDiv.textContent = 'Error al enviar el correo: ' + error.message;
-                    mensajeDiv.style.color = 'red';
-                } else {
-                    mensajeDiv.textContent = 'Correo enviado exitosamente.';
-                    mensajeDiv.style.color = 'green';
-                    document.getElementById('asunto').value = '';
-                    document.getElementById('mensajeCorreo').value = '';
-                    document.getElementById('archivoAdjunto').value = '';
+                console.error("Error completo:", error);
+                console.log("Mensaje:", error.message);
+                console.log("Código:", error.code);
+                console.log("Detalles:", error.details);
+                console.log("Hint:", error.hint);
+                mostrarAlerta("No se pudo enviar la notificación.", "vino");
+                return;
                 }
-            };
-        });
+
+                mostrarAlerta("Notificación enviada exitosamente.", "vino");
+
+                document.getElementById("asunto").value = "";
+                document.getElementById("mensajeCorreo").value = "";
+                document.getElementById("archivoAdjunto").value = "";
+                
+                };
+            });
     </script>
 </body>
 </html>
