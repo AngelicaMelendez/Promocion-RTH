@@ -556,7 +556,6 @@
         <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
         <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
         <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Creación Trabajo</a>
-        <a href="entregables.html"><i class="fas fa-cloud-upload-alt"></i> Entregables</a>
         <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
     </div>
 
@@ -725,10 +724,115 @@
 
 <script type="module">
     // Importamos todo desde el archivo central app.js
-    import { initAuth, supabase } from './app.js'
+    // Importamos todo desde el archivo central app.js
+import { initAuth, supabase } from './app.js'
 
-    // Inicializamos la autenticación (navbar, listener, cierre de sesión, etc.)
-    await initAuth()
+// Inicializamos la autenticación
+await initAuth()
+
+// Forzar carga visual del navbar desde localStorage
+actualizarNavbarLocal()
+
+function normalizarTexto(texto) {
+    return (texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+}
+
+function actualizarNavbarLocal() {
+    const nombre =
+        localStorage.getItem("navUserName") ||
+        localStorage.getItem("usuario_nombre") ||
+        "Usuario"
+
+    const area =
+        localStorage.getItem("navUserArea") ||
+        localStorage.getItem("usuario_area") ||
+        ""
+
+    const foto =
+        localStorage.getItem("navUserPhoto") ||
+        localStorage.getItem("usuario_foto") ||
+        ""
+
+    const navNombre = document.getElementById("nav-user-name")
+    const navArea = document.getElementById("nav-user-area")
+    const avatar = document.getElementById("nav-avatar")
+
+    const perfilNombre = document.getElementById("perfilNombre")
+    const perfilArea = document.getElementById("perfilArea")
+    const perfilFoto = document.getElementById("perfilFoto")
+
+    if (navNombre) navNombre.textContent = nombre
+    if (navArea) navArea.textContent = area || ""
+
+    if (avatar) {
+        if (foto) {
+            avatar.innerHTML = `
+                <img src="${foto}" 
+                     style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+            `
+        } else {
+            avatar.textContent = nombre.charAt(0).toUpperCase()
+        }
+    }
+
+    if (perfilNombre) perfilNombre.textContent = nombre
+    if (perfilArea) perfilArea.textContent = area || "-"
+
+    if (perfilFoto && foto) {
+        perfilFoto.src = foto
+    }
+}
+
+const { data: { user } } = await supabase.auth.getUser()
+
+if (!user) {
+    window.location.href = "login.html"
+    throw new Error("Usuario no autenticado")
+}
+
+const { data: usuario, error } = await supabase
+    .from("usuarios")
+    .select("nombres, apellido_paterno, area, foto_url")
+    .eq("correo", user.email)
+    .single()
+
+if (error || !usuario) {
+    console.error(error)
+} else {
+    const nombreCompleto = `${usuario.nombres || ""} ${usuario.apellido_paterno || ""}`.trim()
+    const areaUsuario = usuario.area || ""
+    const fotoUsuario = usuario.foto_url || ""
+
+    if (nombreCompleto) {
+        localStorage.setItem("usuario_nombre", nombreCompleto)
+        localStorage.setItem("navUserName", nombreCompleto)
+    }
+
+    localStorage.setItem("usuario_area", areaUsuario)
+    localStorage.setItem("navUserArea", areaUsuario)
+
+    if (fotoUsuario) {
+        localStorage.setItem("usuario_foto", fotoUsuario)
+        localStorage.setItem("navUserPhoto", fotoUsuario)
+    }
+
+    actualizarNavbarLocal()
+
+    const areaNormalizada = normalizarTexto(areaUsuario)
+
+    if (
+        areaNormalizada === "radio" ||
+        areaNormalizada === "television" ||
+        areaNormalizada === "ingenieria"
+    ) {
+        window.location.href = "notificaciones.html"
+        throw new Error("Área redirigida a notificaciones")
+    }
+}
 
     // ---------- Resto del código original (formulario, modal, etc.) ----------
     const mensaje = document.getElementById('mensaje')

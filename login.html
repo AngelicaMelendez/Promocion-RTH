@@ -388,10 +388,23 @@
             localStorage.setItem('usuario_nombre', usuario.nombres)
             localStorage.setItem('usuario_correo', usuario.correo)
             localStorage.setItem('usuario_area', usuario.area || '')
+            localStorage.setItem('navUserArea', usuario.area || '')
             localStorage.setItem('usuario_rol', usuario.roles?.nombre || '')
 
-            window.location.href = 'primerContacto.html'
-        })
+            const area = (usuario.area || '').toLowerCase();
+
+if (
+    area === 'radio' ||
+    area === 'televisión' ||
+    area === 'television' ||
+    area === 'ingeniería' ||
+    area === 'ingenieria'
+) {
+    window.location.href = 'notificaciones.html';
+} else {
+    window.location.href = 'primerContacto.html';
+}
+ });
 
     </script>
 
