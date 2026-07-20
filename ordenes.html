@@ -989,107 +989,119 @@
   modalSubirArchivos.classList.add('active')
 }
 
-  // Subir documentos
-  btnSubirDocumentos.addEventListener('click', async () => {
-    if (!currentCotizacionId) {
-      mostrarNotificacion('No se ha seleccionado una cotización.', 'warning')
-      return
-    }
+ // Subir documentos obligatorios
+btnSubirDocumentos.addEventListener('click', async () => {
+  if (!currentCotizacionId) {
+    mostrarNotificacion('No se ha seleccionado una cotización.', 'warning')
+    return
+  }
 
-    const documentos = [
-      { tipo: 'INE', input: fileINE },
-      { tipo: 'RFC', input: fileRFC },
-      { tipo: 'Domicilio Fiscal', input: fileDomicilio },
-      { tipo: 'Razon Social', input: fileRazonSocial },
-      { tipo: 'Uso CFDI', input: fileUsoCFDI }
-    ]
+  const documentos = [
+    { tipo: 'INE', input: fileINE },
+    { tipo: 'RFC', input: fileRFC },
+    { tipo: 'Domicilio Fiscal', input: fileDomicilio },
+    { tipo: 'Razon Social', input: fileRazonSocial },
+    { tipo: 'Uso CFDI', input: fileUsoCFDI }
+  ]
 
-    let subidos = 0
-    btnSubirDocumentos.disabled = true
-    btnSubirDocumentos.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Subiendo...'
+  const { data: documentosExistentes, error: errorExistentes } = await supabase
+    .from('documentos_cotizacion')
+    .select('tipo_documento')
+    .eq('cotizacion_id', currentCotizacionId)
 
-    for (const doc of documentos) {
-      const archivo = doc.input.files[0]
-      if (!archivo) continue
+  if (errorExistentes) {
+    mostrarNotificacion('Error al verificar documentos existentes: ' + errorExistentes.message, 'error')
+    return
+  }
 
-      const extension = archivo.name.split('.').pop()
-      const tipoLimpio = doc.tipo.replaceAll(' ', '_')
-      const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${tipoLimpio}_${Date.now()}.${extension}`
-      // Subir a Supabase Storage (bucket 'documentos')
-      const { error: uploadError } = await supabase.storage
-        .from('documentos')
-        .upload(nombreArchivo, archivo, {
-       cacheControl: '0',
-       upsert: true
+  const tiposSubidos = (documentosExistentes || []).map(doc => doc.tipo_documento)
+
+  const faltantes = documentos.filter(doc => {
+    const yaExiste = tiposSubidos.includes(doc.tipo)
+    const seleccionado = doc.input.files && doc.input.files.length > 0
+    return !yaExiste && !seleccionado
+  })
+
+  if (faltantes.length > 0) {
+    mostrarNotificacion(
+      'Debes subir todos los documentos obligatorios: ' + faltantes.map(doc => doc.tipo).join(', '),
+      'warning'
+    )
+    return
+  }
+
+  let subidos = 0
+  btnSubirDocumentos.disabled = true
+  btnSubirDocumentos.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Subiendo...'
+
+  for (const doc of documentos) {
+    const archivo = doc.input.files[0]
+
+    if (!archivo) continue
+
+    const extension = archivo.name.split('.').pop()
+    const tipoLimpio = doc.tipo.replaceAll(' ', '_')
+    const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${tipoLimpio}_${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('documentos')
+      .upload(nombreArchivo, archivo, {
+        cacheControl: '0',
+        upsert: true
       })
 
-      if (uploadError) {
-        mostrarNotificacion(`Error al subir ${doc.tipo}: ${uploadError.message}`, 'error')
-        continue
-      }
-
-      // Obtener URL pública
-      const { data } = supabase.storage
-        .from('documentos')
-        .getPublicUrl(nombreArchivo)
-
-      
-      const { data: existe, error: existeError } = await supabase
-  .from('documentos_cotizacion')
-  .select('id')
-  .eq('cotizacion_id', currentCotizacionId)
-  .eq('tipo_documento', doc.tipo)
-  .order('id', { ascending: false })
-  .limit(1)
-  .maybeSingle()
-
-if (existeError) {
-  mostrarNotificacion(`Error al revisar ${doc.tipo}: ${existeError.message}`, 'error')
-  continue
-}
-
-  const { error: deleteError } = await supabase
-  .from('documentos_cotizacion')
-  .delete()
-  .eq('cotizacion_id', currentCotizacionId)
-  .eq('tipo_documento', doc.tipo)
-
-const { error: insertError } = await supabase
-  .from('documentos_cotizacion')
-  .insert([
-    {
-      cotizacion_id: currentCotizacionId,
-      tipo_documento: doc.tipo,
-      url: data.publicUrl,
-      nombre_archivo: archivo.name
-    }
-  ])
-
-      if (insertError) {
-        mostrarNotificacion(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`, 'error')
-      } else {
-        subidos++
-      }
+    if (uploadError) {
+      mostrarNotificacion(`Error al subir ${doc.tipo}: ${uploadError.message}`, 'error')
+      continue
     }
 
-    btnSubirDocumentos.disabled = false
-    btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
+    const { data } = supabase.storage
+      .from('documentos')
+      .getPublicUrl(nombreArchivo)
 
-    if (subidos > 0) {
-      mostrarNotificacion(`Se subieron ${subidos} documento(s) correctamente.`, 'success')
-      modalSubirArchivos.classList.remove('active')
+    const { error: deleteError } = await supabase
+      .from('documentos_cotizacion')
+      .delete()
+      .eq('cotizacion_id', currentCotizacionId)
+      .eq('tipo_documento', doc.tipo)
 
-     await cargarOrdenes()
-      // Limpiar inputs
-      fileINE.value = ''
-      fileRFC.value = ''
-      fileDomicilio.value = ''
-      fileRazonSocial.value = ''
-      fileUsoCFDI.value = ''
+    if (deleteError) {
+      mostrarNotificacion(`Error al reemplazar ${doc.tipo}: ${deleteError.message}`, 'error')
+      continue
+    }
+
+    const { error: insertError } = await supabase
+      .from('documentos_cotizacion')
+      .insert([
+        {
+          cotizacion_id: currentCotizacionId,
+          tipo_documento: doc.tipo,
+          url: data.publicUrl,
+          nombre_archivo: archivo.name
+        }
+      ])
+
+    if (insertError) {
+      mostrarNotificacion(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`, 'error')
     } else {
-      mostrarNotificacion('No se seleccionó ningún archivo.', 'warning')
+      subidos++
     }
-  })
+  }
+
+  btnSubirDocumentos.disabled = false
+  btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
+
+  mostrarNotificacion('Documentos obligatorios completos.', 'success')
+  modalSubirArchivos.classList.remove('active')
+
+  await cargarOrdenes()
+
+  fileINE.value = ''
+  fileRFC.value = ''
+  fileDomicilio.value = ''
+  fileRazonSocial.value = ''
+  fileUsoCFDI.value = ''
+})
 
   // --------------------------------------------------------
   // Función para descargar un archivo (sin modificar la original)
