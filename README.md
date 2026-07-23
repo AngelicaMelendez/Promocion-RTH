@@ -9,3 +9,4 @@ los id de cliente y folio de cotizacion se crean auntomaticamente los datos se g
 
 23/06/2026 se presento la version hasta la rama fase29, comenzando asi con los nuevos cambios que se llegaron a un acuerdo, se modifico la tabla usuarios y servicios en la base de datos, se agrego en cotizacion el apartado de editar precio min-max para mandar codigos.
 ademas de las nuevas pantallas de creacionTrabajo y entregables se modifico en el apartado de login y nueva contraseña y se agrego en ordenes que los archivos sean obligatorios.
+Se separo el backend y frontend quedando funcional 
