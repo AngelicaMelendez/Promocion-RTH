@@ -246,6 +246,25 @@
     .stat-card h3 { font-size: 0.9rem; color: var(--gris); margin-bottom: 10px; }
     .stat-card .valor { font-size: 2rem; font-weight: 700; color: var(--vino); }
     .stat-card .sub { font-size: 0.75rem; color: var(--gris); }
+    .stat-card .valor-doble {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .stat-card .valor-doble .item {
+      flex: 1;
+      min-width: 80px;
+    }
+    .stat-card .valor-doble .item .numero {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--vino);
+    }
+    .stat-card .valor-doble .item .etiqueta {
+      font-size: 0.75rem;
+      color: var(--gris);
+    }
     .card {
       background: white;
       border-radius: 24px;
@@ -472,6 +491,21 @@
       <div class="valor" id="facturasPendientes">0</div>
       <div class="sub">Por cobrar</div>
     </div>
+    <!-- NUEVA TARJETA: Cotizaciones Facturadas / No Facturadas -->
+    <div class="stat-card" id="cardCotizacionesEstado">
+      <h3><i class="fas fa-file-invoice"></i> Cotizaciones</h3>
+      <div class="valor-doble">
+        <div class="item">
+          <div class="numero" id="cotizacionesFacturadas">0</div>
+          <div class="etiqueta">Facturadas</div>
+        </div>
+        <div class="item">
+          <div class="numero" id="cotizacionesPendientes">0</div>
+          <div class="etiqueta">No facturadas</div>
+        </div>
+      </div>
+      <div class="sub">Total de cotizaciones</div>
+    </div>
   </div>
 
   <div class="card">
@@ -514,6 +548,63 @@
       </div>
     </div>
   </div>
+
+  <!-- NUEVA SECCIÓN: Resumen de cotizaciones facturadas vs no facturadas -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-balance-scale"></i> Cotizaciones facturadas vs no facturadas</div>
+    <div class="card-body">
+      <div class="charts-row">
+        <div class="chart-container">
+          <h3>Ingresos mensuales: Facturado vs Pendiente</h3>
+          <canvas id="ingresosFacturadoPendienteChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Proporción de cotizaciones</h3>
+          <canvas id="proporcionCotizacionesChart"></canvas>
+        </div>
+      </div>
+      <div style="overflow-x: auto; margin-top: 20px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Folio</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Total</th>
+              <th>Estatus factura</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyResumenCotizaciones">
+            <tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NUEVA SECCIÓN: Servicios solicitados por categoría ===== -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-chart-pie"></i> Servicios solicitados por categoría</div>
+    <div class="card-body">
+      <div class="charts-row">
+        <div class="chart-container">
+          <h3>Cantidad de servicios por categoría</h3>
+          <canvas id="serviciosCategoriaBarChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Distribución por categoría</h3>
+          <canvas id="serviciosCategoriaPieChart"></canvas>
+        </div>
+      </div>
+      <div style="overflow-x: auto; margin-top: 20px;">
+        <table>
+          <thead><tr><th>Categoría</th><th>Cantidad solicitada</th><th>Ingreso generado</th></tr></thead>
+          <tbody id="tbodyServiciosCategoria"><tr><td colspan="3" style="text-align:center;">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- ===================== MODALES ===================== -->
@@ -684,6 +775,8 @@
 
   // ---------- Variables y referencias a modales ----------
   let ingresosMensualesChart, ingresosPorCategoriaChart
+  let ingresosFacturadoPendienteChart, proporcionCotizacionesChart
+  let serviciosCategoriaBarChart, serviciosCategoriaPieChart   // NUEVAS VARIABLES
 
   const modalIngresos = document.getElementById('modalIngresosTotales')
   const modalPendientes = document.getElementById('modalFacturasPendientes')
@@ -744,10 +837,15 @@
       cargarIngresosMensuales(),
       cargarIngresosPorCategoria(),
       cargarTopServicios(),
-      cargarTopServiciosPorIngreso()   // <-- NUEVA FUNCIÓN AGREGADA
+      cargarTopServiciosPorIngreso(),
+      cargarResumenCotizaciones(),          // NUEVO
+      cargarGraficaFacturadoPendiente(),    // NUEVO
+      cargarTablaResumenCotizaciones(),     // NUEVO
+      cargarServiciosPorCategoria()         // NUEVA FUNCIÓN AGREGADA
     ])
   }
 
+  // ---------- ESTADÍSTICAS ORIGINALES (con adición de cotizaciones facturadas/pendientes) ----------
   async function cargarEstadisticas() {
     const { data: facturadas } = await supabase
       .from('cotizaciones')
@@ -782,8 +880,21 @@
       totalCantidad = detalles?.reduce((sum, d) => sum + (d.cantidad || 0), 0) || 0
     }
     document.getElementById('totalServiciosVendidos').innerText = formatoNumero(totalCantidad)
+
+    // ---- NUEVAS ESTADÍSTICAS PARA COTIZACIONES FACTURADAS / PENDIENTES ----
+    const { count: factCount } = await supabase
+      .from('cotizaciones')
+      .select('*', { count: 'exact', head: true })
+      .eq('estatus_factura', 'Facturado')
+    const { count: pendCount } = await supabase
+      .from('cotizaciones')
+      .select('*', { count: 'exact', head: true })
+      .eq('estatus_factura', 'Pendiente')
+    document.getElementById('cotizacionesFacturadas').innerText = formatoNumero(factCount || 0)
+    document.getElementById('cotizacionesPendientes').innerText = formatoNumero(pendCount || 0)
   }
 
+  // ---------- DETALLES MODALES (sin cambios) ----------
   async function cargarDetalleIngresos() {
     const tbody = document.getElementById('tbodyIngresosDetalle')
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>'
@@ -944,6 +1055,7 @@
     }
   }
 
+  // ---------- GRÁFICAS ORIGINALES (sin cambios) ----------
   async function cargarIngresosMensuales() {
     const { data: facturadas } = await supabase
       .from('cotizaciones')
@@ -1058,7 +1170,6 @@
     })
   }
 
-  // NUEVA FUNCIÓN: Servicios con mayor ingreso generado
   async function cargarTopServiciosPorIngreso() {
     const { data: cotizacionesConfirmadas } = await supabase
       .from('cotizaciones')
@@ -1084,7 +1195,6 @@
       item.cantidad += det.cantidad
       item.importe += importe
     }
-    // Ordenar por importe (ingreso generado) de mayor a menor
     const ranking = Array.from(mapa.values()).sort((a,b) => b.importe - a.importe).slice(0, 10)
     const tbody = document.getElementById('tbodyTopServiciosIngreso')
     tbody.innerHTML = ''
@@ -1094,6 +1204,234 @@
       row.insertCell(1).innerText = r.nombre
       row.insertCell(2).innerText = formatoNumero(r.cantidad)
       row.insertCell(3).innerText = formatoMoneda(r.importe)
+    })
+  }
+
+  // ---------- NUEVAS FUNCIONES: Resumen de cotizaciones facturadas vs pendientes ----------
+  async function cargarResumenCotizaciones() {
+    // Esta función actualiza la tarjeta de estadísticas, pero ya se hizo en cargarEstadisticas
+    // Así que aquí solo dejamos un placeholder, pero llamamos a cargarEstadisticas que ya lo hace.
+    // No es necesario duplicar.
+  }
+
+  async function cargarGraficaFacturadoPendiente() {
+    // Obtener todas las cotizaciones con fecha y total, agrupar por mes y estatus
+    const { data: todas, error } = await supabase
+      .from('cotizaciones')
+      .select('fecha, total, estatus_factura')
+      .order('fecha', { ascending: true })
+
+    if (error) {
+      console.error('Error al cargar datos para gráfica facturado/pendiente:', error)
+      return
+    }
+
+    const facturadoPorMes = {}
+    const pendientePorMes = {}
+
+    todas?.forEach(c => {
+      if (!c.fecha) return
+      const mes = c.fecha.slice(0, 7)
+      if (c.estatus_factura === 'Facturado') {
+        facturadoPorMes[mes] = (facturadoPorMes[mes] || 0) + (c.total || 0)
+      } else if (c.estatus_factura === 'Pendiente') {
+        pendientePorMes[mes] = (pendientePorMes[mes] || 0) + (c.total || 0)
+      }
+    })
+
+    // Unir todos los meses presentes en ambos objetos
+    const mesesSet = new Set([...Object.keys(facturadoPorMes), ...Object.keys(pendientePorMes)])
+    const meses = Array.from(mesesSet).sort()
+    const facturadoValores = meses.map(m => facturadoPorMes[m] || 0)
+    const pendienteValores = meses.map(m => pendientePorMes[m] || 0)
+
+    const ctx = document.getElementById('ingresosFacturadoPendienteChart').getContext('2d')
+    if (ingresosFacturadoPendienteChart) ingresosFacturadoPendienteChart.destroy()
+    ingresosFacturadoPendienteChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: meses,
+        datasets: [
+          { label: 'Facturado', data: facturadoValores, backgroundColor: '#691b31', borderRadius: 4 },
+          { label: 'Pendiente', data: pendienteValores, backgroundColor: '#bc955b', borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { position: 'top' }
+        }
+      }
+    })
+
+    // Gráfica de pastel: proporción de cotizaciones (cantidad)
+    const { count: factCount } = await supabase
+      .from('cotizaciones')
+      .select('*', { count: 'exact', head: true })
+      .eq('estatus_factura', 'Facturado')
+    const { count: pendCount } = await supabase
+      .from('cotizaciones')
+      .select('*', { count: 'exact', head: true })
+      .eq('estatus_factura', 'Pendiente')
+
+    const ctxPie = document.getElementById('proporcionCotizacionesChart').getContext('2d')
+    if (proporcionCotizacionesChart) proporcionCotizacionesChart.destroy()
+    proporcionCotizacionesChart = new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: ['Facturadas', 'No facturadas'],
+        datasets: [{ data: [factCount || 0, pendCount || 0], backgroundColor: ['#691b31', '#bc955b'] }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    })
+  }
+
+  async function cargarTablaResumenCotizaciones() {
+    const tbody = document.getElementById('tbodyResumenCotizaciones')
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>'
+
+    const { data, error } = await supabase
+      .from('cotizaciones')
+      .select('folio, cliente_nombre, fecha, total, estatus_factura')
+      .order('fecha', { ascending: true })
+      .order('id', { ascending: true })
+
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error: ${error.message}</td></tr>`
+      return
+    }
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay cotizaciones registradas.</td></tr>'
+      return
+    }
+
+    tbody.innerHTML = ''
+    data.forEach(cot => {
+      const row = tbody.insertRow()
+      row.insertCell(0).innerText = cot.folio || '-'
+      row.insertCell(1).innerText = cot.cliente_nombre || '-'
+      row.insertCell(2).innerText = cot.fecha || '-'
+      row.insertCell(3).innerText = formatoMoneda(cot.total)
+      const estatus = cot.estatus_factura || 'Pendiente'
+      const badge = estatus === 'Facturado' ? '✅ Facturado' : '⏳ Pendiente'
+      row.insertCell(4).innerText = badge
+    })
+  }
+
+  // ---------- NUEVA FUNCIÓN: Servicios solicitados por categoría ----------
+  async function cargarServiciosPorCategoria() {
+    // Obtener todas las cotizaciones con estatus Confirmada
+    const { data: cotizaciones, error: errCot } = await supabase
+      .from('cotizaciones')
+      .select('id')
+      .eq('estatus_orden', 'Confirmada')
+
+    if (errCot || !cotizaciones || cotizaciones.length === 0) {
+      // No hay datos, mostrar mensaje en tabla y gráficas vacías
+      document.getElementById('tbodyServiciosCategoria').innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay servicios solicitados.</td></tr>'
+      // Dibujar gráficas vacías
+      const ctxBar = document.getElementById('serviciosCategoriaBarChart').getContext('2d')
+      if (serviciosCategoriaBarChart) serviciosCategoriaBarChart.destroy()
+      serviciosCategoriaBarChart = new Chart(ctxBar, { type: 'bar', data: { labels: ['Sin datos'], datasets: [{ data: [0] }] } })
+      const ctxPie = document.getElementById('serviciosCategoriaPieChart').getContext('2d')
+      if (serviciosCategoriaPieChart) serviciosCategoriaPieChart.destroy()
+      serviciosCategoriaPieChart = new Chart(ctxPie, { type: 'pie', data: { labels: ['Sin datos'], datasets: [{ data: [1] }] } })
+      return
+    }
+
+    const ids = cotizaciones.map(c => c.id)
+
+    // Obtener detalles de esas cotizaciones
+    const { data: detalles, error: errDet } = await supabase
+      .from('cotizacion_detalle')
+      .select('servicio_id, cantidad, precio_unitario')
+      .in('cotizacion_id', ids)
+
+    if (errDet || !detalles || detalles.length === 0) {
+      document.getElementById('tbodyServiciosCategoria').innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay servicios en las cotizaciones confirmadas.</td></tr>'
+      const ctxBar = document.getElementById('serviciosCategoriaBarChart').getContext('2d')
+      if (serviciosCategoriaBarChart) serviciosCategoriaBarChart.destroy()
+      serviciosCategoriaBarChart = new Chart(ctxBar, { type: 'bar', data: { labels: ['Sin datos'], datasets: [{ data: [0] }] } })
+      const ctxPie = document.getElementById('serviciosCategoriaPieChart').getContext('2d')
+      if (serviciosCategoriaPieChart) serviciosCategoriaPieChart.destroy()
+      serviciosCategoriaPieChart = new Chart(ctxPie, { type: 'pie', data: { labels: ['Sin datos'], datasets: [{ data: [1] }] } })
+      return
+    }
+
+    // Obtener categorías de los servicios
+    const servicioIds = [...new Set(detalles.map(d => d.servicio_id))]
+    const { data: servicios, error: errServ } = await supabase
+      .from('servicios')
+      .select('id, categoria')
+      .in('id', servicioIds)
+
+    if (errServ) {
+      console.error('Error al obtener categorías:', errServ)
+      return
+    }
+
+    const mapaCategoria = Object.fromEntries(servicios.map(s => [s.id, s.categoria || 'Sin categoría']))
+
+    // Agrupar por categoría: sumar cantidades e ingresos
+    const porCategoria = {}
+    detalles.forEach(d => {
+      const cat = mapaCategoria[d.servicio_id] || 'Sin categoría'
+      if (!porCategoria[cat]) porCategoria[cat] = { cantidad: 0, ingreso: 0 }
+      porCategoria[cat].cantidad += d.cantidad
+      porCategoria[cat].ingreso += d.cantidad * d.precio_unitario
+    })
+
+    // Ordenar por cantidad descendente para la tabla y gráficas
+    const categoriasOrdenadas = Object.keys(porCategoria).sort((a, b) => porCategoria[b].cantidad - porCategoria[a].cantidad)
+    const cantidades = categoriasOrdenadas.map(c => porCategoria[c].cantidad)
+    const ingresos = categoriasOrdenadas.map(c => porCategoria[c].ingreso)
+
+    // Gráfica de barras
+    const ctxBar = document.getElementById('serviciosCategoriaBarChart').getContext('2d')
+    if (serviciosCategoriaBarChart) serviciosCategoriaBarChart.destroy()
+    serviciosCategoriaBarChart = new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: categoriasOrdenadas,
+        datasets: [{ label: 'Cantidad solicitada', data: cantidades, backgroundColor: '#691b31', borderRadius: 6 }]
+      },
+      options: { responsive: true, maintainAspectRatio: true }
+    })
+
+    // Gráfica de pastel
+    const ctxPie = document.getElementById('serviciosCategoriaPieChart').getContext('2d')
+    if (serviciosCategoriaPieChart) serviciosCategoriaPieChart.destroy()
+    const colores = ['#691b31','#a02142','#bc955b','#ddc9a3','#7d7d7d','#c9a15f','#4a2c2a','#b8860b']
+    serviciosCategoriaPieChart = new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: categoriasOrdenadas,
+        datasets: [{ data: cantidades, backgroundColor: colores.slice(0, categoriasOrdenadas.length) }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'right' } }
+      }
+    })
+
+    // Llenar tabla
+    const tbody = document.getElementById('tbodyServiciosCategoria')
+    tbody.innerHTML = ''
+    if (categoriasOrdenadas.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay datos.</td></tr>'
+      return
+    }
+    categoriasOrdenadas.forEach(cat => {
+      const row = tbody.insertRow()
+      row.insertCell(0).innerText = cat
+      row.insertCell(1).innerText = formatoNumero(porCategoria[cat].cantidad)
+      row.insertCell(2).innerText = formatoMoneda(porCategoria[cat].ingreso)
     })
   }
 
