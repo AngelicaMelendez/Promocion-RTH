@@ -44,12 +44,12 @@
     .navbar {
       background: var(--vino);
       color: var(--beige);
-      padding: 12px 30px;
+      padding: 12px 22px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       flex-wrap: nowrap !important;
-      gap: 20px;
+      gap: 14px;
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -77,20 +77,24 @@
 
     .nav-links {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      flex-shrink: 0;
+      flex-wrap: nowrap;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+      min-width: max-content;
     }
 
     .nav-links a {
       color: var(--beige);
       text-decoration: none;
-      padding: 8px 14px;
+      padding: 8px 11px;
       border-radius: 40px;
       display: flex;
       align-items: center;
       gap: 6px;
       transition: 0.2s;
+      white-space: nowrap;
+      font-size: 0.95rem;
     }
 
     .nav-links a.active,
@@ -99,37 +103,12 @@
       color: var(--vino);
     }
 
-    .dropdown {
-      position: relative;
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background: white;
-      min-width: 200px;
-      border-radius: 12px;
-      top: 40px;
-      right: 0;
-      z-index: 100;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .dropdown-content a {
-      color: var(--vino);
-      padding: 10px 16px;
-      display: block;
-    }
-
     .nav-profile {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
+      margin-left: auto;
     }
 
     .avatar {
@@ -145,113 +124,25 @@
       flex-shrink: 0;
     }
 
-    #nav-user-info{
-    display:flex;
-    flex-direction:column;
-    line-height:1.1;
-}
+    #nav-user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
 
-    #nav-user-name{
-    font-weight:600;
-}
+    #nav-user-name {
+      font-weight: 600;
+    }
 
-    #nav-user-area{
-    font-size:0.75rem;
-    opacity:.8;
-    color: var(--beige);
-}
+    #nav-user-area {
+      font-size: 0.75rem;
+      opacity: .8;
+      color: var(--beige);
+    }
 
-#modalPerfilUsuario{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-}
-
-#modalPerfilUsuario.active{
-  display:flex;
-}
-
-#modalPerfilUsuario .modal-content{
-  background:#f7f3ed;
-  border-radius:28px;
-  width:90%;
-  max-width:520px;
-  overflow:hidden;
-  box-shadow:0 15px 40px rgba(0,0,0,.35);
-}
-
-#modalPerfilUsuario .modal-header{
-  background:linear-gradient(90deg,#691b31,#a02142);
-  color:white;
-  padding:24px 32px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:1.7rem;
-  font-weight:800;
-}
-
-#modalPerfilUsuario .modal-header button{
-  background:none;
-  border:none;
-  color:white;
-  font-size:2rem;
-  cursor:pointer;
-}
-
-#modalPerfilUsuario .modal-body{
-  padding:38px 30px 34px;
-  text-align:center;
-}
-
-#perfilFoto{
-  width:140px !important;
-  height:140px !important;
-  border-radius:50%;
-  object-fit:cover;
-  background:#ddd;
-  margin-bottom:24px;
-  box-shadow:0 8px 20px rgba(0,0,0,.18);
-}
-
-#perfilNombre,
-#perfilArea{
-  color:#2c3e4e;
-  font-size:1.05rem;
-}
-
-#modalPerfilUsuario .modal-body p{
-  margin:4px 0;
-  font-size:1.05rem;
-}
-
-#modalPerfilUsuario .modal-body strong{
-  color:var(--vino);
-  font-weight:800;
-}
-
-#modalPerfilUsuario .btn-action{
-  background:var(--vino-claro);
-  color:white;
-  border:none;
-  padding:9px 18px;
-  border-radius:30px;
-  cursor:pointer;
-  font-size:.9rem;
-  font-weight:700;
-}
-
-#modalPerfilUsuario .btn-action:hover{
-  background:var(--vino);
-}
-
-#nav-avatar{
-  cursor:pointer;
-}
+    #nav-avatar {
+      cursor: pointer;
+    }
 
     .logout-btn {
       background: transparent;
@@ -328,6 +219,12 @@
       color: #155724;
     }
 
+    .badge-tipo {
+      background: #f7f3ed;
+      color: var(--vino);
+      border: 1px solid #eadcc7;
+    }
+
     .btn-action {
       background: var(--vino-claro);
       color: white;
@@ -358,6 +255,8 @@
       display: inline-block;
       margin: 2px;
       font-weight: 700;
+      border: none;
+      cursor: pointer;
     }
 
     .btn-ver:hover {
@@ -365,7 +264,6 @@
       color: white;
     }
 
-    /* ---------- MODAL ---------- */
     .modal {
       display: none;
       position: fixed;
@@ -378,13 +276,15 @@
       justify-content: center;
       align-items: center;
     }
+
     .modal.active {
       display: flex;
     }
+
     .modal-content {
       background: white;
       width: 90%;
-      max-width: 600px;
+      max-width: 680px;
       max-height: 80vh;
       border-radius: 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -393,10 +293,19 @@
       overflow: hidden;
       animation: fadeIn 0.3s ease;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .modal-header {
       background: var(--vino);
       color: white;
@@ -407,6 +316,7 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .modal-header button {
       background: transparent;
       border: none;
@@ -414,26 +324,63 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+
     .modal-body {
       padding: 20px 28px;
       overflow-y: auto;
       flex: 1;
     }
+
+    .texto-ayuda-tipo {
+      background: #f8f4ec;
+      border-left: 4px solid var(--dorado);
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      color: #5f5f5f;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
     .doc-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      gap: 12px;
+      background: white;
     }
-    .doc-item:last-child { border-bottom: none; }
-    .doc-item i { margin-right: 8px; color: var(--vino); }
-    /* ------------------------- */
+
+    .doc-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .doc-item i {
+      margin-right: 8px;
+      color: var(--vino);
+    }
+
+    .doc-info {
+      color: var(--vino);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .doc-info small {
+      color: var(--gris);
+      font-weight: 600;
+      display: block;
+      margin-top: 2px;
+    }
 
     .doc-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .btn-doc-ver {
@@ -465,7 +412,17 @@
       opacity: .9;
     }
 
-    /* Estilos para el modal de notificación (igual que en órdenes) */
+    .doc-faltante {
+      border: 1px dashed #ddd;
+      background: #fafafa;
+      color: var(--gris);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
     .modal-alerta-sistema {
       position: fixed;
       inset: 0;
@@ -514,14 +471,15 @@
       background: #a8813f;
     }
 
-    /* Dropdown personalizado para el botón de subir factura */
     .dropdown-factura {
       position: relative;
       display: inline-block;
     }
+
     .dropdown-factura .btn-action {
       margin: 0;
     }
+
     .dropdown-menu-factura {
       display: none;
       position: absolute;
@@ -534,6 +492,7 @@
       top: 100%;
       margin-top: 4px;
     }
+
     .dropdown-menu-factura a {
       color: var(--vino);
       padding: 8px 16px;
@@ -544,82 +503,180 @@
       border-radius: 12px;
       cursor: pointer;
     }
+
     .dropdown-menu-factura a:hover {
       background-color: var(--gris-claro);
     }
+
     .dropdown-factura.active .dropdown-menu-factura {
       display: block;
     }
 
-     .footer {
-            background: var(--vino);
-            color: white;
-            margin-top: 70px;
-            padding: 50px 55px 35px;
-        }
+    #modalPerfilUsuario {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1.2fr;
-            gap: 50px;
-        }
+    #modalPerfilUsuario.active {
+      display: flex;
+    }
 
-        .footer-logo img {
-            width: 150px;
-            filter: brightness(0) invert(1);
-        }
+    #modalPerfilUsuario .modal-content {
+      background: #f7f3ed;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 520px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
 
-        .footer-emergencias {
-            display: flex;
-            justify-content: center;
-            gap: 70px;
-            text-align: center;
-        }
+    #modalPerfilUsuario .modal-header {
+      background: linear-gradient(90deg,#691b31,#a02142);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
 
-        .emergencia-item strong {
-            display: block;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-        }
+    #modalPerfilUsuario .modal-header button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
 
-        .footer-line {
-            width: 100%;
-            height: 1px;
-            background: var(--dorado);
-            margin: 40px 0 30px;
-        }
+    #modalPerfilUsuario .modal-body {
+      padding: 38px 30px 34px;
+      text-align: center;
+    }
 
-        @media (max-width: 850px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .navbar {
-                flex-wrap: nowrap !important;
-                justify-content: flex-start;
-                gap: 10px;
-                padding: 15px 20px;
-            }
-            .nav-links {
-                justify-content: center;
-                flex-shrink: 0;
-            }
-            .nav-profile {
-                flex-shrink: 0;
-            }
-            .dropdown-content {
-                right: auto;
-                left: 0;
-            }
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 30px;
-            }
-            .footer-emergencias {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
+    #perfilFoto {
+      width: 140px !important;
+      height: 140px !important;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.18);
+    }
+
+    #perfilNombre,
+    #perfilArea {
+      color: #2c3e4e;
+      font-size: 1.05rem;
+    }
+
+    #modalPerfilUsuario .modal-body p {
+      margin: 4px 0;
+      font-size: 1.05rem;
+    }
+
+    #modalPerfilUsuario .modal-body strong {
+      color: var(--vino);
+      font-weight: 800;
+    }
+
+    #modalPerfilUsuario .btn-action {
+      background: var(--vino-claro);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    #modalPerfilUsuario .btn-action:hover {
+      background: var(--vino);
+    }
+
+    .footer {
+      background: var(--vino);
+      color: white;
+      margin-top: 70px;
+      padding: 50px 55px 35px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 50px;
+    }
+
+    .footer-logo img {
+      width: 150px;
+      filter: brightness(0) invert(1);
+    }
+
+    .footer-emergencias {
+      display: flex;
+      justify-content: center;
+      gap: 70px;
+      text-align: center;
+    }
+
+    .emergencia-item strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .footer-line {
+      width: 100%;
+      height: 1px;
+      background: var(--dorado);
+      margin: 40px 0 30px;
+    }
+
+    @media (max-width: 850px) {
+      .navbar {
+        flex-wrap: nowrap !important;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        justify-content: center;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+      }
+
+      .nav-profile {
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+      }
+
+      .footer-emergencias {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .doc-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .doc-actions {
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
 
@@ -634,7 +691,7 @@
   <div class="nav-links">
     <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
     <a href="cotizacion.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Documentación</a>
     <a href="factura.html" class="active"><i class="fas fa-receipt"></i> Facturas</a>
     <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Creación Trabajo</a>
     <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
@@ -644,14 +701,14 @@
     <div class="avatar" id="nav-avatar" onclick="abrirPerfilUsuario()">U</div>
 
     <div id="nav-user-info">
-        <div id="nav-user-name">Usuario</div>
-        <div id="nav-user-area"></div>
+      <div id="nav-user-name">Usuario</div>
+      <div id="nav-user-area"></div>
     </div>
 
     <button class="logout-btn" onclick="cerrarSesion()">
-        <i class="fas fa-sign-out-alt"></i>
+      <i class="fas fa-sign-out-alt"></i>
     </button>
-</div>
+  </div>
 </nav>
 
 <main class="container">
@@ -674,6 +731,7 @@
           <tr>
             <th>Folio</th>
             <th>Cliente</th>
+            <th>Tipo de cliente</th>
             <th>Fecha</th>
             <th>Total</th>
             <th>Generado por</th>
@@ -685,7 +743,7 @@
 
         <tbody id="tbodyFacturas">
           <tr>
-            <td colspan="8">Cargando cotizaciones confirmadas......</td>
+            <td colspan="9">Cargando cotizaciones confirmadas...</td>
           </tr>
         </tbody>
       </table>
@@ -694,15 +752,15 @@
 
 </main>
 
-<!-- MODAL PARA DESCARGAR DOCUMENTOS (ya no incluye el XML) -->
 <div class="modal" id="modalDescargarDocumentos">
   <div class="modal-content">
     <div class="modal-header">
-      <span><i class="fas fa-download"></i> Documentos de la cotización</span>
+      <span><i class="fas fa-folder-open"></i> Documentación de la cotización</span>
       <button class="cerrar-modal"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="modal-body" id="modalDocumentosContenido">
-      <p style="text-align:center; color:var(--gris);">Cargando documentos...</p>
+      <p style="text-align:center; color:var(--gris);">Cargando documentación...</p>
     </div>
   </div>
 </div>
@@ -766,7 +824,9 @@
   </div>
 
   <div class="footer-line"></div>
-  <div class="footer-copy">Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
+  <div class="footer-copy">
+    Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación
+  </div>
 </footer>
 
 <script type="module">
@@ -775,24 +835,57 @@
   await initAuth()
 
   function formatoMoneda(cantidad) {
-    const numero = Number(cantidad) || 0;
+    const numero = Number(cantidad) || 0
+
     return '$' + numero.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    });
+    })
   }
 
-  // ---------- NOTIFICACIÓN CENTRADA (ESTILO ÓRDENES) ----------
-  function mostrarNotificacion(mensaje) {
+  function limpiarTexto(texto) {
+    return String(texto || '')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+  }
+
+  function normalizarTexto(texto) {
+    return String(texto || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+  }
+
+  function mostrarNotificacion(mensaje, tipo = 'info') {
     const anterior = document.querySelector('.modal-alerta-sistema')
+
     if (anterior) anterior.remove()
 
     const modal = document.createElement('div')
     modal.className = 'modal-alerta-sistema'
 
+    let color = '#691b31'
+    let titulo = 'Aviso'
+
+    if (tipo === 'success') {
+      color = '#16a34a'
+      titulo = 'Éxito'
+    }
+
+    if (tipo === 'warning') {
+      color = '#bc955b'
+      titulo = 'Advertencia'
+    }
+
+    if (tipo === 'error') {
+      color = '#b91c1c'
+      titulo = 'Error'
+    }
+
     modal.innerHTML = `
-      <div class="modal-alerta-card">
-        <h3>Aviso</h3>
+      <div class="modal-alerta-card" style="border-top-color:${color};">
+        <h3>${titulo}</h3>
         <p>${mensaje}</p>
         <button id="btnAceptarAlerta">Aceptar</button>
       </div>
@@ -805,12 +898,63 @@
     })
   }
 
+  const DOCUMENTOS_POR_TIPO = {
+    'institucion publica': [
+      'Decreto de creación',
+      'RFC: Constancia de situación fiscal',
+      'Comprobante de domicilio',
+      'Nombramiento oficial del titular de la dependencia',
+      'Identificación oficial vigente del titular o representante legal'
+    ],
+
+    'persona fisica': [
+      'Identificación oficial vigente',
+      'Comprobante de domicilio',
+      'RFC: Constancia de situación fiscal',
+      'Opinión de cumplimiento POSITIVA'
+    ],
+
+    'persona moral': [
+      'Acta constitutiva',
+      'Comprobante de domicilio',
+      'RFC: Constancia de situación fiscal',
+      'Opinión de cumplimiento POSITIVA',
+      'Poder Notarial del representante legal',
+      'Identificación oficial vigente del representante legal'
+    ]
+  }
+
+  function obtenerDocumentosPorTipoFactura(tipoCliente) {
+    const tipo = normalizarTexto(tipoCliente)
+
+    if (tipo.includes('institucion publica')) {
+      return DOCUMENTOS_POR_TIPO['institucion publica']
+    }
+
+    if (tipo.includes('persona moral')) {
+      return DOCUMENTOS_POR_TIPO['persona moral']
+    }
+
+    if (tipo.includes('persona fisica')) {
+      return DOCUMENTOS_POR_TIPO['persona fisica']
+    }
+
+    return []
+  }
+
+  function obtenerTodosLosDocumentosValidos() {
+    return Object
+      .values(DOCUMENTOS_POR_TIPO)
+      .flat()
+  }
+
   const modalDescargar = document.getElementById('modalDescargarDocumentos')
   const modalDocumentosContenido = document.getElementById('modalDocumentosContenido')
 
   document.querySelector('#modalDescargarDocumentos .cerrar-modal').addEventListener('click', () => {
     modalDescargar.classList.remove('active')
   })
+
   modalDescargar.addEventListener('click', (e) => {
     if (e.target === modalDescargar) {
       modalDescargar.classList.remove('active')
@@ -822,89 +966,143 @@
       const response = await fetch(url)
       const blob = await response.blob()
       const link = document.createElement('a')
+
       link.href = URL.createObjectURL(blob)
-      link.download = nombreArchivo
+      link.download = nombreArchivo || 'documento.pdf'
+
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+
       URL.revokeObjectURL(link.href)
     } catch (error) {
-      mostrarNotificacion('Error al descargar el archivo: ' + error.message)
+      mostrarNotificacion('Error al descargar el archivo: ' + error.message, 'error')
     }
   }
 
   window.descargarArchivo = descargarArchivo
 
-  async function abrirDescargarDocumentos(cotizacionId) {
+  async function abrirDescargarDocumentos(cot) {
     modalDescargar.classList.add('active')
-    modalDocumentosContenido.innerHTML = '<p style="text-align:center; color:var(--gris);">Cargando documentos...</p>'
 
-    // Excluir los documentos de tipo 'Factura XML' porque ya se muestran en la columna de Evidencia
+    modalDocumentosContenido.innerHTML = `
+      <p style="text-align:center; color:var(--gris);">
+        Cargando documentación...
+      </p>
+    `
+
+    const documentosRequeridos = obtenerDocumentosPorTipoFactura(cot.tipo_cliente)
+
+    if (!documentosRequeridos.length) {
+      modalDocumentosContenido.innerHTML = `
+        <div class="texto-ayuda-tipo">
+          <strong>Cotización:</strong> ${limpiarTexto(cot.folio || '-')}<br>
+          <strong>Tipo de cliente:</strong> ${limpiarTexto(cot.tipo_cliente || 'Sin definir')}<br>
+          No se encontró una lista de documentos para este tipo de cliente.
+        </div>
+      `
+      return
+    }
+
     const { data: documentos, error } = await supabase
       .from('documentos_cotizacion')
       .select('*')
-      .eq('cotizacion_id', cotizacionId)
-      .neq('tipo_documento', 'Factura XML')   // ← NO mostrar el XML aquí
+      .eq('cotizacion_id', cot.id)
+      .neq('tipo_documento', 'Factura XML')
 
     if (error) {
-      modalDocumentosContenido.innerHTML = `<p style="text-align:center; color:red;">Error: ${error.message}</p>`
+      modalDocumentosContenido.innerHTML = `
+        <p style="text-align:center; color:red;">
+          Error: ${error.message}
+        </p>
+      `
       return
     }
 
-    if (!documentos || documentos.length === 0) {
-      modalDocumentosContenido.innerHTML = '<p style="text-align:center; color:var(--gris);">No hay documentos adicionales subidos para esta cotización.</p>'
-      return
-    }
+    const documentosValidos = obtenerTodosLosDocumentosValidos()
 
-    const grupos = {}
-    documentos.forEach(doc => {
-      if (!grupos[doc.tipo_documento]) {
-        grupos[doc.tipo_documento] = []
+    const documentosFiltrados = (documentos || []).filter(doc =>
+      documentosRequeridos.includes(doc.tipo_documento)
+    )
+
+    const documentosAgrupados = {}
+
+    documentosFiltrados.forEach(doc => {
+      if (!documentosAgrupados[doc.tipo_documento]) {
+        documentosAgrupados[doc.tipo_documento] = []
       }
-      grupos[doc.tipo_documento].push(doc)
+
+      documentosAgrupados[doc.tipo_documento].push(doc)
     })
 
-    const docsLimpios = []
-    for (const tipo in grupos) {
-      const lista = grupos[tipo]
-      lista.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      const conservar = lista[0]
-      docsLimpios.push(conservar)
+    const documentosLimpios = []
 
-      for (let i = 1; i < lista.length; i++) {
-        const antiguo = lista[i]
-        const urlPartes = antiguo.url.split('/documentos/')
-        if (urlPartes.length > 1) {
-          const ruta = urlPartes[1]
-          await supabase.storage.from('documentos').remove([ruta])
-        }
-        await supabase.from('documentos_cotizacion').delete().eq('id', antiguo.id)
-      }
+    for (const tipoDocumento in documentosAgrupados) {
+      const lista = documentosAgrupados[tipoDocumento]
+
+      lista.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+
+      documentosLimpios.push(lista[0])
     }
 
-    let html = ''
-    docsLimpios.forEach(doc => {
+    const documentosSubidos = documentosLimpios.map(doc => doc.tipo_documento)
+
+    let html = `
+      <div class="texto-ayuda-tipo">
+        <strong>Cotización:</strong> ${limpiarTexto(cot.folio || '-')}<br>
+        <strong>Tipo de cliente:</strong> ${limpiarTexto(cot.tipo_cliente || 'Sin definir')}<br>
+        Solo se muestra la documentación requerida para este tipo de cliente.
+      </div>
+    `
+
+    if (documentosLimpios.length === 0) {
+      html += `
+        <p style="text-align:center; color:var(--gris); margin-bottom:15px;">
+          Esta cotización no tiene documentación cargada para ${limpiarTexto(cot.tipo_cliente || 'este tipo de cliente')}.
+        </p>
+      `
+    }
+
+    documentosRequeridos.forEach(tipoRequerido => {
+      const doc = documentosLimpios.find(item => item.tipo_documento === tipoRequerido)
+
+      if (!doc) {
+        html += `
+          <div class="doc-faltante">
+            <i class="fas fa-circle-exclamation"></i>
+            Falta: ${limpiarTexto(tipoRequerido)}
+          </div>
+        `
+        return
+      }
+
+      const url = String(doc.url || '').replace(/'/g, "\\'")
+      const nombre = String(doc.nombre_archivo || doc.tipo_documento + '.pdf').replace(/'/g, "\\'")
+
       html += `
         <div class="doc-item">
-          <span>
+          <div class="doc-info">
             <i class="fas fa-file-pdf"></i>
-            <strong>${doc.tipo_documento}</strong> - ${doc.nombre_archivo || 'archivo'}
-          </span>
+            ${limpiarTexto(doc.tipo_documento)}
+            <small>${limpiarTexto(doc.nombre_archivo || 'archivo')}</small>
+          </div>
+
           <div class="doc-actions">
-            <a href="${doc.url}" target="_blank" class="btn-doc-ver">
+            <a href="${url}" target="_blank" class="btn-doc-ver">
               <i class="fas fa-eye"></i> Ver archivo
             </a>
-            <button type="button" class="btn-doc-descargar" onclick="descargarArchivo('${doc.url}','${doc.nombre_archivo || 'documento.pdf'}')">
+
+            <button type="button" class="btn-doc-descargar" onclick="descargarArchivo('${url}','${nombre}')">
               <i class="fas fa-download"></i> Descargar
             </button>
           </div>
         </div>
       `
     })
+
     modalDocumentosContenido.innerHTML = html
   }
 
-  // Función para subir PDF (factura principal)
   async function subirFacturaPDF(cotizacionId, archivo) {
     if (!archivo) return false
 
@@ -916,11 +1114,13 @@
       .upload(nombreArchivo, archivo)
 
     if (uploadError) {
-      mostrarNotificacion('Error al subir PDF: ' + uploadError.message)
+      mostrarNotificacion('Error al subir PDF: ' + uploadError.message, 'error')
       return false
     }
 
-    const { data } = supabase.storage.from('evidencias').getPublicUrl(nombreArchivo)
+    const { data } = supabase.storage
+      .from('evidencias')
+      .getPublicUrl(nombreArchivo)
 
     const { error: updateError } = await supabase
       .from('cotizaciones')
@@ -931,13 +1131,13 @@
       .eq('id', cotizacionId)
 
     if (updateError) {
-      mostrarNotificacion('Error al registrar PDF: ' + updateError.message)
+      mostrarNotificacion('Error al registrar PDF: ' + updateError.message, 'error')
       return false
     }
+
     return true
   }
 
-  // Función para subir XML (ahora se guarda igual pero se mostrará en la columna Evidencia)
   async function subirFacturaXML(cotizacionId, archivo) {
     if (!archivo) return false
 
@@ -946,16 +1146,20 @@
 
     const { error: uploadError } = await supabase.storage
       .from('documentos')
-      .upload(nombreArchivo, archivo, { cacheControl: '0', upsert: true })
+      .upload(nombreArchivo, archivo, {
+        cacheControl: '0',
+        upsert: true
+      })
 
     if (uploadError) {
-      mostrarNotificacion('Error al subir XML: ' + uploadError.message)
+      mostrarNotificacion('Error al subir XML: ' + uploadError.message, 'error')
       return false
     }
 
-    const { data } = supabase.storage.from('documentos').getPublicUrl(nombreArchivo)
+    const { data } = supabase.storage
+      .from('documentos')
+      .getPublicUrl(nombreArchivo)
 
-    // Eliminar XML anterior si existe (para mantener solo el más reciente)
     const { data: existente } = await supabase
       .from('documentos_cotizacion')
       .select('id')
@@ -964,49 +1168,63 @@
       .maybeSingle()
 
     if (existente) {
-      await supabase.from('documentos_cotizacion').delete().eq('id', existente.id)
+      await supabase
+        .from('documentos_cotizacion')
+        .delete()
+        .eq('id', existente.id)
     }
 
     const { error: insertError } = await supabase
       .from('documentos_cotizacion')
-      .insert([{
-        cotizacion_id: cotizacionId,
-        tipo_documento: 'Factura XML',
-        url: data.publicUrl,
-        nombre_archivo: archivo.name
-      }])
+      .insert([
+        {
+          cotizacion_id: cotizacionId,
+          tipo_documento: 'Factura XML',
+          url: data.publicUrl,
+          nombre_archivo: archivo.name
+        }
+      ])
 
     if (insertError) {
-      mostrarNotificacion('Error al guardar XML: ' + insertError.message)
+      mostrarNotificacion('Error al guardar XML: ' + insertError.message, 'error')
       return false
     }
+
     return true
   }
 
-  // Función helper para crear input file temporal y subir según tipo
   function crearInputFile(cotizacionId, tipo) {
     const input = document.createElement('input')
+
     input.type = 'file'
+
     if (tipo === 'pdf') {
       input.accept = '.pdf'
     } else {
       input.accept = '.xml'
     }
+
     input.style.display = 'none'
+
     input.onchange = async (e) => {
       const archivo = e.target.files[0]
+
       if (!archivo) return
+
       let exito = false
+
       if (tipo === 'pdf') {
         exito = await subirFacturaPDF(cotizacionId, archivo)
       } else {
         exito = await subirFacturaXML(cotizacionId, archivo)
       }
+
       if (exito) {
-        mostrarNotificacion(`${tipo.toUpperCase()} subido correctamente.`)
+        mostrarNotificacion(`${tipo.toUpperCase()} subido correctamente.`, 'success')
         cargarFacturas()
       }
     }
+
     document.body.appendChild(input)
     input.click()
     document.body.removeChild(input)
@@ -1014,7 +1232,12 @@
 
   async function cargarFacturas() {
     const tbody = document.getElementById('tbodyFacturas')
-    tbody.innerHTML = `<tr><td colspan="8">Cargando cotizaciones confirmadas...</td></tr>`
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9">Cargando cotizaciones confirmadas...</td>
+      </tr>
+    `
 
     const { data, error } = await supabase
       .from('cotizaciones')
@@ -1023,107 +1246,140 @@
       .order('id', { ascending: false })
 
     if (error) {
-      tbody.innerHTML = `<tr><td colspan="8">Error: ${error.message}</td></tr>`
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9">Error: ${error.message}</td>
+        </tr>
+      `
       return
     }
 
     if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8">No hay cotizaciones confirmadas para facturar.</td></tr>`
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9">No hay cotizaciones confirmadas para facturar.</td>
+        </tr>
+      `
       return
     }
 
-    // Mapeo de usuarios (correo → nombres)
-    const userIds = [...new Set(data.map(cot => cot.user_id).filter(Boolean))]
     const { data: usuariosData } = await supabase
       .from('usuarios')
       .select('correo, nombres')
+
     const usuariosMap = {}
+
     if (usuariosData) {
       usuariosData.forEach(usuario => {
         usuariosMap[usuario.correo] = usuario.nombres
       })
     }
 
-    // --- Obtener los XML asociados a cada cotización (para mostrarlos en la columna Evidencia) ---
     const cotizacionIds = data.map(cot => cot.id)
+
     const { data: xmlDocs, error: xmlError } = await supabase
       .from('documentos_cotizacion')
       .select('cotizacion_id, url, nombre_archivo')
       .eq('tipo_documento', 'Factura XML')
       .in('cotizacion_id', cotizacionIds)
 
-    const xmlMap = new Map() // cotizacion_id -> { url, nombre_archivo }
+    const xmlMap = new Map()
+
     if (xmlDocs && !xmlError) {
       xmlDocs.forEach(doc => {
-        // Si hay varios, nos quedamos con el primero (el más reciente, pero como ya limpiamos antes, solo habrá uno)
         if (!xmlMap.has(doc.cotizacion_id)) {
-          xmlMap.set(doc.cotizacion_id, { url: doc.url, nombre: doc.nombre_archivo })
+          xmlMap.set(doc.cotizacion_id, {
+            url: doc.url,
+            nombre: doc.nombre_archivo
+          })
         }
       })
     }
 
     tbody.innerHTML = ''
+
     data.forEach(cot => {
       const row = tbody.insertRow()
 
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
-      row.insertCell(2).innerText = cot.fecha || cot.created_at?.split('T')[0] || '-'
-      row.insertCell(3).innerText = formatoMoneda(cot.total)
-      row.insertCell(4).innerText = usuariosMap[cot.user_id] || cot.user_id || '-'
 
-      const estatusFacturaCell = row.insertCell(5)
+      const tipoClienteCell = row.insertCell(2)
+      tipoClienteCell.innerHTML = `
+        <span class="badge badge-tipo">
+          ${limpiarTexto(cot.tipo_cliente || 'Sin definir')}
+        </span>
+      `
+
+      row.insertCell(3).innerText = cot.fecha || cot.created_at?.split('T')[0] || '-'
+      row.insertCell(4).innerText = formatoMoneda(cot.total)
+      row.insertCell(5).innerText = usuariosMap[cot.user_id] || cot.user_id || '-'
+
+      const estatusFacturaCell = row.insertCell(6)
+
       if (cot.estatus_factura === 'Facturado') {
         estatusFacturaCell.innerHTML = '<span class="badge badge-facturado">Facturado</span>'
       } else {
         estatusFacturaCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>'
       }
 
-      // Celda de Evidencia Factura: mostramos PDF (si existe) y XML (si existe)
-      const evidenciaFacturaCell = row.insertCell(6)
+      const evidenciaFacturaCell = row.insertCell(7)
       let evidenciaHtml = ''
 
-      // PDF (de la cotización)
       if (cot.evidencia_factura) {
         evidenciaHtml += `
-          <a class="btn-ver" href="${cot.evidencia_factura}" target="_blank">Abrir PDF</a>
-          <a class="btn-ver" href="${cot.evidencia_factura}" download>Descargar PDF</a>
+          <a class="btn-ver" href="${cot.evidencia_factura}" target="_blank">
+            <i class="fas fa-eye"></i> Abrir PDF
+          </a>
+
+          <a class="btn-ver" href="${cot.evidencia_factura}" download>
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </a>
         `
       }
 
-      // XML (si existe en el mapa)
       const xmlInfo = xmlMap.get(cot.id)
+
       if (xmlInfo) {
         evidenciaHtml += `
-          <a class="btn-ver" href="${xmlInfo.url}" target="_blank">Abrir XML</a>
-          <a class="btn-ver" onclick="descargarArchivo('${xmlInfo.url}', '${xmlInfo.nombre || 'factura.xml'}')" style="cursor:pointer;">Descargar XML</a>
+          <a class="btn-ver" href="${xmlInfo.url}" target="_blank">
+            <i class="fas fa-eye"></i> Abrir XML
+          </a>
+
+          <a class="btn-ver" onclick="descargarArchivo('${xmlInfo.url}', '${xmlInfo.nombre || 'factura.xml'}')" style="cursor:pointer;">
+            <i class="fas fa-file-code"></i> Descargar XML
+          </a>
         `
       }
 
       if (evidenciaHtml === '') {
         evidenciaHtml = 'Sin evidencia'
       }
+
       evidenciaFacturaCell.innerHTML = evidenciaHtml
 
-      const accionCell = row.insertCell(7)
+      const accionCell = row.insertCell(8)
 
-      // Siempre mostramos el dropdown con las dos opciones (PDF y XML)
       const dropdownDiv = document.createElement('div')
       dropdownDiv.className = 'dropdown-factura'
 
       const btnMain = document.createElement('button')
       btnMain.className = 'btn-action'
       btnMain.innerHTML = '<i class="fas fa-upload"></i> Subir factura <i class="fas fa-caret-down"></i>'
+
       btnMain.onclick = (e) => {
         e.stopPropagation()
+
         document.querySelectorAll('.dropdown-factura.active').forEach(d => {
           if (d !== dropdownDiv) d.classList.remove('active')
         })
+
         dropdownDiv.classList.toggle('active')
       }
 
       const menuDiv = document.createElement('div')
       menuDiv.className = 'dropdown-menu-factura'
+
       const opcionPDF = document.createElement('a')
       opcionPDF.innerHTML = '<i class="fas fa-file-pdf"></i> Subir PDF (Factura)'
       opcionPDF.onclick = (e) => {
@@ -1132,6 +1388,7 @@
         dropdownDiv.classList.remove('active')
         crearInputFile(cot.id, 'pdf')
       }
+
       const opcionXML = document.createElement('a')
       opcionXML.innerHTML = '<i class="fas fa-file-code"></i> Subir XML (Factura)'
       opcionXML.onclick = (e) => {
@@ -1140,32 +1397,37 @@
         dropdownDiv.classList.remove('active')
         crearInputFile(cot.id, 'xml')
       }
+
       menuDiv.appendChild(opcionPDF)
       menuDiv.appendChild(opcionXML)
+
       dropdownDiv.appendChild(btnMain)
       dropdownDiv.appendChild(menuDiv)
+
       accionCell.appendChild(dropdownDiv)
 
-      // Botón de descarga de documentos (ya no incluye el XML, solo los documentos adicionales)
       const btnDescargarDocs = document.createElement('button')
       btnDescargarDocs.className = 'btn-action'
       btnDescargarDocs.style.marginLeft = '4px'
-      btnDescargarDocs.innerHTML = '<i class="fas fa-download"></i> Descargar archivos'
-      btnDescargarDocs.onclick = () => abrirDescargarDocumentos(cot.id)
+      btnDescargarDocs.innerHTML = '<i class="fas fa-folder-open"></i> <i class="fas fa-file-alt"></i> Descargar documentación'
+      btnDescargarDocs.onclick = () => abrirDescargarDocumentos(cot)
+
       accionCell.appendChild(btnDescargarDocs)
     })
-
-    // Cerrar dropdowns al hacer clic fuera
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.dropdown-factura')) {
-        document.querySelectorAll('.dropdown-factura.active').forEach(d => d.classList.remove('active'))
-      }
-    })
   }
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown-factura')) {
+      document
+        .querySelectorAll('.dropdown-factura.active')
+        .forEach(d => d.classList.remove('active'))
+    }
+  })
 
   window.cargarFacturas = cargarFacturas
 
   cargarFacturas()
 </script>
+
 </body>
 </html>
