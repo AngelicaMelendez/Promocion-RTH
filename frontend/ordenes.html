@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RYTH | Órdenes de Servicio</title>
+  <title>RYTH | Documentación</title>
+
   <link rel="icon" type="image/x-icon" href="img/star.ico">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     :root {
       --vino: #691b31;
@@ -43,12 +48,12 @@
     .navbar {
       background: var(--vino);
       color: var(--beige);
-      padding: 12px 30px;
+      padding: 12px 22px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       flex-wrap: nowrap !important;
-      gap: 20px;
+      gap: 14px;
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -76,20 +81,24 @@
 
     .nav-links {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      flex-shrink: 0;
+      flex-wrap: nowrap;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+      min-width: max-content;
     }
 
     .nav-links a {
       color: var(--beige);
       text-decoration: none;
-      padding: 8px 14px;
+      padding: 8px 11px;
       border-radius: 40px;
       display: flex;
       align-items: center;
       gap: 6px;
       transition: 0.2s;
+      white-space: nowrap;
+      font-size: 0.95rem;
     }
 
     .nav-links a.active,
@@ -98,37 +107,12 @@
       color: var(--vino);
     }
 
-    .dropdown {
-      position: relative;
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background: white;
-      min-width: 200px;
-      border-radius: 12px;
-      top: 40px;
-      right: 0;
-      z-index: 100;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .dropdown-content a {
-      color: var(--vino);
-      padding: 10px 16px;
-      display: block;
-    }
-
     .nav-profile {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
+      margin-left: auto;
     }
 
     .avatar {
@@ -144,114 +128,25 @@
       flex-shrink: 0;
     }
 
+    #nav-user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
 
-    #nav-user-info{
-    display:flex;
-    flex-direction:column;
-    line-height:1.1;
-}
+    #nav-user-name {
+      font-weight: 600;
+    }
 
-#nav-user-name{
-    font-weight:600;
-}
+    #nav-user-area {
+      font-size: 0.75rem;
+      opacity: .8;
+      color: var(--beige);
+    }
 
-#nav-user-area{
-    font-size:0.75rem;
-    opacity:.8;
-    color: var(--beige);
-}
-
-#modalPerfilUsuario{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-}
-
-#modalPerfilUsuario.active{
-  display:flex;
-}
-
-#modalPerfilUsuario .modal-content{
-  background:#f7f3ed;
-  border-radius:28px;
-  width:90%;
-  max-width:520px;
-  overflow:hidden;
-  box-shadow:0 15px 40px rgba(0,0,0,.35);
-}
-
-#modalPerfilUsuario .modal-header{
-  background:linear-gradient(90deg,#691b31,#a02142);
-  color:white;
-  padding:24px 32px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:1.7rem;
-  font-weight:800;
-}
-
-#modalPerfilUsuario .modal-header button{
-  background:none;
-  border:none;
-  color:white;
-  font-size:2rem;
-  cursor:pointer;
-}
-
-#modalPerfilUsuario .modal-body{
-  padding:38px 30px 34px;
-  text-align:center;
-}
-
-#perfilFoto{
-  width:140px !important;
-  height:140px !important;
-  border-radius:50%;
-  object-fit:cover;
-  background:#ddd;
-  margin-bottom:24px;
-  box-shadow:0 8px 20px rgba(0,0,0,.18);
-}
-
-#perfilNombre,
-#perfilArea{
-  color:#2c3e4e;
-  font-size:1.05rem;
-}
-
-#modalPerfilUsuario .modal-body p{
-  margin:4px 0;
-  font-size:1.05rem;
-}
-
-#modalPerfilUsuario .modal-body strong{
-  color:var(--vino);
-  font-weight:800;
-}
-
-#modalPerfilUsuario .btn-action{
-  background:var(--vino-claro);
-  color:white;
-  border:none;
-  padding:9px 18px;
-  border-radius:30px;
-  cursor:pointer;
-  font-size:.9rem;
-  font-weight:700;
-}
-
-#modalPerfilUsuario .btn-action:hover{
-  background:var(--vino);
-}
-
-#nav-avatar{
-  cursor:pointer;
-}
+    #nav-avatar {
+      cursor: pointer;
+    }
 
     .logout-btn {
       background: transparent;
@@ -298,7 +193,8 @@
       font-size: 0.85rem;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 12px 8px;
       text-align: left;
@@ -308,6 +204,10 @@
     th {
       background: var(--gris-claro);
       color: var(--vino);
+    }
+
+    th i {
+      margin-right: 5px;
     }
 
     .badge {
@@ -326,6 +226,12 @@
     .badge-confirmada {
       background: #d4edda;
       color: #155724;
+    }
+
+    .badge-tipo {
+      background: #f7f3ed;
+      color: var(--vino);
+      border: 1px solid #eadcc7;
     }
 
     .btn-action {
@@ -365,7 +271,24 @@
       color: white;
     }
 
-    /* ---------- MODAL ---------- */
+    .btn-ver i,
+    .btn-descarga i {
+      margin-right: 5px;
+    }
+
+    .texto-vacio {
+      color: var(--gris);
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .texto-vacio i {
+      color: var(--dorado);
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -378,14 +301,16 @@
       justify-content: center;
       align-items: center;
     }
+
     .modal.active {
       display: flex;
     }
+
     .modal-content {
       background: white;
       width: 90%;
-      max-width: 700px;
-      max-height: 80vh;
+      max-width: 720px;
+      max-height: 82vh;
       border-radius: 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       display: flex;
@@ -393,10 +318,19 @@
       overflow: hidden;
       animation: fadeIn 0.3s ease;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .modal-header {
       background: var(--vino);
       color: white;
@@ -407,6 +341,7 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .modal-header button {
       background: transparent;
       border: none;
@@ -414,152 +349,52 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+
     .modal-body {
       padding: 20px 28px;
       overflow-y: auto;
       flex: 1;
     }
-    .form-group {
-      margin-bottom: 15px;
+
+    .texto-ayuda-tipo {
+      background: #f8f4ec;
+      border-left: 4px solid var(--dorado);
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      color: #5f5f5f;
+      font-size: 0.92rem;
+      line-height: 1.45;
     }
-    .form-group label {
+
+    .documento-grupo {
+      margin-bottom: 16px;
+    }
+
+    .documento-grupo label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
+      font-weight: 700;
+      margin-bottom: 7px;
       color: var(--vino);
     }
-    .form-group input[type="file"] {
+
+    .documento-grupo input[type="file"] {
       width: 100%;
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 0.85rem;
+      background: white;
     }
+
     .btn-upload-group {
       display: flex;
       justify-content: flex-end;
+      gap: 8px;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
-    /* ------------------------- */
 
-    /* NOTIFICACIÓN CENTRADA */
-    .notificacion-centro {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
-      padding: 25px 35px;
-      z-index: 3000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      animation: fadeIn 0.3s ease;
-      min-width: 280px;
-      max-width: 90%;
-      text-align: center;
-    }
-    .notificacion-centro i {
-      font-size: 2.2rem;
-    }
-    .notificacion-centro .mensaje {
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--vino);
-    }
-    .notificacion-centro button {
-      background: var(--dorado);
-      color: var(--vino);
-      border: none;
-      padding: 8px 20px;
-      border-radius: 30px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .overlay-notificacion {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 2999;
-    }
-    .notificacion-centro i.fa-check-circle { color: #155724; }
-    .notificacion-centro i.fa-exclamation-circle { color: #856404; }
-    .notificacion-centro i.fa-times-circle { color: #a02142; }
-
-   .footer {
-            background: var(--vino);
-            color: white;
-            margin-top: 70px;
-            padding: 50px 55px 35px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1.2fr;
-            gap: 50px;
-        }
-
-        .footer-logo img {
-            width: 150px;
-            filter: brightness(0) invert(1);
-        }
-
-        .footer-emergencias {
-            display: flex;
-            justify-content: center;
-            gap: 70px;
-            text-align: center;
-        }
-
-        .emergencia-item strong {
-            display: block;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-        }
-
-        .footer-line {
-            width: 100%;
-            height: 1px;
-            background: var(--dorado);
-            margin: 40px 0 30px;
-        }
-
-        @media (max-width: 850px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .navbar {
-                flex-wrap: nowrap !important;
-                justify-content: flex-start;
-                gap: 10px;
-                padding: 15px 20px;
-            }
-            .nav-links {
-                justify-content: center;
-                flex-shrink: 0;
-            }
-            .nav-profile {
-                flex-shrink: 0;
-            }
-            .dropdown-content {
-                right: auto;
-                left: 0;
-            }
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 30px;
-            }
-            .footer-emergencias {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
-
-    /* Estilos para los dropdown de archivos */
     .archivo-item {
       position: relative;
       display: inline-block;
@@ -619,54 +454,210 @@
       min-width: 220px;
     }
 
+    #modalPerfilUsuario {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
 
-  .modal-alerta-sistema {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
-}
+    #modalPerfilUsuario.active {
+      display: flex;
+    }
 
-.modal-alerta-card {
-  background: white;
-  width: 420px;
-  max-width: 90%;
-  border-radius: 20px;
-  text-align: center;
-  padding: 30px;
-  border-top: 6px solid #691b31;
-  box-shadow: 0 10px 30px rgba(0,0,0,.25);
-}
+    #modalPerfilUsuario .modal-content {
+      background: #f7f3ed;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 520px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
 
-.modal-alerta-card h3 {
-  color: #691b31;
-  font-size: 2rem;
-  margin-bottom: 15px;
-  font-weight: 700;
-}
+    #modalPerfilUsuario .modal-header {
+      background: linear-gradient(90deg,#691b31,#a02142);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
 
-.modal-alerta-card p {
-  color: #333;
-  font-size: 1.1rem;
-  margin-bottom: 25px;
-}
+    #modalPerfilUsuario .modal-header button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
 
-.modal-alerta-card button {
-  background: #bc955b;
-  color: white;
-  border: none;
-  border-radius: 999px;
-  padding: 10px 35px;
-  font-weight: 700;
-  cursor: pointer;
-}
+    #modalPerfilUsuario .modal-body {
+      padding: 38px 30px 34px;
+      text-align: center;
+    }
 
-.modal-alerta-card button:hover {
-  background: #a8813f;
-}
+    #perfilFoto {
+      width: 140px !important;
+      height: 140px !important;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.18);
+    }
+
+    #perfilNombre,
+    #perfilArea {
+      color: #2c3e4e;
+      font-size: 1.05rem;
+    }
+
+    #modalPerfilUsuario .modal-body p {
+      margin: 4px 0;
+      font-size: 1.05rem;
+    }
+
+    #modalPerfilUsuario .modal-body strong {
+      color: var(--vino);
+      font-weight: 800;
+    }
+
+    #modalPerfilUsuario .btn-action {
+      background: var(--vino-claro);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    #modalPerfilUsuario .btn-action:hover {
+      background: var(--vino);
+    }
+
+    .modal-alerta-sistema {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
+
+    .modal-alerta-card {
+      background: white;
+      width: 420px;
+      max-width: 90%;
+      border-radius: 20px;
+      text-align: center;
+      padding: 30px;
+      border-top: 6px solid #691b31;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .modal-alerta-card h3 {
+      color: #691b31;
+      font-size: 2rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .modal-alerta-card p {
+      color: #333;
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+    }
+
+    .modal-alerta-card button {
+      background: #bc955b;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 35px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-alerta-card button:hover {
+      background: #a8813f;
+    }
+
+    .footer {
+      background: var(--vino);
+      color: white;
+      margin-top: 70px;
+      padding: 50px 55px 35px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 50px;
+    }
+
+    .footer-logo img {
+      width: 150px;
+      filter: brightness(0) invert(1);
+    }
+
+    .footer-emergencias {
+      display: flex;
+      justify-content: center;
+      gap: 70px;
+      text-align: center;
+    }
+
+    .emergencia-item strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .footer-line {
+      width: 100%;
+      height: 1px;
+      background: var(--dorado);
+      margin: 40px 0 30px;
+    }
+
+    @media (max-width: 850px) {
+      .navbar {
+        flex-wrap: nowrap !important;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        justify-content: center;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+      }
+
+      .nav-profile {
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+      }
+
+      .footer-emergencias {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
   </style>
 </head>
 
@@ -679,9 +670,9 @@
   </div>
 
   <div class="nav-links">
-    <a href="primerContacto.html" ><i class="fas fa-users"></i> Clientes</a>
+    <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
     <a href="cotizacion.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-    <a href="ordenes.html" class="active"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="ordenes.html" class="active"><i class="fas fa-clipboard-list"></i> Documentación</a>
     <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
     <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Creación Trabajo</a>
     <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
@@ -690,23 +681,22 @@
   <div class="nav-profile">
     <div class="avatar" id="nav-avatar" onclick="abrirPerfilUsuario()">U</div>
 
-
     <div id="nav-user-info">
-        <div id="nav-user-name">Usuario</div>
-        <div id="nav-user-area"></div>
+      <div id="nav-user-name">Usuario</div>
+      <div id="nav-user-area"></div>
     </div>
 
     <button class="logout-btn" onclick="cerrarSesion()">
-        <i class="fas fa-sign-out-alt"></i>
+      <i class="fas fa-sign-out-alt"></i>
     </button>
-</div>
+  </div>
 </nav>
 
 <main class="container">
-
   <div class="card">
     <div class="card-header">
-      <span><i class="fas fa-tasks"></i> Órdenes de Servicio</span>
+      <span><i class="fas fa-folder-open"></i> Documentación</span>
+
       <button class="btn-action" onclick="cargarOrdenes()">
         <i class="fas fa-sync-alt"></i> Actualizar
       </button>
@@ -722,13 +712,14 @@
           <tr>
             <th>Folio</th>
             <th>Cliente</th>
+            <th>Tipo de cliente</th>
             <th>Fecha</th>
             <th>Subtotal</th>
             <th>IVA</th>
             <th>Total</th>
             <th>Estatus</th>
-            <th>Evidencia</th>
-            <th>Archivos</th>
+            <th><i class="fas fa-file-signature"></i> Evidencia</th>
+            <th><i class="fas fa-folder-open"></i> Archivos</th>
             <th>Generado por</th>
             <th>Acción</th>
           </tr>
@@ -736,59 +727,35 @@
 
         <tbody id="tbodyOrdenes">
           <tr>
-            <td colspan="11">Cargando cotizaciones...</td>
+            <td colspan="12">Cargando cotizaciones...</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-
 </main>
 
-<!-- MODAL SUBIR ARCHIVOS -->
 <div class="modal" id="modalSubirArchivos">
   <div class="modal-content">
     <div class="modal-header">
       <span><i class="fas fa-upload"></i> Subir documentos por orden</span>
       <button class="cerrar-modal"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="modal-body">
-      <p style="margin-bottom: 20px; color: var(--gris);">
+      <p style="margin-bottom: 14px; color: var(--gris);">
         Cotización <strong id="modalCotizacionFolio">-</strong>
       </p>
 
-      <div class="form-group">
-        <label><i class="fas fa-id-card"></i> INE (PDF)</label>
-        <input type="file" id="fileINE" accept=".pdf">
-      </div>
-      <div class="form-group">
-        <label><i class="fas fa-file-alt"></i> RFC (PDF)</label>
-        <input type="file" id="fileRFC" accept=".pdf">
-      </div>
-      <div class="form-group">
-        <label><i class="fas fa-home"></i> Domicilio Fiscal (PDF)</label>
-        <input type="file" id="fileDomicilio" accept=".pdf">
-      </div>
-      <div class="form-group">
-        <label><i class="fas fa-building"></i> Razón Social (PDF)</label>
-        <input type="file" id="fileRazonSocial" accept=".pdf">
-      </div>
-      <div class="form-group">
-        <label><i class="fas fa-file-invoice"></i> Uso CFDI (PDF)</label>
-        <input type="file" id="fileUsoCFDI" accept=".pdf">
-      </div>
+      <div id="contenedorDocumentosDinamicos"></div>
 
       <div class="btn-upload-group">
+        <button class="btn-action" id="btnEditarDocumentos" type="button">
+          <i class="fas fa-edit"></i> Editar archivos
+        </button>
 
-       <button class="btn-action" id="btnEditarDocumentos" type="button">
-       <i class="fas fa-edit"></i> Editar archivos
-       </button>
-
-      <button class="btn-action" id="btnSubirDocumentos">
-      <i class="fas fa-cloud-upload-alt"></i> Subir todos
-     </button>
-
-</div>
+        <button class="btn-action" id="btnSubirDocumentos" type="button">
+          <i class="fas fa-cloud-upload-alt"></i> Subir todos
         </button>
       </div>
     </div>
@@ -799,14 +766,14 @@
   <div class="modal-content" style="max-width:420px;">
     <div class="modal-header">
       <span><i class="fas fa-user"></i> Perfil de usuario</span>
+
       <button onclick="cerrarPerfilUsuario()">
         <i class="fas fa-times"></i>
       </button>
     </div>
 
     <div class="modal-body" style="text-align:center;">
-      <img id="perfilFoto" src="" alt="Foto de perfil"
-        style="width:110px;height:110px;border-radius:50%;object-fit:cover;background:#ddd;margin-bottom:15px;">
+      <img id="perfilFoto" src="" alt="Foto de perfil">
 
       <p><strong>Nombre:</strong> <span id="perfilNombre">Usuario</span></p>
       <p><strong>Área:</strong> <span id="perfilArea">-</span></p>
@@ -854,257 +821,468 @@
   </div>
 
   <div class="footer-line"></div>
-  <div class="footer-copy">Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
+  <div class="footer-copy">
+    Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación
+  </div>
 </footer>
 
 <script type="module">
-  // Importamos todo desde el archivo central app.js
   import { initAuth, supabase } from './app.js'
 
-  // Inicializamos la autenticación (navbar, listener, cierre de sesión, etc.)
   await initAuth()
 
-  // ---------- Funciones originales de órdenes ----------
-  
-  // Función auxiliar para formatear cantidades con separador de miles
   function formatoMoneda(cantidad) {
-    const numero = Number(cantidad) || 0;
+    const numero = Number(cantidad) || 0
+
     return '$' + numero.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    });
+    })
   }
 
-  // ---------- NUEVA NOTIFICACIÓN CENTRADA ----------
+  function limpiarTexto(texto) {
+    return String(texto || '')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+  }
+
+  function normalizarTexto(texto) {
+    return String(texto || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+  }
+
   function mostrarNotificacion(mensaje, tipo = 'info') {
+    const anterior = document.querySelector('.modal-alerta-sistema')
 
-  const anterior = document.querySelector('.modal-alerta-sistema')
-  if (anterior) anterior.remove()
+    if (anterior) anterior.remove()
 
-  const modal = document.createElement('div')
-  modal.className = 'modal-alerta-sistema'
+    const modal = document.createElement('div')
+    modal.className = 'modal-alerta-sistema'
 
-  modal.innerHTML = `
-    <div class="modal-alerta-card">
-      <h3>Aviso</h3>
-      <p>${mensaje}</p>
-      <button id="btnAceptarAlerta">Aceptar</button>
-    </div>
-  `
+    let color = '#691b31'
+    let titulo = 'Aviso'
 
-  document.body.appendChild(modal)
+    if (tipo === 'success') {
+      color = '#16a34a'
+      titulo = 'Éxito'
+    }
 
-  document.getElementById('btnAceptarAlerta').addEventListener('click', () => {
-    modal.remove()
-  })
-}
+    if (tipo === 'warning') {
+      color = '#bc955b'
+      titulo = 'Advertencia'
+    }
 
-  // ---------- NUEVO: Modal para subir documentos ----------
+    if (tipo === 'error') {
+      color = '#b91c1c'
+      titulo = 'Error'
+    }
+
+    modal.innerHTML = `
+      <div class="modal-alerta-card" style="border-top-color:${color};">
+        <h3>${titulo}</h3>
+        <p>${mensaje}</p>
+        <button id="btnAceptarAlerta">Aceptar</button>
+      </div>
+    `
+
+    document.body.appendChild(modal)
+
+    document.getElementById('btnAceptarAlerta').addEventListener('click', () => {
+      modal.remove()
+    })
+  }
+
+  function esArchivoPDF(archivo) {
+    if (!archivo) return false
+
+    const nombre = archivo.name.toLowerCase()
+    const extensionPDF = nombre.endsWith('.pdf')
+    const tipoPDF = archivo.type === 'application/pdf' || archivo.type === ''
+
+    return extensionPDF && tipoPDF
+  }
+
+  function nombreSeguroArchivo(nombre) {
+    return String(nombre || 'documento.pdf')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9._-]/g, '_')
+  }
+
+  const DOCUMENTOS_POR_TIPO = {
+    'institucion publica': [
+      {
+        tipo: 'decreto_creacion',
+        tipo_documento: 'Decreto de creación',
+        nombre: 'Decreto de creación (PDF)',
+        icono: 'fas fa-file-alt'
+      },
+      {
+        tipo: 'rfc_constancia',
+        tipo_documento: 'RFC: Constancia de situación fiscal',
+        nombre: 'RFC: Constancia de situación fiscal (PDF)',
+        icono: 'fas fa-file-invoice'
+      },
+      {
+        tipo: 'comprobante_domicilio',
+        tipo_documento: 'Comprobante de domicilio',
+        nombre: 'Comprobante de domicilio (PDF)',
+        icono: 'fas fa-home'
+      },
+      {
+        tipo: 'nombramiento_oficial',
+        tipo_documento: 'Nombramiento oficial del titular de la dependencia',
+        nombre: 'Nombramiento oficial del titular de la dependencia (PDF)',
+        icono: 'fas fa-user-tie'
+      },
+      {
+        tipo: 'identificacion_titular_representante',
+        tipo_documento: 'Identificación oficial vigente del titular o representante legal',
+        nombre: 'Identificación oficial vigente del titular o representante legal (INE, pasaporte) (PDF)',
+        icono: 'fas fa-id-card'
+      }
+    ],
+
+    'persona fisica': [
+      {
+        tipo: 'identificacion_oficial',
+        tipo_documento: 'Identificación oficial vigente',
+        nombre: 'Identificación oficial vigente (INE, pasaporte) (PDF)',
+        icono: 'fas fa-id-card'
+      },
+      {
+        tipo: 'comprobante_domicilio',
+        tipo_documento: 'Comprobante de domicilio',
+        nombre: 'Comprobante de domicilio (PDF)',
+        icono: 'fas fa-home'
+      },
+      {
+        tipo: 'rfc_constancia',
+        tipo_documento: 'RFC: Constancia de situación fiscal',
+        nombre: 'RFC: Constancia de situación fiscal (PDF)',
+        icono: 'fas fa-file-invoice'
+      },
+      {
+        tipo: 'opinion_cumplimiento',
+        tipo_documento: 'Opinión de cumplimiento POSITIVA',
+        nombre: 'Opinión de cumplimiento POSITIVA (PDF)',
+        icono: 'fas fa-check-circle'
+      }
+    ],
+
+    'persona moral': [
+      {
+        tipo: 'acta_constitutiva',
+        tipo_documento: 'Acta constitutiva',
+        nombre: 'Acta constitutiva (PDF)',
+        icono: 'fas fa-file-signature'
+      },
+      {
+        tipo: 'comprobante_domicilio',
+        tipo_documento: 'Comprobante de domicilio',
+        nombre: 'Comprobante de domicilio (PDF)',
+        icono: 'fas fa-home'
+      },
+      {
+        tipo: 'rfc_constancia',
+        tipo_documento: 'RFC: Constancia de situación fiscal',
+        nombre: 'RFC: Constancia de situación fiscal (PDF)',
+        icono: 'fas fa-file-invoice'
+      },
+      {
+        tipo: 'opinion_cumplimiento',
+        tipo_documento: 'Opinión de cumplimiento POSITIVA',
+        nombre: 'Opinión de cumplimiento POSITIVA (PDF)',
+        icono: 'fas fa-check-circle'
+      },
+      {
+        tipo: 'poder_notarial',
+        tipo_documento: 'Poder Notarial del representante legal',
+        nombre: 'Poder Notarial del representante legal (PDF)',
+        icono: 'fas fa-gavel'
+      },
+      {
+        tipo: 'identificacion_representante',
+        tipo_documento: 'Identificación oficial vigente del representante legal',
+        nombre: 'Identificación oficial vigente del representante legal (INE, pasaporte) (PDF)',
+        icono: 'fas fa-id-card'
+      }
+    ]
+  }
+
+  function obtenerDocumentosPorTipo(tipoCliente) {
+    const tipo = normalizarTexto(tipoCliente)
+
+    if (tipo.includes('institucion publica')) {
+      return DOCUMENTOS_POR_TIPO['institucion publica']
+    }
+
+    if (tipo.includes('persona moral')) {
+      return DOCUMENTOS_POR_TIPO['persona moral']
+    }
+
+    if (tipo.includes('persona fisica')) {
+      return DOCUMENTOS_POR_TIPO['persona fisica']
+    }
+
+    return []
+  }
+
+  function obtenerTodosLosTiposDocumento() {
+    return Object
+      .values(DOCUMENTOS_POR_TIPO)
+      .flat()
+      .map(doc => doc.tipo_documento)
+  }
+
   const modalSubirArchivos = document.getElementById('modalSubirArchivos')
-  let currentCotizacionId = null
-
-  // Referencias a los inputs de archivo
-  const fileINE = document.getElementById('fileINE')
-  const fileRFC = document.getElementById('fileRFC')
-  const fileDomicilio = document.getElementById('fileDomicilio')
-  const fileRazonSocial = document.getElementById('fileRazonSocial')
-  const fileUsoCFDI = document.getElementById('fileUsoCFDI')
+  const contenedorDocumentosDinamicos = document.getElementById('contenedorDocumentosDinamicos')
   const btnSubirDocumentos = document.getElementById('btnSubirDocumentos')
   const btnEditarDocumentos = document.getElementById('btnEditarDocumentos')
 
+  let currentCotizacionId = null
+  let currentTipoCliente = null
+  let currentFolio = null
+
+  function limpiarModalDocumentos() {
+    currentCotizacionId = null
+    currentTipoCliente = null
+    currentFolio = null
+
+    document.getElementById('modalCotizacionFolio').innerText = '-'
+
+    if (contenedorDocumentosDinamicos) {
+      contenedorDocumentosDinamicos.innerHTML = ''
+    }
+  }
+
+  function renderCamposDocumentos(tipoCliente, tiposSubidos = []) {
+    const documentos = obtenerDocumentosPorTipo(tipoCliente)
+
+    if (!contenedorDocumentosDinamicos) return
+
+    if (!documentos.length) {
+      contenedorDocumentosDinamicos.innerHTML = `
+        <div class="texto-ayuda-tipo">
+          <strong>Tipo de cliente:</strong> ${limpiarTexto(tipoCliente || 'Sin definir')}<br>
+          No se encontró una lista de documentos para este tipo de cliente.
+        </div>
+      `
+      return
+    }
+
+    contenedorDocumentosDinamicos.innerHTML = `
+      <div class="texto-ayuda-tipo">
+        <strong>Tipo de cliente:</strong> ${limpiarTexto(tipoCliente)}<br>
+        Debes subir todos los documentos requeridos en formato PDF.
+      </div>
+
+      ${documentos.map(doc => {
+        const yaSubido = tiposSubidos.includes(doc.tipo_documento)
+
+        return `
+          <div class="documento-grupo">
+            <label for="file_${doc.tipo}">
+              <i class="${doc.icono}"></i> ${limpiarTexto(doc.nombre)}
+              ${yaSubido ? '<span class="badge badge-confirmada">Subido</span>' : ''}
+            </label>
+
+            <input
+              type="file"
+              id="file_${doc.tipo}"
+              data-tipo="${limpiarTexto(doc.tipo)}"
+              data-tipo-documento="${limpiarTexto(doc.tipo_documento)}"
+              accept=".pdf,application/pdf"
+              ${yaSubido ? 'disabled' : ''}
+            >
+          </div>
+        `
+      }).join('')}
+    `
+  }
+
   btnEditarDocumentos.addEventListener('click', () => {
-
-  fileINE.disabled = false
-  fileRFC.disabled = false
-  fileDomicilio.disabled = false
-  fileRazonSocial.disabled = false
-  fileUsoCFDI.disabled = false
-
-  document
-    .querySelectorAll('.estado-subido')
-    .forEach(e => e.remove())
-
-})
-
-  // Cerrar modal
-  document.querySelector('#modalSubirArchivos .cerrar-modal').addEventListener('click', () => {
-    modalSubirArchivos.classList.remove('active')
-    // Limpiar inputs
-    fileINE.value = ''
-    fileRFC.value = ''
-    fileDomicilio.value = ''
-    fileRazonSocial.value = ''
-    fileUsoCFDI.value = ''
+    document
+      .querySelectorAll('#contenedorDocumentosDinamicos input[type="file"]')
+      .forEach(input => {
+        input.disabled = false
+      })
   })
 
-  // Cerrar al hacer clic fuera del contenido
+  document.querySelector('#modalSubirArchivos .cerrar-modal').addEventListener('click', () => {
+    modalSubirArchivos.classList.remove('active')
+    limpiarModalDocumentos()
+  })
+
   modalSubirArchivos.addEventListener('click', (e) => {
     if (e.target === modalSubirArchivos) {
       modalSubirArchivos.classList.remove('active')
-      fileINE.value = ''
-      fileRFC.value = ''
-      fileDomicilio.value = ''
-      fileRazonSocial.value = ''
-      fileUsoCFDI.value = ''
+      limpiarModalDocumentos()
     }
   })
 
-  // Función para abrir el modal con los datos de la cotización
-    async function abrirModalDocumentos(cotizacion) {
-  currentCotizacionId = cotizacion.id
+  async function abrirModalDocumentos(cotizacion) {
+    currentCotizacionId = cotizacion.id
+    currentTipoCliente = cotizacion.tipo_cliente || 'Sin definir'
+    currentFolio = cotizacion.folio || cotizacion.id
 
-  document.getElementById('modalCotizacionFolio').innerText =
-    cotizacion.folio || cotizacion.id
+    document.getElementById('modalCotizacionFolio').innerText = currentFolio
 
-  const { data } = await supabase
-    .from('documentos_cotizacion')
-    .select('tipo_documento')
-    .eq('cotizacion_id', currentCotizacionId)
-
-  const tiposSubidos = (data || []).map(doc => doc.tipo_documento)
-
-  const documentos = [
-    { tipo: 'INE', input: fileINE },
-    { tipo: 'RFC', input: fileRFC },
-    { tipo: 'Domicilio Fiscal', input: fileDomicilio },
-    { tipo: 'Razon Social', input: fileRazonSocial },
-    { tipo: 'Uso CFDI', input: fileUsoCFDI }
-  ]
-
-  documentos.forEach(doc => {
-    const grupo = doc.input.closest('.form-group')
-    const label = grupo.querySelector('label')
-
-    label.querySelector('.badge-confirmada')?.remove()
-
-    if (tiposSubidos.includes(doc.tipo)) {
-      doc.input.disabled = true
-      label.innerHTML +=
-        ' <span class="badge badge-confirmada">Subido</span>'
-    } else {
-      doc.input.disabled = false
-    }
-  })
-
-  modalSubirArchivos.classList.add('active')
-}
-
- // Subir documentos obligatorios
-btnSubirDocumentos.addEventListener('click', async () => {
-  if (!currentCotizacionId) {
-    mostrarNotificacion('No se ha seleccionado una cotización.', 'warning')
-    return
-  }
-
-  const documentos = [
-    { tipo: 'INE', input: fileINE },
-    { tipo: 'RFC', input: fileRFC },
-    { tipo: 'Domicilio Fiscal', input: fileDomicilio },
-    { tipo: 'Razon Social', input: fileRazonSocial },
-    { tipo: 'Uso CFDI', input: fileUsoCFDI }
-  ]
-
-  const { data: documentosExistentes, error: errorExistentes } = await supabase
-    .from('documentos_cotizacion')
-    .select('tipo_documento')
-    .eq('cotizacion_id', currentCotizacionId)
-
-  if (errorExistentes) {
-    mostrarNotificacion('Error al verificar documentos existentes: ' + errorExistentes.message, 'error')
-    return
-  }
-
-  const tiposSubidos = (documentosExistentes || []).map(doc => doc.tipo_documento)
-
-  const faltantes = documentos.filter(doc => {
-    const yaExiste = tiposSubidos.includes(doc.tipo)
-    const seleccionado = doc.input.files && doc.input.files.length > 0
-    return !yaExiste && !seleccionado
-  })
-
-  if (faltantes.length > 0) {
-    mostrarNotificacion(
-      'Debes subir todos los documentos obligatorios: ' + faltantes.map(doc => doc.tipo).join(', '),
-      'warning'
-    )
-    return
-  }
-
-  let subidos = 0
-  btnSubirDocumentos.disabled = true
-  btnSubirDocumentos.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Subiendo...'
-
-  for (const doc of documentos) {
-    const archivo = doc.input.files[0]
-
-    if (!archivo) continue
-
-    const extension = archivo.name.split('.').pop()
-    const tipoLimpio = doc.tipo.replaceAll(' ', '_')
-    const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${tipoLimpio}_${Date.now()}.${extension}`
-
-    const { error: uploadError } = await supabase.storage
-      .from('documentos')
-      .upload(nombreArchivo, archivo, {
-        cacheControl: '0',
-        upsert: true
-      })
-
-    if (uploadError) {
-      mostrarNotificacion(`Error al subir ${doc.tipo}: ${uploadError.message}`, 'error')
-      continue
-    }
-
-    const { data } = supabase.storage
-      .from('documentos')
-      .getPublicUrl(nombreArchivo)
-
-    const { error: deleteError } = await supabase
+    const { data, error } = await supabase
       .from('documentos_cotizacion')
-      .delete()
+      .select('tipo_documento')
       .eq('cotizacion_id', currentCotizacionId)
-      .eq('tipo_documento', doc.tipo)
 
-    if (deleteError) {
-      mostrarNotificacion(`Error al reemplazar ${doc.tipo}: ${deleteError.message}`, 'error')
-      continue
+    if (error) {
+      mostrarNotificacion('Error al cargar documentos existentes: ' + error.message, 'error')
+      return
     }
 
-    const { error: insertError } = await supabase
-      .from('documentos_cotizacion')
-      .insert([
-        {
-          cotizacion_id: currentCotizacionId,
-          tipo_documento: doc.tipo,
-          url: data.publicUrl,
-          nombre_archivo: archivo.name
-        }
-      ])
+    const tiposSubidos = (data || []).map(doc => doc.tipo_documento)
 
-    if (insertError) {
-      mostrarNotificacion(`Error al guardar referencia de ${doc.tipo}: ${insertError.message}`, 'error')
-    } else {
-      subidos++
-    }
+    renderCamposDocumentos(currentTipoCliente, tiposSubidos)
+
+    modalSubirArchivos.classList.add('active')
   }
 
-  btnSubirDocumentos.disabled = false
-  btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
+  btnSubirDocumentos.addEventListener('click', async () => {
+    if (!currentCotizacionId) {
+      mostrarNotificacion('No se ha seleccionado una cotización.', 'warning')
+      return
+    }
 
-  mostrarNotificacion('Documentos obligatorios completos.', 'success')
-  modalSubirArchivos.classList.remove('active')
+    const documentos = obtenerDocumentosPorTipo(currentTipoCliente)
 
-  await cargarOrdenes()
+    if (!documentos.length) {
+      mostrarNotificacion('No se pudo determinar el tipo de cliente para subir documentos.', 'warning')
+      return
+    }
 
-  fileINE.value = ''
-  fileRFC.value = ''
-  fileDomicilio.value = ''
-  fileRazonSocial.value = ''
-  fileUsoCFDI.value = ''
-})
+    const { data: documentosExistentes, error: errorExistentes } = await supabase
+      .from('documentos_cotizacion')
+      .select('tipo_documento')
+      .eq('cotizacion_id', currentCotizacionId)
 
-  // --------------------------------------------------------
-  // Función para descargar un archivo (sin modificar la original)
+    if (errorExistentes) {
+      mostrarNotificacion('Error al verificar documentos existentes: ' + errorExistentes.message, 'error')
+      return
+    }
+
+    const tiposSubidos = (documentosExistentes || []).map(doc => doc.tipo_documento)
+
+    const faltantes = documentos.filter(doc => {
+      const yaExiste = tiposSubidos.includes(doc.tipo_documento)
+      const input = document.getElementById(`file_${doc.tipo}`)
+      const seleccionado = input && input.files && input.files.length > 0
+
+      return !yaExiste && !seleccionado
+    })
+
+    if (faltantes.length > 0) {
+      mostrarNotificacion(
+        'Debes subir todos los documentos obligatorios: ' + faltantes.map(doc => doc.tipo_documento).join(', '),
+        'warning'
+      )
+      return
+    }
+
+    const archivosNoPDF = documentos.filter(doc => {
+      const input = document.getElementById(`file_${doc.tipo}`)
+      const archivo = input?.files?.[0]
+
+      return archivo && !esArchivoPDF(archivo)
+    })
+
+    if (archivosNoPDF.length > 0) {
+      mostrarNotificacion(
+        'Solo se permiten archivos PDF. Revisa: ' + archivosNoPDF.map(doc => doc.tipo_documento).join(', '),
+        'warning'
+      )
+      return
+    }
+
+    let subidos = 0
+
+    btnSubirDocumentos.disabled = true
+    btnSubirDocumentos.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Subiendo...'
+
+    for (const doc of documentos) {
+      const input = document.getElementById(`file_${doc.tipo}`)
+      const archivo = input?.files?.[0]
+
+      if (!archivo) continue
+
+      if (!esArchivoPDF(archivo)) {
+        mostrarNotificacion(`El archivo de ${doc.tipo_documento} debe ser PDF.`, 'warning')
+        btnSubirDocumentos.disabled = false
+        btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
+        return
+      }
+
+      const nombreSeguro = nombreSeguroArchivo(archivo.name)
+      const nombreArchivo = `documentos_cotizacion/${currentCotizacionId}/${doc.tipo}_${Date.now()}_${nombreSeguro}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('documentos')
+        .upload(nombreArchivo, archivo, {
+          cacheControl: '0',
+          upsert: true
+        })
+
+      if (uploadError) {
+        mostrarNotificacion(`Error al subir ${doc.tipo_documento}: ${uploadError.message}`, 'error')
+        continue
+      }
+
+      const { data } = supabase.storage
+        .from('documentos')
+        .getPublicUrl(nombreArchivo)
+
+      const { error: deleteError } = await supabase
+        .from('documentos_cotizacion')
+        .delete()
+        .eq('cotizacion_id', currentCotizacionId)
+        .eq('tipo_documento', doc.tipo_documento)
+
+      if (deleteError) {
+        mostrarNotificacion(`Error al reemplazar ${doc.tipo_documento}: ${deleteError.message}`, 'error')
+        continue
+      }
+
+      const { error: insertError } = await supabase
+        .from('documentos_cotizacion')
+        .insert([
+          {
+            cotizacion_id: currentCotizacionId,
+            tipo_documento: doc.tipo_documento,
+            url: data.publicUrl,
+            nombre_archivo: archivo.name
+          }
+        ])
+
+      if (insertError) {
+        mostrarNotificacion(`Error al guardar referencia de ${doc.tipo_documento}: ${insertError.message}`, 'error')
+      } else {
+        subidos++
+      }
+    }
+
+    btnSubirDocumentos.disabled = false
+    btnSubirDocumentos.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir todos'
+
+    if (subidos > 0) {
+      mostrarNotificacion('Documentos obligatorios completos.', 'success')
+      modalSubirArchivos.classList.remove('active')
+      limpiarModalDocumentos()
+      await cargarOrdenes()
+    } else {
+      mostrarNotificacion('No se seleccionaron archivos nuevos para subir.', 'warning')
+    }
+  })
+
   window.descargarArchivo = async function(url, nombreArchivo) {
     const respuesta = await fetch(url)
     const blob = await respuesta.blob()
@@ -1112,6 +1290,7 @@ btnSubirDocumentos.addEventListener('click', async () => {
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
     link.download = nombreArchivo || 'documento.pdf'
+
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -1119,10 +1298,11 @@ btnSubirDocumentos.addEventListener('click', async () => {
     URL.revokeObjectURL(link.href)
   }
 
-  // Cierra cualquier dropdown de archivos abierto
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.archivo-item')) {
-      document.querySelectorAll('.archivo-dropdown.show').forEach(d => d.classList.remove('show'))
+      document
+        .querySelectorAll('.archivo-dropdown.show')
+        .forEach(d => d.classList.remove('show'))
     }
   })
 
@@ -1133,67 +1313,78 @@ btnSubirDocumentos.addEventListener('click', async () => {
       .eq('cotizacion_id', cotizacionId)
 
     if (error || !data || data.length === 0) {
-      cell.innerHTML = 'Sin archivos'
+      cell.innerHTML = `
+        <span class="texto-vacio">
+          <i class="fas fa-folder-open"></i> Sin archivos
+        </span>
+      `
       return
     }
 
-     
-     const tiposOrden = [
-    'INE',
-    'RFC',
-    'Domicilio Fiscal',
-    'Razon Social',
-    'Uso CFDI'
-]
+    const tiposValidos = obtenerTodosLosTiposDocumento()
 
     const archivosOrden = data.filter(doc =>
-     tiposOrden.includes(doc.tipo_documento)
-)
+      tiposValidos.includes(doc.tipo_documento)
+    )
 
     if (archivosOrden.length === 0) {
-    cell.innerHTML = 'Sin archivos'
-    return
-}
+      cell.innerHTML = `
+        <span class="texto-vacio">
+          <i class="fas fa-folder-open"></i> Sin archivos
+        </span>
+      `
+      return
+    }
 
     cell.innerHTML = archivosOrden.map(doc => {
-      // Escape de las URLs para el onclick
       const url = doc.url.replace(/'/g, "\\'")
       const nombre = (doc.nombre_archivo || doc.tipo_documento + '.pdf').replace(/'/g, "\\'")
+
       return `
         <div class="archivo-item">
           <button class="btn-descarga" onclick="
             const dropdown = this.nextElementSibling;
-            document.querySelectorAll('.archivo-dropdown.show').forEach(d => { if (d !== dropdown) d.classList.remove('show') });
+            document.querySelectorAll('.archivo-dropdown.show').forEach(d => {
+              if (d !== dropdown) d.classList.remove('show')
+            });
             dropdown.classList.toggle('show');
             event.stopPropagation();
-          ">${doc.tipo_documento}</button>
+          ">
+            <i class="fas fa-file-pdf"></i> ${limpiarTexto(doc.tipo_documento)}
+          </button>
+
           <div class="archivo-dropdown">
-            <a href="#" onclick="event.preventDefault(); window.open('${url}', '_blank')"><i class="fas fa-eye"></i> Ver</a>
-            <a href="#" onclick="event.preventDefault(); descargarArchivo('${url}', '${nombre}')"><i class="fas fa-download"></i> Descargar</a>
+            <a href="#" onclick="event.preventDefault(); window.open('${url}', '_blank')">
+              <i class="fas fa-eye"></i> Ver
+            </a>
+
+            <a href="#" onclick="event.preventDefault(); descargarArchivo('${url}', '${nombre}')">
+              <i class="fas fa-download"></i> Descargar
+            </a>
           </div>
         </div>
       `
     }).join('')
   }
-   
+
   async function cargarOrdenes() {
     const tbody = document.getElementById('tbodyOrdenes')
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="11">Cargando cotizaciones...</td>
+        <td colspan="12">Cargando cotizaciones...</td>
       </tr>
     `
 
-   const { data, error } = await supabase
-  .from('cotizaciones')
-  .select('*')
-  .order('id', { ascending: false })
+    const { data, error } = await supabase
+      .from('cotizaciones')
+      .select('*')
+      .order('id', { ascending: false })
 
     if (error) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="11">Error: ${error.message}</td>
+          <td colspan="12">Error: ${error.message}</td>
         </tr>
       `
       return
@@ -1202,25 +1393,24 @@ btnSubirDocumentos.addEventListener('click', async () => {
     if (!data || data.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="11">No hay cotizaciones registradas.</td>
+          <td colspan="12">No hay cotizaciones registradas.</td>
         </tr>
       `
       return
     }
 
-    const userIds = [...new Set(data.map(cot => cot.user_id).filter(Boolean))]
-
     const { data: usuariosData } = await supabase
-  .from('usuarios')
-  .select('correo, nombres')
+      .from('usuarios')
+      .select('correo, nombres')
 
     const usuariosMap = {}
 
- if (usuariosData) {
-  usuariosData.forEach(usuario => {
-    usuariosMap[usuario.correo] = usuario.nombres
-  })
-}
+    if (usuariosData) {
+      usuariosData.forEach(usuario => {
+        usuariosMap[usuario.correo] = usuario.nombres
+      })
+    }
+
     tbody.innerHTML = ''
 
     data.forEach(cot => {
@@ -1228,74 +1418,72 @@ btnSubirDocumentos.addEventListener('click', async () => {
 
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
-      row.insertCell(2).innerText =
-        cot.fecha ||
-        cot.created_at?.split('T')[0] ||
-        '-'
 
-      // Subtotal con separador de miles
-      row.insertCell(3).innerText = formatoMoneda(cot.subtotal)
+      const tipoClienteCell = row.insertCell(2)
+      tipoClienteCell.innerHTML = `
+        <span class="badge badge-tipo">
+          ${limpiarTexto(cot.tipo_cliente || 'Sin definir')}
+        </span>
+      `
 
-      // IVA con separador de miles
-      row.insertCell(4).innerText = formatoMoneda(cot.iva)
+      row.insertCell(3).innerText = cot.fecha || cot.created_at?.split('T')[0] || '-'
+      row.insertCell(4).innerText = formatoMoneda(cot.subtotal)
+      row.insertCell(5).innerText = formatoMoneda(cot.iva)
+      row.insertCell(6).innerText = formatoMoneda(cot.total)
 
-      // Total con separador de miles
-      row.insertCell(5).innerText = formatoMoneda(cot.total)
-
-      const estatusCell = row.insertCell(6)
+      const estatusCell = row.insertCell(7)
 
       if (cot.estatus_orden === 'Confirmada') {
-        estatusCell.innerHTML =
-          '<span class="badge badge-confirmada">Confirmada</span>'
+        estatusCell.innerHTML = '<span class="badge badge-confirmada">Confirmada</span>'
       } else {
-        estatusCell.innerHTML =
-          '<span class="badge badge-pendiente">Pendiente</span>'
+        estatusCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>'
       }
 
-      const evidenciaCell = row.insertCell(7)
+      const evidenciaCell = row.insertCell(8)
 
       if (cot.evidencia_aprobacion) {
         evidenciaCell.innerHTML = `
           <a class="btn-ver" href="${cot.evidencia_aprobacion}" target="_blank" rel="noopener">
-            Abrir
+            <i class="fas fa-eye"></i> Abrir
           </a>
 
           <a class="btn-ver" href="${cot.evidencia_aprobacion}" download>
-            Descargar
+            <i class="fas fa-download"></i> Descargar
           </a>
         `
       } else {
-        evidenciaCell.innerHTML = 'Sin evidencia'
+        evidenciaCell.innerHTML = `
+          <span class="texto-vacio">
+            <i class="fas fa-circle-exclamation"></i> Sin evidencia
+          </span>
+        `
       }
 
-      const descargasCell = row.insertCell(8)
+      const descargasCell = row.insertCell(9)
       descargasCell.className = 'descargas-cell'
 
       cargarDescargasCotizacion(cot.id, descargasCell)
 
-      // Nueva columna "Generado por"
-      const generadoPorCell = row.insertCell(9)
-      generadoPorCell.innerText =
-      usuariosMap[cot.user_id] ||
-      cot.user_id ||
-      '-'
+      const generadoPorCell = row.insertCell(10)
 
-      const accionCell = row.insertCell(10)
+      generadoPorCell.innerText =
+        usuariosMap[cot.user_id] ||
+        cot.user_id ||
+        '-'
+
+      const accionCell = row.insertCell(11)
       accionCell.className = 'acciones-cell'
 
-      
-
-      // Botón original de evidencia de aprobación
       if (cot.evidencia_aprobacion) {
         const btnConfirmada = document.createElement('button')
         btnConfirmada.className = 'btn-action'
         btnConfirmada.disabled = true
-        btnConfirmada.innerText = 'Confirmada'
+        btnConfirmada.innerHTML = '<i class="fas fa-check-circle"></i> Confirmada'
         accionCell.appendChild(btnConfirmada)
       } else {
         const inputFile = document.createElement('input')
         inputFile.type = 'file'
-        inputFile.accept = '.pdf,.jpg,.jpeg,.png'
+        inputFile.accept = '.pdf,application/pdf'
         inputFile.style.display = 'none'
 
         inputFile.onchange = () => {
@@ -1311,12 +1499,12 @@ btnSubirDocumentos.addEventListener('click', async () => {
         accionCell.appendChild(boton)
       }
 
-      // Nuevo botón "Subir archivos"
       const btnSubirArchivos = document.createElement('button')
       btnSubirArchivos.className = 'btn-action'
       btnSubirArchivos.style.marginLeft = '4px'
       btnSubirArchivos.innerHTML = '<i class="fas fa-folder-open"></i> Subir archivos'
       btnSubirArchivos.onclick = () => abrirModalDocumentos(cot)
+
       accionCell.appendChild(btnSubirArchivos)
     })
   }
@@ -1324,9 +1512,12 @@ btnSubirDocumentos.addEventListener('click', async () => {
   async function subirEvidencia(cotizacionId, archivo) {
     if (!archivo) return
 
-    const extension = archivo.name.split('.').pop()
-    const nombreArchivo =
-      `ordenes/cotizacion_${cotizacionId}_${Date.now()}.${extension}`
+    if (!esArchivoPDF(archivo)) {
+      mostrarNotificacion('Solo se permite subir evidencia en formato PDF.', 'warning')
+      return
+    }
+
+    const nombreArchivo = `ordenes/cotizacion_${cotizacionId}_${Date.now()}.pdf`
 
     const { error: uploadError } = await supabase.storage
       .from('evidencias')
@@ -1361,7 +1552,6 @@ btnSubirDocumentos.addEventListener('click', async () => {
   window.cargarOrdenes = cargarOrdenes
   window.subirEvidencia = subirEvidencia
 
-  // Inicializar órdenes
   cargarOrdenes()
 </script>
 

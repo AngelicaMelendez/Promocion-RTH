@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RYTH | Entregables</title>
+
 <link rel="icon" type="image/x-icon" href="img/star.ico">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -149,7 +150,7 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1150px;
     margin: 30px auto;
     background: white;
     padding: 30px;
@@ -165,6 +166,35 @@ h1 {
 .subtitle {
     color: var(--gris);
     margin-bottom: 25px;
+}
+
+.cotizacion-box {
+    background: #faf8f3;
+    border: 1px solid #eadcc7;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 22px;
+}
+
+.cotizacion-box label {
+    display: block;
+    color: var(--vino);
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.cotizacion-box select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .95rem;
+    outline: none;
+}
+
+.cotizacion-box select:focus {
+    border-color: var(--vino);
 }
 
 .upload-area {
@@ -197,8 +227,16 @@ h1 {
     display: none;
 }
 
+.tabla-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 14px;
+    background: white;
+}
+
 table {
     width: 100%;
+    min-width: 950px;
     border-collapse: collapse;
     margin-top: 20px;
 }
@@ -209,11 +247,39 @@ td {
     padding: 12px 10px;
     text-align: left;
     font-size: 0.85rem;
+    vertical-align: middle;
 }
 
 th {
     background: var(--gris-claro);
     color: var(--vino);
+}
+
+tbody tr:hover {
+    background: #f7f3ed;
+}
+
+.badge-cotizacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f7f3ed;
+    color: var(--vino);
+    border: 1px solid #eadcc7;
+    border-radius: 30px;
+    padding: 6px 12px;
+    font-size: .78rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.badge-sin-cotizacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #777;
+    font-size: .78rem;
+    white-space: nowrap;
 }
 
 .btn-action {
@@ -225,6 +291,11 @@ th {
     cursor: pointer;
     font-size: 0.75rem;
     margin: 2px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .btn-action:hover {
@@ -440,6 +511,7 @@ th {
         transform: translateX(0);
     }
 }
+
 .modal-confirmacion {
     position: fixed;
     inset: 0;
@@ -530,8 +602,6 @@ th {
         transform: scale(1);
     }
 }
-
-
 </style>
 </head>
 
@@ -548,7 +618,7 @@ th {
         </a>
 
         <a href="entregables.html" class="active">
-            <i class="fas fa-cloud-upload-alt"></i> Entregables
+            <i class="fas fa-cloud-upload-alt"></i> Testigos
         </a>
     </div>
 
@@ -570,6 +640,16 @@ th {
     <h1><i class="fas fa-cloud-upload-alt"></i> Entregables</h1>
     <p class="subtitle">Sube archivos multimedia (video, audio) relacionados con los proyectos</p>
 
+    <div class="cotizacion-box">
+        <label for="cotizacionSelect">
+            <i class="fas fa-file-invoice-dollar"></i> Cotización vinculada *
+        </label>
+
+        <select id="cotizacionSelect">
+            <option value="">Cargando cotizaciones...</option>
+        </select>
+    </div>
+
     <div class="upload-area" id="uploadArea">
         <i class="fas fa-cloud-upload-alt"></i>
         <p>Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
@@ -579,23 +659,26 @@ th {
 
     <h2 style="color:var(--vino); margin-bottom:15px;">Archivos subidos</h2>
 
-    <table id="tablaEntregables">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Tamaño</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
+    <div class="tabla-wrapper">
+        <table id="tablaEntregables">
+            <thead>
+                <tr>
+                    <th>Cotización</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Tamaño</th>
+                    <th>Fecha</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
 
-        <tbody id="tbodyEntregables">
-            <tr>
-                <td colspan="5" style="text-align:center;">Cargando...</td>
-            </tr>
-        </tbody>
-    </table>
+            <tbody id="tbodyEntregables">
+                <tr>
+                    <td colspan="6" style="text-align:center;">Cargando...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <p id="mensaje"></p>
 </div>
@@ -666,6 +749,16 @@ th {
 
 <script type="module">
 import { initAuth, supabase } from './app.js';
+
+function limpiar(texto) {
+    return String(texto || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }[m]));
+}
 
 function mostrarConfirmacion(mensaje){
     return new Promise(resolve=>{
@@ -739,10 +832,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.warn('initAuth:', e);
     }
 
+    actualizarNavbarLocal();
+
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
     const tbody = document.getElementById('tbodyEntregables');
     const mensaje = document.getElementById('mensaje');
+    const cotizacionSelect = document.getElementById('cotizacionSelect');
 
     function obtenerUsuarioLocal(){
         return {
@@ -769,31 +865,108 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
+    function actualizarNavbarLocal() {
+        const nombre =
+            localStorage.getItem('navUserName') ||
+            localStorage.getItem('usuario_nombre') ||
+            'Usuario';
+
+        const area =
+            localStorage.getItem('navUserArea') ||
+            localStorage.getItem('usuario_area') ||
+            '';
+
+        const foto =
+            localStorage.getItem('navUserPhoto') ||
+            localStorage.getItem('usuario_foto') ||
+            '';
+
+        const navNombre = document.getElementById('nav-user-name');
+        const navArea = document.getElementById('nav-user-area');
+        const avatar = document.getElementById('nav-avatar');
+
+        const perfilNombre = document.getElementById('perfilNombre');
+        const perfilArea = document.getElementById('perfilArea');
+        const perfilFoto = document.getElementById('perfilFoto');
+
+        if (navNombre) navNombre.textContent = nombre;
+        if (navArea) navArea.textContent = area || '';
+
+        if (avatar) {
+            if (foto) {
+                avatar.innerHTML = `
+                    <img src="${foto}" 
+                    style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                `;
+            } else {
+                avatar.textContent = nombre.charAt(0).toUpperCase();
+            }
+        }
+
+        if (perfilNombre) perfilNombre.textContent = nombre;
+        if (perfilArea) perfilArea.textContent = area || '-';
+
+        if (perfilFoto && foto) {
+            perfilFoto.src = foto;
+        }
+    }
+
+    async function cargarCotizaciones(){
+        cotizacionSelect.innerHTML = '<option value="">Cargando cotizaciones...</option>';
+
+        const { data, error } = await supabase
+            .from('cotizaciones')
+            .select('id, folio, cliente_nombre, fecha')
+            .order('id', { ascending:false });
+
+        if(error){
+            console.error('Error al cargar cotizaciones:', error);
+            cotizacionSelect.innerHTML = '<option value="">No se pudieron cargar cotizaciones</option>';
+            mostrarAlerta('No se pudieron cargar las cotizaciones.','error');
+            return;
+        }
+
+        if(!data || data.length === 0){
+            cotizacionSelect.innerHTML = '<option value="">No hay cotizaciones registradas</option>';
+            return;
+        }
+
+        cotizacionSelect.innerHTML = '<option value="">Selecciona una cotización</option>';
+
+        data.forEach(cotizacion => {
+            const option = document.createElement('option');
+            option.value = cotizacion.id;
+            option.dataset.folio = cotizacion.folio || '';
+            option.textContent = `${cotizacion.folio || 'Sin folio'} - ${cotizacion.cliente_nombre || 'Sin cliente'}`;
+            cotizacionSelect.appendChild(option);
+        });
+    }
+
     async function cargarEntregables(){
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando...</td></tr>';
 
         const usuario = await obtenerUsuarioActual();
 
         if(!usuario.id){
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No se pudo identificar el usuario.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No se pudo identificar el usuario.</td></tr>';
             return;
         }
 
         const { data, error } = await supabase
             .from('entregables')
-            .select('*')
+            .select('id, user_id, nombre, tipo, tamano, url, created_at, cotizacion_id, folio_cotizacion')
             .eq('user_id', usuario.id)
             .order('created_at', { ascending:false });
 
         if(error){
             console.error('Error al cargar entregables:', error);
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Error al cargar archivos</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Error al cargar archivos</td></tr>';
             mostrarAlerta('Error al cargar archivos.','error');
             return;
         }
 
         if(!data || data.length===0){
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay archivos subidos</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay archivos subidos</td></tr>';
             return;
         }
 
@@ -804,18 +977,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             const sizeMB = item.tamano ? (item.tamano / (1024*1024)).toFixed(1) : '0.0';
             const fecha = item.created_at ? new Date(item.created_at).toLocaleDateString('es-MX') : '-';
 
+            const cotizacionHtml = item.folio_cotizacion
+                ? `<span class="badge-cotizacion"><i class="fas fa-file-invoice-dollar"></i> ${limpiar(item.folio_cotizacion)}</span>`
+                : `<span class="badge-sin-cotizacion"><i class="fas fa-minus-circle"></i> Sin cotización</span>`;
+
             row.innerHTML = `
-            <td>${item.nombre || 'Sin nombre'}</td>
-            <td>${item.tipo || '-'}</td>
+            <td>${cotizacionHtml}</td>
+            <td>${limpiar(item.nombre || 'Sin nombre')}</td>
+            <td>${limpiar(item.tipo || '-')}</td>
             <td>${sizeMB} MB</td>
             <td>${fecha}</td>
             <td>
-                <a class="btn-action" href="${item.url}" target="_blank">
+                <a class="btn-action" href="${limpiar(item.url)}" target="_blank">
                     <i class="fas fa-download"></i> Descargar
                 </a>
 
                 <button class="btn-action" onclick="eliminarEntregable(${item.id})">
-                    <i class="fas fa-trash"></i>
+                    <i class="fas fa-trash"></i> Eliminar
                 </button>
             </td>`;
         });
@@ -834,6 +1012,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        const cotizacionId = cotizacionSelect.value;
+        const selectedOption = cotizacionSelect.options[cotizacionSelect.selectedIndex];
+        const folioCotizacion = selectedOption?.dataset?.folio || '';
+
+        if(!cotizacionId || !folioCotizacion){
+            mostrarAlerta('Selecciona una cotización antes de subir entregables.','warning');
+            return;
+        }
+
         mensaje.style.color = 'var(--vino)';
         mensaje.textContent = 'Subiendo archivo...';
 
@@ -848,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .replace(/[\u0300-\u036f]/g,'')
                 .replace(/[^a-zA-Z0-9._-]/g,'_');
 
-            const ruta = `${usuario.id}/${Date.now()}_${nombreSeguro}`;
+            const ruta = `${usuario.id}/${folioCotizacion}/${Date.now()}_${nombreSeguro}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('entregables')
@@ -873,7 +1060,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     nombre: archivo.name,
                     tipo: archivo.type,
                     tamano: archivo.size,
-                    url: publicData.publicUrl
+                    url: publicData.publicUrl,
+                    cotizacion_id: Number(cotizacionId),
+                    folio_cotizacion: folioCotizacion
                 });
 
             if(insertError){
@@ -941,8 +1130,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    await cargarCotizaciones();
     await cargarEntregables();
 });
+
+window.cerrarSesion = async function(){
+    try {
+        await supabase.auth.signOut();
+    } catch(e) {
+        console.warn(e);
+    }
+
+    localStorage.removeItem('usuario_id');
+    localStorage.removeItem('usuario_nombre');
+    localStorage.removeItem('usuario_correo');
+    localStorage.removeItem('usuario_area');
+    localStorage.removeItem('navUserArea');
+    localStorage.removeItem('usuario_rol');
+
+    window.location.href = 'login.html';
+};
+
+window.cerrarPerfilUsuario = function(){
+    const modal = document.getElementById('modalPerfilUsuario');
+
+    if(modal){
+        modal.classList.remove('active');
+    }
+};
+
+window.guardarFotoPerfil = function(){
+    mostrarAlerta('Función de foto pendiente de configurar.','info');
+};
 </script>
 </body>
 </html>

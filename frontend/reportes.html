@@ -7,9 +7,12 @@
   <link rel="icon" type="image/x-icon" href="img/star.ico">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
       --vino: #691b31;
       --vino-claro: #a02142;
@@ -20,6 +23,7 @@
       --blanco: #ffffff;
       --fondo: #f7f3ed;
     }
+
     html {
       overflow-y: auto;
       overflow-x: hidden;
@@ -30,50 +34,80 @@
       width: 0;
       height: 0;
     }
+
     body {
       font-family: 'Montserrat', sans-serif;
       background: var(--fondo);
       color: #2c3e4e;
       overflow-x: hidden;
     }
+
     .navbar {
       background: var(--vino);
       color: var(--beige);
-      padding: 12px 30px;
+      padding: 12px 22px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       flex-wrap: nowrap !important;
-      gap: 20px;
+      gap: 14px;
       position: sticky;
       top: 0;
       z-index: 1000;
       overflow-x: auto;
       scrollbar-width: none;
     }
+
     .navbar::-webkit-scrollbar {
       width: 0;
       height: 0;
     }
-    .nav-logo { display: flex; align-items: center; gap: 16px; font-weight: 700; flex-shrink: 0; }
-    .nav-logo img { width: 90px; height: auto; }
-    .nav-links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img {
+      width: 90px;
+      height: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+      min-width: max-content;
+    }
+
     .nav-links a {
       color: var(--beige);
       text-decoration: none;
-      padding: 8px 14px;
+      padding: 8px 11px;
       border-radius: 40px;
       display: flex;
       align-items: center;
       gap: 6px;
       transition: 0.2s;
+      white-space: nowrap;
+      font-size: 0.95rem;
     }
+
     .nav-links a.active,
     .nav-links a:hover {
       background-color: var(--dorado);
       color: var(--vino);
     }
-    .dropdown { position: relative; }
+
+    .dropdown {
+      position: relative;
+    }
+
     .dropdown-content {
       display: none;
       position: absolute;
@@ -85,13 +119,25 @@
       z-index: 100;
       box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
-    .dropdown:hover .dropdown-content { display: block; }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
     .dropdown-content a {
       color: var(--vino);
       padding: 10px 16px;
       display: block;
     }
-    .nav-profile { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .nav-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
     .avatar {
       background: var(--dorado);
       width: 38px;
@@ -105,113 +151,26 @@
       flex-shrink: 0;
     }
 
-    #nav-user-info{
-    display:flex;
-    flex-direction:column;
-    line-height:1.1;
-}
+    #nav-user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
 
-#nav-user-name{
-    font-weight:600;
-}
+    #nav-user-name {
+      font-weight: 600;
+    }
 
-#nav-user-area{
-    font-size:0.75rem;
-    opacity:.8;
-    color: var(--beige);
-}
+    #nav-user-area {
+      font-size: 0.75rem;
+      opacity: .8;
+      color: var(--beige);
+    }
 
-#modalPerfilUsuario{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-}
+    #nav-avatar {
+      cursor: pointer;
+    }
 
-#modalPerfilUsuario.active{
-  display:flex;
-}
-
-#modalPerfilUsuario .modal-content{
-  background:#f7f3ed;
-  border-radius:28px;
-  width:90%;
-  max-width:520px;
-  overflow:hidden;
-  box-shadow:0 15px 40px rgba(0,0,0,.35);
-}
-
-#modalPerfilUsuario .modal-header{
-  background:linear-gradient(90deg,#691b31,#a02142);
-  color:white;
-  padding:24px 32px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:1.7rem;
-  font-weight:800;
-}
-
-#modalPerfilUsuario .modal-header button{
-  background:none;
-  border:none;
-  color:white;
-  font-size:2rem;
-  cursor:pointer;
-}
-
-#modalPerfilUsuario .modal-body{
-  padding:38px 30px 34px;
-  text-align:center;
-}
-
-#perfilFoto{
-  width:140px !important;
-  height:140px !important;
-  border-radius:50%;
-  object-fit:cover;
-  background:#ddd;
-  margin-bottom:24px;
-  box-shadow:0 8px 20px rgba(0,0,0,.18);
-}
-
-#perfilNombre,
-#perfilArea{
-  color:#2c3e4e;
-  font-size:1.05rem;
-}
-
-#modalPerfilUsuario .modal-body p{
-  margin:4px 0;
-  font-size:1.05rem;
-}
-
-#modalPerfilUsuario .modal-body strong{
-  color:var(--vino);
-  font-weight:800;
-}
-
-#modalPerfilUsuario .btn-action{
-  background:var(--vino-claro);
-  color:white;
-  border:none;
-  padding:9px 18px;
-  border-radius:30px;
-  cursor:pointer;
-  font-size:.9rem;
-  font-weight:700;
-}
-
-#modalPerfilUsuario .btn-action:hover{
-  background:var(--vino);
-}
-
-#nav-avatar{
-  cursor:pointer;
-}
     .logout-btn {
       background: transparent;
       border: none;
@@ -219,17 +178,20 @@
       font-size: 1.2rem;
       cursor: pointer;
     }
+
     .container {
       max-width: 1300px;
       margin: 30px auto;
       padding: 0 25px;
     }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
       margin-bottom: 30px;
     }
+
     .stat-card {
       background: white;
       border-radius: 24px;
@@ -240,31 +202,51 @@
       cursor: pointer;
       transition: transform 0.2s;
     }
+
     .stat-card:hover {
       transform: scale(1.02);
     }
-    .stat-card h3 { font-size: 0.9rem; color: var(--gris); margin-bottom: 10px; }
-    .stat-card .valor { font-size: 2rem; font-weight: 700; color: var(--vino); }
-    .stat-card .sub { font-size: 0.75rem; color: var(--gris); }
+
+    .stat-card h3 {
+      font-size: 0.9rem;
+      color: var(--gris);
+      margin-bottom: 10px;
+    }
+
+    .stat-card .valor {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--vino);
+    }
+
+    .stat-card .sub {
+      font-size: 0.75rem;
+      color: var(--gris);
+    }
+
     .stat-card .valor-doble {
       display: flex;
       justify-content: space-around;
       gap: 10px;
       flex-wrap: wrap;
     }
+
     .stat-card .valor-doble .item {
       flex: 1;
       min-width: 80px;
     }
+
     .stat-card .valor-doble .item .numero {
       font-size: 1.8rem;
       font-weight: 700;
       color: var(--vino);
     }
+
     .stat-card .valor-doble .item .etiqueta {
       font-size: 0.75rem;
       color: var(--gris);
     }
+
     .card {
       background: white;
       border-radius: 24px;
@@ -272,6 +254,7 @@
       overflow: hidden;
       margin-bottom: 30px;
     }
+
     .card-header {
       background: var(--vino);
       color: white;
@@ -279,41 +262,54 @@
       font-weight: 700;
       font-size: 1.3rem;
     }
-    .card-body { padding: 25px 28px; }
+
+    .card-body {
+      padding: 25px 28px;
+    }
+
     .charts-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 30px;
       margin-bottom: 30px;
     }
+
     .chart-container {
       background: white;
       border-radius: 16px;
       padding: 15px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
+
     .chart-container h3 {
       text-align: center;
       color: var(--vino);
       margin-bottom: 15px;
     }
-    canvas { max-height: 300px; width: 100%; }
+
+    canvas {
+      max-height: 300px;
+      width: 100%;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
     }
-    th, td {
+
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 12px 8px;
       text-align: left;
     }
+
     th {
       background: var(--gris-claro);
       color: var(--vino);
     }
 
-    /* ---- MODAL ---- */
     .modal {
       display: none;
       position: fixed;
@@ -326,9 +322,11 @@
       justify-content: center;
       align-items: center;
     }
+
     .modal.active {
       display: flex;
     }
+
     .modal-content {
       background: white;
       width: 90%;
@@ -341,10 +339,19 @@
       overflow: hidden;
       animation: fadeIn 0.3s ease;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .modal-header {
       background: var(--vino);
       color: white;
@@ -355,6 +362,7 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .modal-header button {
       background: transparent;
       border: none;
@@ -362,111 +370,214 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+
     .modal-body {
       padding: 20px 28px;
       overflow-y: auto;
       flex: 1;
     }
-     .footer {
-            background: var(--vino);
-            color: white;
-            margin-top: 70px;
-            padding: 50px 55px 35px;
-        }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1.2fr;
-            gap: 50px;
-        }
+    #modalPerfilUsuario {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .footer-logo img {
-            width: 150px;
-            filter: brightness(0) invert(1);
-        }
+    #modalPerfilUsuario.active {
+      display: flex;
+    }
 
-        .footer-emergencias {
-            display: flex;
-            justify-content: center;
-            gap: 70px;
-            text-align: center;
-        }
+    #modalPerfilUsuario .modal-content {
+      background: #f7f3ed;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 520px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
 
-        .emergencia-item strong {
-            display: block;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-        }
+    #modalPerfilUsuario .modal-header {
+      background: linear-gradient(90deg,#691b31,#a02142);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
 
-        .footer-line {
-            width: 100%;
-            height: 1px;
-            background: var(--dorado);
-            margin: 40px 0 30px;
-        }
+    #modalPerfilUsuario .modal-header button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
 
-        @media (max-width: 850px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .navbar {
-                flex-wrap: nowrap !important;
-                justify-content: flex-start;
-                gap: 10px;
-                padding: 15px 20px;
-            }
-            .nav-links {
-                justify-content: center;
-                flex-shrink: 0;
-            }
-            .nav-profile {
-                flex-shrink: 0;
-            }
-            .dropdown-content {
-                right: auto;
-                left: 0;
-            }
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 30px;
-            }
-            .footer-emergencias {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
+    #modalPerfilUsuario .modal-body {
+      padding: 38px 30px 34px;
+      text-align: center;
+    }
+
+    #perfilFoto {
+      width: 140px !important;
+      height: 140px !important;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.18);
+    }
+
+    #perfilNombre,
+    #perfilArea {
+      color: #2c3e4e;
+      font-size: 1.05rem;
+    }
+
+    #modalPerfilUsuario .modal-body p {
+      margin: 4px 0;
+      font-size: 1.05rem;
+    }
+
+    #modalPerfilUsuario .modal-body strong {
+      color: var(--vino);
+      font-weight: 800;
+    }
+
+    #modalPerfilUsuario .btn-action {
+      background: var(--vino-claro);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    #modalPerfilUsuario .btn-action:hover {
+      background: var(--vino);
+    }
+
+    .footer {
+      background: var(--vino);
+      color: white;
+      margin-top: 70px;
+      padding: 50px 55px 35px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 50px;
+    }
+
+    .footer-logo img {
+      width: 150px;
+      filter: brightness(0) invert(1);
+    }
+
+    .footer-emergencias {
+      display: flex;
+      justify-content: center;
+      gap: 70px;
+      text-align: center;
+    }
+
+    .emergencia-item strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .footer-line {
+      width: 100%;
+      height: 1px;
+      background: var(--dorado);
+      margin: 40px 0 30px;
+    }
+
+    @media (max-width: 850px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+
+      .navbar {
+        flex-wrap: nowrap !important;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        justify-content: center;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+      }
+
+      .nav-profile {
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+
+      .dropdown-content {
+        right: auto;
+        left: 0;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+      }
+
+      .footer-emergencias {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-<!-- ENCABEZADO -->
 <nav class="navbar">
   <div class="nav-logo">
     <img src="img/logo_RYT.png" alt="Logo">
     <span>RADIO Y TELEVISIÓN HIDALGO</span>
   </div>
+
   <div class="nav-links">
     <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
     <a href="cotizacion.html"><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a>
-    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Órdenes</a>
+    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Documentación</a>
     <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
     <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Creación Trabajo</a>
     <a href="reportes.html" class="active"><i class="fas fa-chart-line"></i> Reportes</a>
   </div>
+
   <div class="nav-profile">
     <div class="avatar" id="nav-avatar" onclick="abrirPerfilUsuario()">U</div>
 
-
     <div id="nav-user-info">
-        <div id="nav-user-name">Usuario</div>
-        <div id="nav-user-area"></div>
+      <div id="nav-user-name">Usuario</div>
+      <div id="nav-user-area"></div>
     </div>
 
     <button class="logout-btn" onclick="cerrarSesion()">
-        <i class="fas fa-sign-out-alt"></i>
+      <i class="fas fa-sign-out-alt"></i>
     </button>
-</div>
+  </div>
 </nav>
 
 <main class="container">
@@ -476,22 +587,25 @@
       <div class="valor" id="totalServiciosVendidos">0</div>
       <div class="sub">Cantidad total</div>
     </div>
+
     <div class="stat-card" id="cardIngresosTotales">
       <h3><i class="fas fa-chart-line"></i> Ingresos totales (facturados)</h3>
       <div class="valor" id="totalIngresos">$0</div>
       <div class="sub">Cotizaciones facturadas</div>
     </div>
+
     <div class="stat-card" id="cardOrdenesConfirmadas">
       <h3><i class="fas fa-check-circle"></i> Órdenes confirmadas</h3>
       <div class="valor" id="cotizacionesAprobadas">0</div>
       <div class="sub">En ejecución</div>
     </div>
+
     <div class="stat-card" id="cardFacturasPendientes">
       <h3><i class="fas fa-file-invoice"></i> Facturas pendientes</h3>
       <div class="valor" id="facturasPendientes">0</div>
       <div class="sub">Por cobrar</div>
     </div>
-    <!-- NUEVA TARJETA: Cotizaciones Facturadas / No Facturadas -->
+
     <div class="stat-card" id="cardCotizacionesEstado">
       <h3><i class="fas fa-file-invoice"></i> Cotizaciones</h3>
       <div class="valor-doble">
@@ -499,6 +613,7 @@
           <div class="numero" id="cotizacionesFacturadas">0</div>
           <div class="etiqueta">Facturadas</div>
         </div>
+
         <div class="item">
           <div class="numero" id="cotizacionesPendientes">0</div>
           <div class="etiqueta">No facturadas</div>
@@ -510,12 +625,14 @@
 
   <div class="card">
     <div class="card-header"><i class="fas fa-chart-bar"></i> Ingresos mensuales (facturados)</div>
+
     <div class="card-body">
       <div class="charts-row">
         <div class="chart-container">
           <h3>Ingresos por mes</h3>
           <canvas id="ingresosMensualesChart"></canvas>
         </div>
+
         <div class="chart-container">
           <h3>Ingresos por categoría de servicio</h3>
           <canvas id="ingresosPorCategoriaChart"></canvas>
@@ -526,43 +643,66 @@
 
   <div class="card">
     <div class="card-header"><i class="fas fa-trophy"></i> Servicios más vendidos (por cantidad)</div>
+
     <div class="card-body">
       <div style="overflow-x: auto;">
         <table>
-          <thead><tr><th>Clave</th><th>Nombre</th><th>Cantidad vendida</th><th>Ingreso generado</th></tr></thead>
-          <tbody id="tbodyTopServicios"><tr><td colspan="4">Cargando...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Clave</th>
+              <th>Nombre</th>
+              <th>Cantidad vendida</th>
+              <th>Ingreso generado</th>
+            </tr>
+          </thead>
+
+          <tbody id="tbodyTopServicios">
+            <tr><td colspan="4">Cargando...</td></tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- NUEVA TABLA: Servicios con mayor ingreso generado -->
   <div class="card">
     <div class="card-header"><i class="fas fa-trophy"></i> Servicios con mayor ingreso generado</div>
+
     <div class="card-body">
       <div style="overflow-x: auto;">
         <table>
-          <thead><tr><th>Clave</th><th>Nombre</th><th>Cantidad vendida</th><th>Ingreso generado</th></tr></thead>
-          <tbody id="tbodyTopServiciosIngreso"><tr><td colspan="4">Cargando...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Clave</th>
+              <th>Nombre</th>
+              <th>Cantidad vendida</th>
+              <th>Ingreso generado</th>
+            </tr>
+          </thead>
+
+          <tbody id="tbodyTopServiciosIngreso">
+            <tr><td colspan="4">Cargando...</td></tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- NUEVA SECCIÓN: Resumen de cotizaciones facturadas vs no facturadas -->
   <div class="card">
     <div class="card-header"><i class="fas fa-balance-scale"></i> Cotizaciones facturadas vs no facturadas</div>
+
     <div class="card-body">
       <div class="charts-row">
         <div class="chart-container">
           <h3>Ingresos mensuales: Facturado vs Pendiente</h3>
           <canvas id="ingresosFacturadoPendienteChart"></canvas>
         </div>
+
         <div class="chart-container">
           <h3>Proporción de cotizaciones</h3>
           <canvas id="proporcionCotizacionesChart"></canvas>
         </div>
       </div>
+
       <div style="overflow-x: auto; margin-top: 20px;">
         <table>
           <thead>
@@ -574,6 +714,7 @@
               <th>Estatus factura</th>
             </tr>
           </thead>
+
           <tbody id="tbodyResumenCotizaciones">
             <tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>
           </tbody>
@@ -582,38 +723,48 @@
     </div>
   </div>
 
-  <!-- ===== NUEVA SECCIÓN: Servicios solicitados por categoría ===== -->
   <div class="card">
     <div class="card-header"><i class="fas fa-chart-pie"></i> Servicios solicitados por categoría</div>
+
     <div class="card-body">
       <div class="charts-row">
         <div class="chart-container">
           <h3>Cantidad de servicios por categoría</h3>
           <canvas id="serviciosCategoriaBarChart"></canvas>
         </div>
+
         <div class="chart-container">
           <h3>Distribución por categoría</h3>
           <canvas id="serviciosCategoriaPieChart"></canvas>
         </div>
       </div>
+
       <div style="overflow-x: auto; margin-top: 20px;">
         <table>
-          <thead><tr><th>Categoría</th><th>Cantidad solicitada</th><th>Ingreso generado</th></tr></thead>
-          <tbody id="tbodyServiciosCategoria"><tr><td colspan="3" style="text-align:center;">Cargando...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Cantidad solicitada</th>
+              <th>Ingreso generado</th>
+            </tr>
+          </thead>
+
+          <tbody id="tbodyServiciosCategoria">
+            <tr><td colspan="3" style="text-align:center;">Cargando...</td></tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
-
 </main>
 
-<!-- ===================== MODALES ===================== -->
 <div class="modal" id="modalServiciosVendidos">
   <div class="modal-content">
     <div class="modal-header">
       <span><i class="fas fa-list"></i> Todos los servicios vendidos (orden cronológico)</span>
       <button class="cerrar-modal"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="modal-body">
       <div style="overflow-x: auto;">
         <table>
@@ -629,6 +780,7 @@
               <th>Importe</th>
             </tr>
           </thead>
+
           <tbody id="tbodyDetalleVendidos">
             <tr><td colspan="8" style="text-align:center;">Cargando...</td></tr>
           </tbody>
@@ -644,6 +796,7 @@
       <span><i class="fas fa-chart-line"></i> Cotizaciones facturadas (ingresos totales)</span>
       <button class="cerrar-modal"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="modal-body">
       <div style="overflow-x: auto;">
         <table>
@@ -655,6 +808,7 @@
               <th>Total</th>
             </tr>
           </thead>
+
           <tbody id="tbodyIngresosDetalle">
             <tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>
           </tbody>
@@ -670,6 +824,7 @@
       <span><i class="fas fa-file-invoice"></i> Facturas pendientes (todas)</span>
       <button class="cerrar-modal"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="modal-body">
       <div style="overflow-x: auto;">
         <table>
@@ -682,6 +837,7 @@
               <th>Días desde emisión</th>
             </tr>
           </thead>
+
           <tbody id="tbodyPendientesDetalle">
             <tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>
           </tbody>
@@ -697,6 +853,7 @@
       <span><i class="fas fa-check-circle"></i> Órdenes confirmadas</span>
       <button class="cerrar-modal"><i class="fas fa-times"></i></button>
     </div>
+
     <div class="modal-body">
       <div style="overflow-x: auto;">
         <table>
@@ -708,6 +865,7 @@
               <th>Total</th>
             </tr>
           </thead>
+
           <tbody id="tbodyOrdenesDetalle">
             <tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>
           </tbody>
@@ -750,11 +908,22 @@
 
 <footer class="footer">
   <div class="footer-content">
-    <div class="footer-logo"><img src="img/logo_RYT.png" alt="Gobierno Hidalgo"></div>
-    <div class="footer-emergencias">
-      <div class="emergencia-item"><strong>911</strong><span>Emergencia</span></div>
-      <div class="emergencia-item"><strong>089</strong><span>Denuncia Anónima</span></div>
+    <div class="footer-logo">
+      <img src="img/logo_RYT.png" alt="Gobierno Hidalgo">
     </div>
+
+    <div class="footer-emergencias">
+      <div class="emergencia-item">
+        <strong>911</strong>
+        <span>Emergencia</span>
+      </div>
+
+      <div class="emergencia-item">
+        <strong>089</strong>
+        <span>Denuncia Anónima</span>
+      </div>
+    </div>
+
     <div class="footer-contacto">
       <p>Aviso de privacidad</p>
       <p>Carretera Federal México-Pachuca Km 84.5</p>
@@ -763,20 +932,25 @@
       <p>Tel: (771) 71 79000 Ext. 9211</p>
     </div>
   </div>
+
   <div class="footer-line"></div>
-  <div class="footer-copy">Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
+
+  <div class="footer-copy">
+    Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación
+  </div>
 </footer>
 
 <script type="module">
   import { initAuth, supabase } from './app.js'
 
-  // Inicializar la autenticación (navbar, listener, cierre de sesión, etc.)
   await initAuth()
 
-  // ---------- Variables y referencias a modales ----------
-  let ingresosMensualesChart, ingresosPorCategoriaChart
-  let ingresosFacturadoPendienteChart, proporcionCotizacionesChart
-  let serviciosCategoriaBarChart, serviciosCategoriaPieChart   // NUEVAS VARIABLES
+  let ingresosMensualesChart
+  let ingresosPorCategoriaChart
+  let ingresosFacturadoPendienteChart
+  let proporcionCotizacionesChart
+  let serviciosCategoriaBarChart
+  let serviciosCategoriaPieChart
 
   const modalIngresos = document.getElementById('modalIngresosTotales')
   const modalPendientes = document.getElementById('modalFacturasPendientes')
@@ -792,14 +966,17 @@
     modalIngresos.classList.add('active')
     cargarDetalleIngresos()
   })
+
   cardPendientes.addEventListener('click', () => {
     modalPendientes.classList.add('active')
     cargarDetallePendientes()
   })
+
   cardOrdenes.addEventListener('click', () => {
     modalOrdenes.classList.add('active')
     cargarDetalleOrdenes()
   })
+
   cardServicios.addEventListener('click', () => {
     modalServicios.classList.add('active')
     cargarDetalleServiciosVendidos()
@@ -810,27 +987,30 @@
       btn.closest('.modal').classList.remove('active')
     })
   })
+
   document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('active')
+      if (e.target === modal) {
+        modal.classList.remove('active')
+      }
     })
   })
 
-  // ---------- Funciones auxiliares de formato ----------
   function formatoMoneda(cantidad) {
-    const numero = Number(cantidad) || 0;
+    const numero = Number(cantidad) || 0
+
     return '$' + numero.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    });
+    })
   }
 
   function formatoNumero(cantidad) {
-    const numero = Number(cantidad) || 0;
-    return numero.toLocaleString('en-US');
+    const numero = Number(cantidad) || 0
+
+    return numero.toLocaleString('en-US')
   }
 
-  // ---------- Funciones de carga de reportes ----------
   async function cargarReportes() {
     await Promise.all([
       cargarEstadisticas(),
@@ -838,65 +1018,74 @@
       cargarIngresosPorCategoria(),
       cargarTopServicios(),
       cargarTopServiciosPorIngreso(),
-      cargarResumenCotizaciones(),          // NUEVO
-      cargarGraficaFacturadoPendiente(),    // NUEVO
-      cargarTablaResumenCotizaciones(),     // NUEVO
-      cargarServiciosPorCategoria()         // NUEVA FUNCIÓN AGREGADA
+      cargarResumenCotizaciones(),
+      cargarGraficaFacturadoPendiente(),
+      cargarTablaResumenCotizaciones(),
+      cargarServiciosPorCategoria()
     ])
   }
 
-  // ---------- ESTADÍSTICAS ORIGINALES (con adición de cotizaciones facturadas/pendientes) ----------
   async function cargarEstadisticas() {
     const { data: facturadas } = await supabase
       .from('cotizaciones')
       .select('total')
       .eq('estatus_factura', 'Facturado')
+
     const totalIngresos = facturadas?.reduce((sum, c) => sum + (c.total || 0), 0) || 0
+
     document.getElementById('totalIngresos').innerText = formatoMoneda(totalIngresos)
 
     const { count: pendientes } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_factura', 'Pendiente')
+
     document.getElementById('facturasPendientes').innerText = formatoNumero(pendientes || 0)
 
     const { count: confirmadas } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_orden', 'Confirmada')
+
     document.getElementById('cotizacionesAprobadas').innerText = formatoNumero(confirmadas || 0)
 
     const { data: cotizacionesConfirmadas } = await supabase
       .from('cotizaciones')
       .select('id')
       .eq('estatus_orden', 'Confirmada')
+
     const ids = cotizacionesConfirmadas?.map(c => c.id) || []
+
     let totalCantidad = 0
+
     if (ids.length) {
       const { data: detalles } = await supabase
         .from('cotizacion_detalle')
         .select('cantidad')
         .in('cotizacion_id', ids)
+
       totalCantidad = detalles?.reduce((sum, d) => sum + (d.cantidad || 0), 0) || 0
     }
+
     document.getElementById('totalServiciosVendidos').innerText = formatoNumero(totalCantidad)
 
-    // ---- NUEVAS ESTADÍSTICAS PARA COTIZACIONES FACTURADAS / PENDIENTES ----
     const { count: factCount } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_factura', 'Facturado')
+
     const { count: pendCount } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_factura', 'Pendiente')
+
     document.getElementById('cotizacionesFacturadas').innerText = formatoNumero(factCount || 0)
     document.getElementById('cotizacionesPendientes').innerText = formatoNumero(pendCount || 0)
   }
 
-  // ---------- DETALLES MODALES (sin cambios) ----------
   async function cargarDetalleIngresos() {
     const tbody = document.getElementById('tbodyIngresosDetalle')
+
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>'
 
     const { data, error } = await supabase
@@ -910,14 +1099,17 @@
       tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Error: ${error.message}</td></tr>`
       return
     }
+
     if (!data || data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay cotizaciones facturadas.</td></tr>'
       return
     }
 
     tbody.innerHTML = ''
+
     data.forEach(cot => {
       const row = tbody.insertRow()
+
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
@@ -927,6 +1119,7 @@
 
   async function cargarDetallePendientes() {
     const tbody = document.getElementById('tbodyPendientesDetalle')
+
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>'
 
     const { data, error } = await supabase
@@ -940,26 +1133,31 @@
       tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error: ${error.message}</td></tr>`
       return
     }
+
     if (!data || data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay facturas pendientes.</td></tr>'
       return
     }
 
     const hoy = new Date()
+
     tbody.innerHTML = ''
+
     data.forEach(cot => {
       const row = tbody.insertRow()
+      const dias = Math.floor((hoy - new Date(cot.fecha)) / (1000 * 60 * 60 * 24))
+
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
       row.insertCell(3).innerText = formatoMoneda(cot.total)
-      const dias = Math.floor((hoy - new Date(cot.fecha)) / (1000 * 60 * 60 * 24))
       row.insertCell(4).innerText = `${dias} días`
     })
   }
 
   async function cargarDetalleOrdenes() {
     const tbody = document.getElementById('tbodyOrdenesDetalle')
+
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>'
 
     const { data, error } = await supabase
@@ -973,14 +1171,17 @@
       tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Error: ${error.message}</td></tr>`
       return
     }
+
     if (!data || data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay órdenes confirmadas.</td></tr>'
       return
     }
 
     tbody.innerHTML = ''
+
     data.forEach(cot => {
       const row = tbody.insertRow()
+
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
@@ -990,6 +1191,7 @@
 
   async function cargarDetalleServiciosVendidos() {
     const tbody = document.getElementById('tbodyDetalleVendidos')
+
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando...</td></tr>'
 
     const { data: cotizaciones, error: errorCot } = await supabase
@@ -1003,6 +1205,7 @@
       tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Error al consultar cotizaciones: ${errorCot.message}</td></tr>`
       return
     }
+
     if (!cotizaciones || cotizaciones.length === 0) {
       tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No hay cotizaciones confirmadas.</td></tr>'
       return
@@ -1019,12 +1222,14 @@
       tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Error al consultar detalles: ${errorDet.message}</td></tr>`
       return
     }
+
     if (!detalles || detalles.length === 0) {
       tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Las cotizaciones no tienen servicios asociados.</td></tr>'
       return
     }
 
     const serviciosIds = [...new Set(detalles.map(d => d.servicio_id))]
+
     const { data: servicios, error: errorServ } = await supabase
       .from('servicios')
       .select('id, nombre')
@@ -1034,14 +1239,18 @@
       tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Error al consultar servicios: ${errorServ.message}</td></tr>`
       return
     }
+
     const servicioMap = Object.fromEntries(servicios.map(s => [s.id, s.nombre || 'Sin nombre']))
 
-    const cotizacionMap = Object.fromEntries(cotizaciones.map(c => [c.id, c]))
     tbody.innerHTML = ''
+
     for (const cot of cotizaciones) {
       const detallesDeCot = detalles.filter(d => d.cotizacion_id === cot.id)
+
       for (const det of detallesDeCot) {
         const row = tbody.insertRow()
+        const importe = (det.cantidad || 0) * (det.precio_unitario || 0)
+
         row.insertCell(0).innerText = cot.folio || '-'
         row.insertCell(1).innerText = cot.cliente_nombre || '-'
         row.insertCell(2).innerText = cot.fecha || '-'
@@ -1049,13 +1258,11 @@
         row.insertCell(4).innerText = servicioMap[det.servicio_id] || 'Desconocido'
         row.insertCell(5).innerText = formatoNumero(det.cantidad)
         row.insertCell(6).innerText = formatoMoneda(det.precio_unitario)
-        const importe = (det.cantidad || 0) * (det.precio_unitario || 0)
         row.insertCell(7).innerText = formatoMoneda(importe)
       }
     }
   }
 
-  // ---------- GRÁFICAS ORIGINALES (sin cambios) ----------
   async function cargarIngresosMensuales() {
     const { data: facturadas } = await supabase
       .from('cotizaciones')
@@ -1064,23 +1271,38 @@
       .order('fecha', { ascending: true })
 
     const mensual = {}
+
     facturadas?.forEach(c => {
       if (!c.fecha) return
+
       const mes = c.fecha.slice(0, 7)
       mensual[mes] = (mensual[mes] || 0) + c.total
     })
+
     const meses = Object.keys(mensual).sort()
     const valores = meses.map(m => mensual[m])
 
     if (ingresosMensualesChart) ingresosMensualesChart.destroy()
+
     const ctx = document.getElementById('ingresosMensualesChart').getContext('2d')
+
     ingresosMensualesChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: meses,
-        datasets: [{ label: 'Ingresos (MXN)', data: valores, backgroundColor: '#691b31', borderRadius: 8 }]
+        datasets: [
+          {
+            label: 'Ingresos (MXN)',
+            data: valores,
+            backgroundColor: '#691b31',
+            borderRadius: 8
+          }
+        ]
       },
-      options: { responsive: true, maintainAspectRatio: true }
+      options: {
+        responsive: true,
+        maintainAspectRatio: true
+      }
     })
   }
 
@@ -1089,47 +1311,81 @@
       .from('cotizaciones')
       .select('id')
       .eq('estatus_orden', 'Confirmada')
+
     const ids = cotizacionesConfirmadas?.map(c => c.id) || []
+
     if (ids.length === 0) {
       const ctx = document.getElementById('ingresosPorCategoriaChart').getContext('2d')
+
       if (ingresosPorCategoriaChart) ingresosPorCategoriaChart.destroy()
-      ingresosPorCategoriaChart = new Chart(ctx, { type: 'pie', data: { labels: ['Sin datos'], datasets: [{ data: [1] }] } })
+
+      ingresosPorCategoriaChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Sin datos'],
+          datasets: [{ data: [1] }]
+        }
+      })
+
       return
     }
+
     const { data: detalles } = await supabase
       .from('cotizacion_detalle')
       .select('servicio_id, cantidad, precio_unitario')
       .in('cotizacion_id', ids)
-    
+
     const porServicio = {}
+
     for (let det of detalles) {
       const importe = det.cantidad * det.precio_unitario
       porServicio[det.servicio_id] = (porServicio[det.servicio_id] || 0) + importe
     }
+
     const servicioIds = Object.keys(porServicio)
+
     if (servicioIds.length === 0) return
+
     const { data: servicios } = await supabase
       .from('servicios')
       .select('id, categoria')
       .in('id', servicioIds)
+
     const mapaCategoria = Object.fromEntries(servicios?.map(s => [s.id, s.categoria || 'Sin categoría']) || [])
+
     const porCategoria = {}
+
     for (let [sid, ingreso] of Object.entries(porServicio)) {
       const cat = mapaCategoria[sid] || 'Sin categoría'
       porCategoria[cat] = (porCategoria[cat] || 0) + ingreso
     }
+
     const categorias = Object.keys(porCategoria)
     const valores = categorias.map(c => porCategoria[c])
 
     const ctx = document.getElementById('ingresosPorCategoriaChart').getContext('2d')
+
     if (ingresosPorCategoriaChart) ingresosPorCategoriaChart.destroy()
+
     ingresosPorCategoriaChart = new Chart(ctx, {
       type: 'pie',
       data: {
         labels: categorias,
-        datasets: [{ data: valores, backgroundColor: ['#691b31','#a02142','#bc955b','#ddc9a3','#7d7d7d','#c9a15f'] }]
+        datasets: [
+          {
+            data: valores,
+            backgroundColor: ['#691b31', '#a02142', '#bc955b', '#ddc9a3', '#7d7d7d', '#c9a15f']
+          }
+        ]
       },
-      options: { responsive: true, plugins: { legend: { position: 'right' } } }
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'right'
+          }
+        }
+      }
     })
   }
 
@@ -1138,31 +1394,56 @@
       .from('cotizaciones')
       .select('id')
       .eq('estatus_orden', 'Confirmada')
+
     const ids = cotizacionesConfirmadas?.map(c => c.id) || []
+
     if (ids.length === 0) {
       document.getElementById('tbodyTopServicios').innerHTML = '<tr><td colspan="4">Sin servicios vendidos.</td></tr>'
       return
     }
+
     const { data: detalles } = await supabase
       .from('cotizacion_detalle')
       .select('servicio_id, cantidad, precio_unitario')
       .in('cotizacion_id', ids)
+
     const mapa = new Map()
+
     for (let det of detalles) {
       const importe = det.cantidad * det.precio_unitario
+
       if (!mapa.has(det.servicio_id)) {
-        const { data: serv } = await supabase.from('servicios').select('clave, nombre').eq('id', det.servicio_id).single()
-        mapa.set(det.servicio_id, { cantidad: 0, importe: 0, clave: serv?.clave || '', nombre: serv?.nombre || '' })
+        const { data: serv } = await supabase
+          .from('servicios')
+          .select('clave, nombre')
+          .eq('id', det.servicio_id)
+          .single()
+
+        mapa.set(det.servicio_id, {
+          cantidad: 0,
+          importe: 0,
+          clave: serv?.clave || '',
+          nombre: serv?.nombre || ''
+        })
       }
+
       const item = mapa.get(det.servicio_id)
+
       item.cantidad += det.cantidad
       item.importe += importe
     }
-    const ranking = Array.from(mapa.values()).sort((a,b) => b.cantidad - a.cantidad).slice(0, 10)
+
+    const ranking = Array.from(mapa.values())
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .slice(0, 10)
+
     const tbody = document.getElementById('tbodyTopServicios')
+
     tbody.innerHTML = ''
+
     ranking.forEach(r => {
       const row = tbody.insertRow()
+
       row.insertCell(0).innerText = r.clave
       row.insertCell(1).innerText = r.nombre
       row.insertCell(2).innerText = formatoNumero(r.cantidad)
@@ -1175,31 +1456,56 @@
       .from('cotizaciones')
       .select('id')
       .eq('estatus_orden', 'Confirmada')
+
     const ids = cotizacionesConfirmadas?.map(c => c.id) || []
+
     if (ids.length === 0) {
       document.getElementById('tbodyTopServiciosIngreso').innerHTML = '<tr><td colspan="4">Sin servicios vendidos.</td></tr>'
       return
     }
+
     const { data: detalles } = await supabase
       .from('cotizacion_detalle')
       .select('servicio_id, cantidad, precio_unitario')
       .in('cotizacion_id', ids)
+
     const mapa = new Map()
+
     for (let det of detalles) {
       const importe = det.cantidad * det.precio_unitario
+
       if (!mapa.has(det.servicio_id)) {
-        const { data: serv } = await supabase.from('servicios').select('clave, nombre').eq('id', det.servicio_id).single()
-        mapa.set(det.servicio_id, { cantidad: 0, importe: 0, clave: serv?.clave || '', nombre: serv?.nombre || '' })
+        const { data: serv } = await supabase
+          .from('servicios')
+          .select('clave, nombre')
+          .eq('id', det.servicio_id)
+          .single()
+
+        mapa.set(det.servicio_id, {
+          cantidad: 0,
+          importe: 0,
+          clave: serv?.clave || '',
+          nombre: serv?.nombre || ''
+        })
       }
+
       const item = mapa.get(det.servicio_id)
+
       item.cantidad += det.cantidad
       item.importe += importe
     }
-    const ranking = Array.from(mapa.values()).sort((a,b) => b.importe - a.importe).slice(0, 10)
+
+    const ranking = Array.from(mapa.values())
+      .sort((a, b) => b.importe - a.importe)
+      .slice(0, 10)
+
     const tbody = document.getElementById('tbodyTopServiciosIngreso')
+
     tbody.innerHTML = ''
+
     ranking.forEach(r => {
       const row = tbody.insertRow()
+
       row.insertCell(0).innerText = r.clave
       row.insertCell(1).innerText = r.nombre
       row.insertCell(2).innerText = formatoNumero(r.cantidad)
@@ -1207,15 +1513,11 @@
     })
   }
 
-  // ---------- NUEVAS FUNCIONES: Resumen de cotizaciones facturadas vs pendientes ----------
   async function cargarResumenCotizaciones() {
-    // Esta función actualiza la tarjeta de estadísticas, pero ya se hizo en cargarEstadisticas
-    // Así que aquí solo dejamos un placeholder, pero llamamos a cargarEstadisticas que ya lo hace.
-    // No es necesario duplicar.
+    return
   }
 
   async function cargarGraficaFacturadoPendiente() {
-    // Obtener todas las cotizaciones con fecha y total, agrupar por mes y estatus
     const { data: todas, error } = await supabase
       .from('cotizaciones')
       .select('fecha, total, estatus_factura')
@@ -1231,7 +1533,9 @@
 
     todas?.forEach(c => {
       if (!c.fecha) return
+
       const mes = c.fecha.slice(0, 7)
+
       if (c.estatus_factura === 'Facturado') {
         facturadoPorMes[mes] = (facturadoPorMes[mes] || 0) + (c.total || 0)
       } else if (c.estatus_factura === 'Pendiente') {
@@ -1239,54 +1543,76 @@
       }
     })
 
-    // Unir todos los meses presentes en ambos objetos
     const mesesSet = new Set([...Object.keys(facturadoPorMes), ...Object.keys(pendientePorMes)])
     const meses = Array.from(mesesSet).sort()
     const facturadoValores = meses.map(m => facturadoPorMes[m] || 0)
     const pendienteValores = meses.map(m => pendientePorMes[m] || 0)
 
     const ctx = document.getElementById('ingresosFacturadoPendienteChart').getContext('2d')
+
     if (ingresosFacturadoPendienteChart) ingresosFacturadoPendienteChart.destroy()
+
     ingresosFacturadoPendienteChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: meses,
         datasets: [
-          { label: 'Facturado', data: facturadoValores, backgroundColor: '#691b31', borderRadius: 4 },
-          { label: 'Pendiente', data: pendienteValores, backgroundColor: '#bc955b', borderRadius: 4 }
+          {
+            label: 'Facturado',
+            data: facturadoValores,
+            backgroundColor: '#691b31',
+            borderRadius: 4
+          },
+          {
+            label: 'Pendiente',
+            data: pendienteValores,
+            backgroundColor: '#bc955b',
+            borderRadius: 4
+          }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { position: 'top' }
+          legend: {
+            position: 'top'
+          }
         }
       }
     })
 
-    // Gráfica de pastel: proporción de cotizaciones (cantidad)
     const { count: factCount } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_factura', 'Facturado')
+
     const { count: pendCount } = await supabase
       .from('cotizaciones')
       .select('*', { count: 'exact', head: true })
       .eq('estatus_factura', 'Pendiente')
 
     const ctxPie = document.getElementById('proporcionCotizacionesChart').getContext('2d')
+
     if (proporcionCotizacionesChart) proporcionCotizacionesChart.destroy()
+
     proporcionCotizacionesChart = new Chart(ctxPie, {
       type: 'pie',
       data: {
         labels: ['Facturadas', 'No facturadas'],
-        datasets: [{ data: [factCount || 0, pendCount || 0], backgroundColor: ['#691b31', '#bc955b'] }]
+        datasets: [
+          {
+            data: [factCount || 0, pendCount || 0],
+            backgroundColor: ['#691b31', '#bc955b']
+          }
+        ]
       },
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'right' }
+          legend: {
+            position: 'right'
+          }
         }
       }
     })
@@ -1294,6 +1620,7 @@
 
   async function cargarTablaResumenCotizaciones() {
     const tbody = document.getElementById('tbodyResumenCotizaciones')
+
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>'
 
     const { data, error } = await supabase
@@ -1306,66 +1633,104 @@
       tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error: ${error.message}</td></tr>`
       return
     }
+
     if (!data || data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay cotizaciones registradas.</td></tr>'
       return
     }
 
     tbody.innerHTML = ''
+
     data.forEach(cot => {
       const row = tbody.insertRow()
+      const estatus = cot.estatus_factura || 'Pendiente'
+      const badge = estatus === 'Facturado' ? '✅ Facturado' : '⏳ Pendiente'
+
       row.insertCell(0).innerText = cot.folio || '-'
       row.insertCell(1).innerText = cot.cliente_nombre || '-'
       row.insertCell(2).innerText = cot.fecha || '-'
       row.insertCell(3).innerText = formatoMoneda(cot.total)
-      const estatus = cot.estatus_factura || 'Pendiente'
-      const badge = estatus === 'Facturado' ? '✅ Facturado' : '⏳ Pendiente'
       row.insertCell(4).innerText = badge
     })
   }
 
-  // ---------- NUEVA FUNCIÓN: Servicios solicitados por categoría ----------
   async function cargarServiciosPorCategoria() {
-    // Obtener todas las cotizaciones con estatus Confirmada
     const { data: cotizaciones, error: errCot } = await supabase
       .from('cotizaciones')
       .select('id')
       .eq('estatus_orden', 'Confirmada')
 
     if (errCot || !cotizaciones || cotizaciones.length === 0) {
-      // No hay datos, mostrar mensaje en tabla y gráficas vacías
-      document.getElementById('tbodyServiciosCategoria').innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay servicios solicitados.</td></tr>'
-      // Dibujar gráficas vacías
+      document.getElementById('tbodyServiciosCategoria').innerHTML =
+        '<tr><td colspan="3" style="text-align:center;">No hay servicios solicitados.</td></tr>'
+
       const ctxBar = document.getElementById('serviciosCategoriaBarChart').getContext('2d')
+
       if (serviciosCategoriaBarChart) serviciosCategoriaBarChart.destroy()
-      serviciosCategoriaBarChart = new Chart(ctxBar, { type: 'bar', data: { labels: ['Sin datos'], datasets: [{ data: [0] }] } })
+
+      serviciosCategoriaBarChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: ['Sin datos'],
+          datasets: [{ data: [0] }]
+        }
+      })
+
       const ctxPie = document.getElementById('serviciosCategoriaPieChart').getContext('2d')
+
       if (serviciosCategoriaPieChart) serviciosCategoriaPieChart.destroy()
-      serviciosCategoriaPieChart = new Chart(ctxPie, { type: 'pie', data: { labels: ['Sin datos'], datasets: [{ data: [1] }] } })
+
+      serviciosCategoriaPieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+          labels: ['Sin datos'],
+          datasets: [{ data: [1] }]
+        }
+      })
+
       return
     }
 
     const ids = cotizaciones.map(c => c.id)
 
-    // Obtener detalles de esas cotizaciones
     const { data: detalles, error: errDet } = await supabase
       .from('cotizacion_detalle')
       .select('servicio_id, cantidad, precio_unitario')
       .in('cotizacion_id', ids)
 
     if (errDet || !detalles || detalles.length === 0) {
-      document.getElementById('tbodyServiciosCategoria').innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay servicios en las cotizaciones confirmadas.</td></tr>'
+      document.getElementById('tbodyServiciosCategoria').innerHTML =
+        '<tr><td colspan="3" style="text-align:center;">No hay servicios en las cotizaciones confirmadas.</td></tr>'
+
       const ctxBar = document.getElementById('serviciosCategoriaBarChart').getContext('2d')
+
       if (serviciosCategoriaBarChart) serviciosCategoriaBarChart.destroy()
-      serviciosCategoriaBarChart = new Chart(ctxBar, { type: 'bar', data: { labels: ['Sin datos'], datasets: [{ data: [0] }] } })
+
+      serviciosCategoriaBarChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: ['Sin datos'],
+          datasets: [{ data: [0] }]
+        }
+      })
+
       const ctxPie = document.getElementById('serviciosCategoriaPieChart').getContext('2d')
+
       if (serviciosCategoriaPieChart) serviciosCategoriaPieChart.destroy()
-      serviciosCategoriaPieChart = new Chart(ctxPie, { type: 'pie', data: { labels: ['Sin datos'], datasets: [{ data: [1] }] } })
+
+      serviciosCategoriaPieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+          labels: ['Sin datos'],
+          datasets: [{ data: [1] }]
+        }
+      })
+
       return
     }
 
-    // Obtener categorías de los servicios
     const servicioIds = [...new Set(detalles.map(d => d.servicio_id))]
+
     const { data: servicios, error: errServ } = await supabase
       .from('servicios')
       .select('id, categoria')
@@ -1378,64 +1743,95 @@
 
     const mapaCategoria = Object.fromEntries(servicios.map(s => [s.id, s.categoria || 'Sin categoría']))
 
-    // Agrupar por categoría: sumar cantidades e ingresos
     const porCategoria = {}
+
     detalles.forEach(d => {
       const cat = mapaCategoria[d.servicio_id] || 'Sin categoría'
-      if (!porCategoria[cat]) porCategoria[cat] = { cantidad: 0, ingreso: 0 }
+
+      if (!porCategoria[cat]) {
+        porCategoria[cat] = {
+          cantidad: 0,
+          ingreso: 0
+        }
+      }
+
       porCategoria[cat].cantidad += d.cantidad
       porCategoria[cat].ingreso += d.cantidad * d.precio_unitario
     })
 
-    // Ordenar por cantidad descendente para la tabla y gráficas
-    const categoriasOrdenadas = Object.keys(porCategoria).sort((a, b) => porCategoria[b].cantidad - porCategoria[a].cantidad)
-    const cantidades = categoriasOrdenadas.map(c => porCategoria[c].cantidad)
-    const ingresos = categoriasOrdenadas.map(c => porCategoria[c].ingreso)
+    const categoriasOrdenadas = Object.keys(porCategoria)
+      .sort((a, b) => porCategoria[b].cantidad - porCategoria[a].cantidad)
 
-    // Gráfica de barras
+    const cantidades = categoriasOrdenadas.map(c => porCategoria[c].cantidad)
+
     const ctxBar = document.getElementById('serviciosCategoriaBarChart').getContext('2d')
+
     if (serviciosCategoriaBarChart) serviciosCategoriaBarChart.destroy()
+
     serviciosCategoriaBarChart = new Chart(ctxBar, {
       type: 'bar',
       data: {
         labels: categoriasOrdenadas,
-        datasets: [{ label: 'Cantidad solicitada', data: cantidades, backgroundColor: '#691b31', borderRadius: 6 }]
+        datasets: [
+          {
+            label: 'Cantidad solicitada',
+            data: cantidades,
+            backgroundColor: '#691b31',
+            borderRadius: 6
+          }
+        ]
       },
-      options: { responsive: true, maintainAspectRatio: true }
+      options: {
+        responsive: true,
+        maintainAspectRatio: true
+      }
     })
 
-    // Gráfica de pastel
     const ctxPie = document.getElementById('serviciosCategoriaPieChart').getContext('2d')
+
     if (serviciosCategoriaPieChart) serviciosCategoriaPieChart.destroy()
-    const colores = ['#691b31','#a02142','#bc955b','#ddc9a3','#7d7d7d','#c9a15f','#4a2c2a','#b8860b']
+
+    const colores = ['#691b31', '#a02142', '#bc955b', '#ddc9a3', '#7d7d7d', '#c9a15f', '#4a2c2a', '#b8860b']
+
     serviciosCategoriaPieChart = new Chart(ctxPie, {
       type: 'pie',
       data: {
         labels: categoriasOrdenadas,
-        datasets: [{ data: cantidades, backgroundColor: colores.slice(0, categoriasOrdenadas.length) }]
+        datasets: [
+          {
+            data: cantidades,
+            backgroundColor: colores.slice(0, categoriasOrdenadas.length)
+          }
+        ]
       },
       options: {
         responsive: true,
-        plugins: { legend: { position: 'right' } }
+        plugins: {
+          legend: {
+            position: 'right'
+          }
+        }
       }
     })
 
-    // Llenar tabla
     const tbody = document.getElementById('tbodyServiciosCategoria')
+
     tbody.innerHTML = ''
+
     if (categoriasOrdenadas.length === 0) {
       tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay datos.</td></tr>'
       return
     }
+
     categoriasOrdenadas.forEach(cat => {
       const row = tbody.insertRow()
+
       row.insertCell(0).innerText = cat
       row.insertCell(1).innerText = formatoNumero(porCategoria[cat].cantidad)
       row.insertCell(2).innerText = formatoMoneda(porCategoria[cat].ingreso)
     })
   }
 
-  // Iniciar carga de reportes
   cargarReportes()
 </script>
 
