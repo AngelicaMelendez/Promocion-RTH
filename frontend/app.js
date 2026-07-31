@@ -293,6 +293,7 @@ function aplicarRestriccionesDeAcceso() {
 
   if (!paginaActual || paginaActual === 'login') return
 
+  // === PÁGINAS PERMITIDAS (MODIFICADO) ===
   const paginasTrabajo = [
     'notificaciones',
     'entregables'
@@ -305,12 +306,16 @@ function aplicarRestriccionesDeAcceso() {
     'factura',
     'creaciontrabajo',
     'entregables',
-    'reportes'
+    'reportes',
+    'barraprogramatica',    // <-- NUEVA
+    'historialcambios'      // <-- NUEVA
   ]
 
   const paginasJuridicoAdministracion = [
     'ordenes',
-    'factura'
+    'factura',
+    'barraprogramatica',    // <-- NUEVA (si aplica)
+    'historialcambios'      // <-- NUEVA (si aplica)
   ]
 
   const paginasDirector = [
@@ -321,7 +326,9 @@ function aplicarRestriccionesDeAcceso() {
     'creaciontrabajo',
     'entregables',
     'reportes',
-    'notificaciones'
+    'notificaciones',
+    'barraprogramatica',    // <-- NUEVA
+    'historialcambios'      // <-- NUEVA
   ]
 
   const areasSoloTrabajo = [
@@ -755,6 +762,8 @@ function asignarClickAvatar() {
   }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
   asignarClickAvatar()
 })
+
