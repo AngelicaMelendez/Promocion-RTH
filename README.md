@@ -1,4 +1,4 @@
-# 📡 Sistema de Promociones RTH
+# Sistema de Promociones RTH
 
 ![Estado](https://img.shields.io/badge/Estado-En%20desarrollo-bc955b?style=for-the-badge)
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
@@ -12,9 +12,8 @@ Sistema web institucional desarrollado para **Radio y Televisión de Hidalgo (RT
 
 El sistema permite administrar los procesos de **Primer Contacto, Cotización, Documentación, Facturas, Creación de Trabajo, Entregables y Reportes**, centralizando la información en **Supabase** para mejorar el control operativo, el seguimiento de actividades, la gestión documental y la consulta de estadísticas por área.
 
----
 
-## 📌 Objetivo del sistema
+## Objetivo del sistema
 
 Desarrollar una plataforma web que permita llevar un control de monitoreo sobre las operaciones realizadas dentro del sistema RTH, considerando los siguientes apartados:
 
@@ -28,9 +27,8 @@ Desarrollar una plataforma web que permita llevar un control de monitoreo sobre 
 
 El sistema utiliza **Supabase** como base de datos principal para guardar y consultar los datos generados desde los diferentes módulos del programa.
 
----
 
-## 🧩 Descripción general
+## Descripción general
 
 El sistema permite registrar, consultar, editar y dar seguimiento a la información operativa del área de Promoción de RTH.
 
@@ -58,11 +56,10 @@ Actualmente el sistema permite:
 - Visualizar quién realizó cada cotización.
 - Controlar información por tipo de cliente.
 
----
 
-## 🛠️ Herramientas técnicas utilizadas
+## Herramientas técnicas utilizadas
 
-### 🌐 Lenguajes y tecnologías web
+### Lenguajes y tecnologías web
 
 | Herramienta | Uso dentro del sistema |
 |---|---|
@@ -70,9 +67,8 @@ Actualmente el sistema permite:
 | ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) | Diseño visual, estilos institucionales, navbar, footer, tablas, botones, formularios y modales. |
 | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | Lógica del sistema, validaciones, eventos, interacción con Supabase y generación dinámica de contenido. |
 
----
 
-### 🗄️ Backend, base de datos y almacenamiento
+### Backend, base de datos y almacenamiento
 
 | Herramienta | Uso dentro del sistema |
 |---|---|
@@ -82,9 +78,8 @@ Actualmente el sistema permite:
 | 🗂️ Supabase Storage | Almacenamiento de archivos PDF, XML, evidencias, documentos y entregables. |
 | ⚡ Supabase Edge Functions | Funciones del sistema como envío de códigos de autorización. |
 
----
 
-### 📚 Librerías y recursos externos
+### Librerías y recursos externos
 
 | Herramienta | Uso dentro del sistema |
 |---|---|
@@ -93,9 +88,9 @@ Actualmente el sistema permite:
 | 📄 jsPDF | Generación del PDF de cotización. |
 | ✉️ Resend | Envío de correos electrónicos y códigos de autorización. |
 
----
 
-### 💻 Herramientas de desarrollo
+
+### Herramientas de desarrollo
 
 | Herramienta | Uso dentro del proyecto |
 |---|---|
@@ -107,9 +102,8 @@ Actualmente el sistema permite:
 | 🌐 Navegador web | Pruebas del sistema. |
 | 🧪 Servidor local | Ejecución del sistema durante desarrollo y pruebas. |
 
----
 
-## 🎨 Diseño institucional
+## Diseño institucional
 
 El sistema mantiene una identidad visual basada en los colores institucionales de RTH.
 
@@ -133,13 +127,9 @@ También se integraron:
 - Perfil de usuario.
 - Nombre y área visibles en la navegación.
 
----
+## Módulos del sistema
 
-## 🧱 Módulos del sistema
-
----
-
-## 🔐 Login y registro
+## Login y registro
 
 El sistema cuenta con acceso mediante usuarios autorizados.
 
