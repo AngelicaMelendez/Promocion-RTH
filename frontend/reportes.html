@@ -54,7 +54,7 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      overflow-x: auto;
+      overflow: visible;
       scrollbar-width: none;
     }
 
@@ -106,6 +106,7 @@
 
     .dropdown {
       position: relative;
+      display: inline-block;
     }
 
     .dropdown-content {
@@ -114,10 +115,13 @@
       background: white;
       min-width: 200px;
       border-radius: 12px;
-      top: 40px;
-      right: 0;
-      z-index: 100;
+      top: 100%;
+      left: 0;
+      margin-top: 6px;
+      z-index: 9999;
       box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      padding: 8px 0;
+      border: 1px solid #eee;
     }
 
     .dropdown:hover .dropdown-content {
@@ -128,6 +132,21 @@
       color: var(--vino);
       padding: 10px 16px;
       display: block;
+      border-radius: 4px;
+    }
+
+    .dropdown-content a:hover {
+      background: var(--gris-claro);
+      color: var(--vino-claro);
+    }
+
+    .caret {
+      font-size: 0.65rem;
+      margin-left: 4px;
+    }
+
+    .dropdown:hover .caret {
+      transform: rotate(180deg);
     }
 
     .nav-profile {
@@ -563,7 +582,16 @@
     <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Documentación</a>
     <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
     <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Crear Trabajo</a>
-    <a href="reportes.html" class="active"><i class="fas fa-chart-line"></i> Reportes</a>
+
+    <div class="dropdown">
+      <a href="reportes.html" class="active">
+        <i class="fas fa-chart-line"></i> Reportes <span class="caret">▼</span>
+      </a>
+
+      <div class="dropdown-content">
+        <a href="historialCambios.html">Historial de cambios</a>
+      </div>
+    </div>
   </div>
 
   <div class="nav-profile">

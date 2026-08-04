@@ -43,20 +43,19 @@
     }
 
     .navbar {
-    background: var(--vino);
-    color: var(--beige);
-    padding: 12px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: nowrap !important;
-    gap: 14px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    overflow: visible; /* ← esto es clave */
-    scrollbar-width: none;
-    /* Si necesitas scroll horizontal en móvil, lo puedes lograr con un contenedor interno */
+      background: var(--vino);
+      color: var(--beige);
+      padding: 12px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: nowrap !important;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      overflow: visible;
+      scrollbar-width: none;
     }
 
     .navbar::-webkit-scrollbar {
@@ -685,99 +684,98 @@
       color: #2c3e4e;
       font-size: 1.05rem;
     }
-    /* ===== DROPDOWN NAVBAR ===== */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
-}
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
 
-.dropbtn {
-  color: var(--beige);
-  text-decoration: none;
-  padding: 8px 11px;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: 0.2s;
-  white-space: nowrap;
-  font-size: 0.95rem;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  font-family: 'Montserrat', sans-serif;
-}
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
 
-.dropbtn .caret {
-  font-size: 0.65rem;
-  margin-left: 4px;
-  transition: transform 0.2s;
-}
+    .dropbtn {
+      color: var(--beige);
+      text-decoration: none;
+      padding: 8px 11px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      white-space: nowrap;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+    }
 
-.dropdown:hover .caret {
-  transform: rotate(180deg);
-}
+    .dropbtn .caret {
+      font-size: 0.65rem;
+      margin-left: 4px;
+      transition: transform 0.2s;
+    }
 
-.dropbtn:hover,
-.dropbtn.active {
-  background-color: var(--dorado);
-  color: var(--vino);
-}
+    .dropdown:hover .caret {
+      transform: rotate(180deg);
+    }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: white;
-  min-width: 190px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-  border-radius: 12px;
-  z-index: 9999; /* ← mayor que el navbar */
-  padding: 8px 0;
-  top: 100%;
-  left: 0;
-  margin-top: 6px;
-  border: 1px solid #eee;
-}
+    .dropbtn:hover,
+    .dropbtn.active {
+      background-color: var(--dorado);
+      color: var(--vino);
+    }
 
-.dropdown-content a {
-  color: var(--vino);
-  padding: 10px 18px;
-  text-decoration: none;
-  display: block;
-  font-size: 0.9rem;
-  border-radius: 4px;
-  transition: background 0.15s;
-}
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 190px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      z-index: 9999;
+      padding: 8px 0;
+      top: 100%;
+      left: 0;
+      margin-top: 6px;
+      border: 1px solid #eee;
+    }
 
-.dropdown-content a:hover {
-  background-color: var(--gris-claro);
-  color: var(--vino-claro);
-}
+    .dropdown-content a {
+      color: var(--vino);
+      padding: 10px 18px;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
 
-.dropdown:hover .dropdown-content {
-  display: block;
-}
+    .dropdown-content a:hover {
+      background-color: var(--gris-claro);
+      color: var(--vino-claro);
+    }
 
-.dropdown:hover .dropbtn {
-  background-color: var(--dorado);
-  color: var(--vino);
-}
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
 
-/* Ajuste responsivo */
-@media (max-width: 850px) {
-  .dropdown-content {
-    left: auto;
-    right: 0;
-    min-width: 160px;
-  }
-}
+    .dropdown:hover .dropbtn {
+      background-color: var(--dorado);
+      color: var(--vino);
+    }
+
+    @media (max-width: 850px) {
+      .dropdown-content {
+        left: auto;
+        right: 0;
+        min-width: 160px;
+      }
+    }
 
     @media (max-width: 850px) {
       .grid {
@@ -842,34 +840,30 @@
   </div>
 
   <div class="nav-links navbar-scroll">
-  <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
+    <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
 
-  <!-- Dropdown Cotizaciones -->
-  <div class="dropdown">
-    <a href="cotizacion.html" class="dropbtn active">
-      <i class="fas fa-file-invoice-dollar"></i> Cotizaciones <span class="caret">▼</span>
-    </a>
-    <div class="dropdown-content">
-      <a href="cotizacion.html">Nueva Cotización</a>
-      <a href="barraProgramatica.html">Barra programática</a>
+    <div class="dropdown">
+      <a href="cotizacion.html" class="dropbtn active">
+        <i class="fas fa-file-invoice-dollar"></i> Cotizaciones <span class="caret">▼</span>
+      </a>
+      <div class="dropdown-content">
+        <a href="barraProgramatica.html">Barra programática</a>
+      </div>
+    </div>
+
+    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Documentación</a>
+    <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
+    <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Crear Trabajo</a>
+
+    <div class="dropdown">
+      <a href="reportes.html" class="dropbtn">
+        <i class="fas fa-chart-line"></i> Reportes <span class="caret">▼</span>
+      </a>
+      <div class="dropdown-content">
+        <a href="historialCambios.html">Historial de cambios</a>
+      </div>
     </div>
   </div>
-
-  <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Documentación</a>
-  <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
-  <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Crear Trabajo</a>
-
-  <!-- Dropdown Reportes -->
-  <div class="dropdown">
-    <a href="reportes.html" class="dropbtn">
-      <i class="fas fa-chart-line"></i> Reportes <span class="caret">▼</span>
-    </a>
-    <div class="dropdown-content">
-      <a href="reportes.html">Reportes generales</a>
-      <a href="historialCambios.html">Historial de cambios</a>
-    </div>
-  </div>
-</div>
 
   <div class="nav-profile">
     <div class="avatar" id="nav-avatar">U</div>
@@ -1444,7 +1438,7 @@
         ? "Aplicar precio mínimo"
         : "Editar cantidad de UMA";
 
-    const { data, error } = await supabase.functions.invoke('enviar-codigo', {
+    const { error } = await supabase.functions.invoke('enviar-codigo', {
       body: {
         email: correoDestino,
         codigo: codigoPrecio,
