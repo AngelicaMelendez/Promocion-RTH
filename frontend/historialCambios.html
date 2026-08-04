@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RYTH | Historial de Cambios</title>
+
   <link rel="icon" type="image/x-icon" href="img/star.ico">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     :root {
       --vino: #691b31;
@@ -21,17 +27,25 @@
       --fondo: #f7f3ed;
     }
 
-    html { overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
-    html::-webkit-scrollbar { width: 0; height: 0; }
+    html {
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
+
+    html::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
 
     body {
       font-family: 'Montserrat', sans-serif;
       background: var(--fondo);
       color: #2c3e4e;
       overflow-x: hidden;
+      margin: 0;
     }
 
-    /* ===== NAVBAR (exactamente igual a ordenes.html) ===== */
     .navbar {
       background: var(--vino);
       color: var(--beige);
@@ -44,7 +58,7 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      overflow-x: visible;
+      overflow: visible;
       scrollbar-width: none;
     }
 
@@ -75,7 +89,8 @@
       min-width: max-content;
     }
 
-    .nav-links a {
+    .nav-links a,
+    .nav-links .dropbtn {
       color: var(--beige);
       text-decoration: none;
       padding: 8px 11px;
@@ -86,10 +101,16 @@
       transition: 0.2s;
       white-space: nowrap;
       font-size: 0.95rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
     }
 
+    .nav-links a:hover,
+    .nav-links .dropbtn:hover,
     .nav-links a.active,
-    .nav-links a:hover {
+    .nav-links .dropbtn.active {
       background-color: var(--dorado);
       color: var(--vino);
     }
@@ -113,12 +134,24 @@
       font-weight: bold;
       color: white;
       flex-shrink: 0;
+      cursor: pointer;
     }
 
-    #nav-user-info { display: flex; flex-direction: column; line-height: 1.1; }
-    #nav-user-name { font-weight: 600; }
-    #nav-user-area { font-size: 0.75rem; opacity: .8; color: var(--beige); }
-    #nav-avatar { cursor: pointer; }
+    #nav-user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    #nav-user-name {
+      font-weight: 600;
+    }
+
+    #nav-user-area {
+      font-size: 0.75rem;
+      opacity: .8;
+      color: var(--beige);
+    }
 
     .logout-btn {
       background: transparent;
@@ -129,27 +162,9 @@
       padding: 8px;
     }
 
-    /* ===== DROPDOWN ===== */
     .dropdown {
       position: relative;
       display: inline-block;
-    }
-
-    .dropbtn {
-      color: var(--beige);
-      text-decoration: none;
-      padding: 8px 11px;
-      border-radius: 40px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: 0.2s;
-      white-space: nowrap;
-      font-size: 0.95rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      font-family: 'Montserrat', sans-serif;
     }
 
     .dropbtn .caret {
@@ -158,8 +173,11 @@
       transition: transform 0.2s;
     }
 
-    .dropdown:hover .caret { transform: rotate(180deg); }
-    .dropbtn:hover, .dropbtn.active {
+    .dropdown.open .caret {
+      transform: rotate(180deg);
+    }
+
+    .dropdown.open .dropbtn {
       background-color: var(--dorado);
       color: var(--vino);
     }
@@ -189,13 +207,18 @@
       transition: background 0.15s;
     }
 
-    .dropdown-content a:hover { background-color: var(--gris-claro); color: var(--vino-claro); }
-    .dropdown:hover .dropdown-content { display: block; }
-    .dropdown:hover .dropbtn { background-color: var(--dorado); color: var(--vino); }
+    .dropdown-content a:hover {
+      background-color: var(--gris-claro);
+      color: var(--vino-claro);
+    }
 
-    /* ===== CONTENEDOR ===== */
+    .dropdown.open .dropdown-content {
+      display: block;
+    }
+
     .container {
       max-width: 1300px;
+      min-height: 260px;
       margin: 30px auto;
       background: white;
       padding: 25px;
@@ -203,108 +226,6 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.05);
     }
 
-    h1 { color: var(--vino); margin-bottom: 10px; }
-    .subtitle { color: var(--gris); margin-bottom: 20px; }
-
-    /* ===== BOTONES DE ACCIÓN (como en cotización) ===== */
-    .acciones {
-      display: flex;
-      gap: 15px;
-      margin: 25px 0;
-      flex-wrap: wrap;
-      position: relative;
-      z-index: 20;
-    }
-
-    .btn-vino {
-      background: var(--vino);
-      color: white;
-      border: none;
-      padding: 13px 22px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.95rem;
-      font-family: 'Montserrat', sans-serif;
-      transition: background 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-vino:hover { background: #4a1322; }
-
-    .btn-gris {
-      background: var(--gris);
-      color: white;
-      border: none;
-      padding: 13px 22px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.95rem;
-      font-family: 'Montserrat', sans-serif;
-      transition: background 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-gris:hover { background: #5a5a5a; }
-
-    /* ===== FILTROS ===== */
-    .filtros {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      align-items: center;
-    }
-    .filtros input, .filtros select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.9rem;
-      background: white;
-    }
-    .filtros input:focus, .filtros select:focus {
-      border-color: var(--vino);
-      outline: none;
-    }
-
-    /* ===== TABLA ===== */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    th {
-      background: var(--vino);
-      color: white;
-      padding: 12px 8px;
-      text-align: left;
-    }
-
-    td {
-      border: 1px solid #ddd;
-      padding: 10px 8px;
-      vertical-align: middle;
-    }
-
-    tr:nth-child(even) { background: #fafafa; }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-    .badge-edit { background: #fef3c7; color: #92400e; }
-    .badge-minimo { background: #dbeafe; color: #1e40af; }
-    .badge-unitario { background: #d1fae5; color: #065f46; }
-
-    /* ===== FOOTER ===== */
     .footer {
       background: var(--vino);
       color: white;
@@ -312,13 +233,37 @@
       padding: 50px 55px 35px;
     }
 
-    .footer-content { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 50px; }
-    .footer-logo img { width: 150px; filter: brightness(0) invert(1); }
-    .footer-emergencias { display: flex; justify-content: center; gap: 70px; text-align: center; }
-    .emergencia-item strong { display: block; font-size: 1.3rem; margin-bottom: 15px; }
-    .footer-line { width: 100%; height: 1px; background: var(--dorado); margin: 40px 0 30px; }
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 50px;
+    }
 
-    /* ===== MODALES ===== */
+    .footer-logo img {
+      width: 150px;
+      filter: brightness(0) invert(1);
+    }
+
+    .footer-emergencias {
+      display: flex;
+      justify-content: center;
+      gap: 70px;
+      text-align: center;
+    }
+
+    .emergencia-item strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .footer-line {
+      width: 100%;
+      height: 1px;
+      background: var(--dorado);
+      margin: 40px 0 30px;
+    }
+
     #modalPerfilUsuario {
       display: none;
       position: fixed;
@@ -329,7 +274,9 @@
       align-items: center;
     }
 
-    #modalPerfilUsuario.active { display: flex; }
+    #modalPerfilUsuario.active {
+      display: flex;
+    }
 
     #modalPerfilUsuario .modal-content {
       background: #f7f3ed;
@@ -359,7 +306,10 @@
       cursor: pointer;
     }
 
-    #modalPerfilUsuario .modal-body { padding: 38px 30px 34px; text-align: center; }
+    #modalPerfilUsuario .modal-body {
+      padding: 38px 30px 34px;
+      text-align: center;
+    }
 
     #perfilFoto {
       width: 140px !important;
@@ -371,7 +321,11 @@
       box-shadow: 0 8px 20px rgba(0,0,0,.18);
     }
 
-    #perfilNombre, #perfilArea { color: #2c3e4e; font-size: 1.05rem; }
+    #perfilNombre,
+    #perfilArea {
+      color: #2c3e4e;
+      font-size: 1.05rem;
+    }
 
     .btn-action {
       background: var(--vino-claro);
@@ -385,24 +339,50 @@
       font-family: 'Montserrat', sans-serif;
       margin: 0 5px;
     }
-    .btn-action:hover { background: var(--vino); }
+
+    .btn-action:hover {
+      background: var(--vino);
+    }
 
     @media (max-width: 850px) {
-      .navbar { flex-wrap: nowrap !important; justify-content: flex-start; gap: 10px; padding: 15px 20px; }
-      .nav-links { justify-content: center; flex-shrink: 0; flex-wrap: nowrap; }
-      .nav-profile { flex-shrink: 0; margin-left: auto; }
-      .footer-content { grid-template-columns: 1fr; text-align: center; gap: 30px; }
-      .footer-emergencias { flex-direction: column; gap: 20px; }
-      .dropdown-content { left: auto; right: 0; min-width: 160px; }
-      table { font-size: 0.75rem; }
-      th, td { padding: 6px 4px; }
-      .filtros { flex-direction: column; align-items: stretch; }
-      .container { margin: 15px auto; padding: 15px; }
-      .acciones { gap: 10px; justify-content: stretch; }
-      .btn-vino, .btn-gris { padding: 10px 16px; font-size: 0.85rem; justify-content: center; }
+      .navbar {
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+
+      .nav-profile {
+        margin-left: auto;
+      }
+
+      .dropdown-content {
+        left: auto;
+        right: 0;
+        min-width: 160px;
+      }
+
+      .container {
+        margin: 15px auto;
+        padding: 15px;
+        min-height: 220px;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+      }
+
+      .footer-emergencias {
+        flex-direction: column;
+        gap: 20px;
+      }
     }
   </style>
 </head>
+
 <body>
 
 <nav class="navbar">
@@ -412,26 +392,37 @@
   </div>
 
   <div class="nav-links">
-    <a href="primerContacto.html"><i class="fas fa-users"></i> Clientes</a>
+    <a href="primerContacto.html">
+      <i class="fas fa-users"></i> Clientes
+    </a>
 
     <div class="dropdown">
       <a href="cotizacion.html" class="dropbtn">
         <i class="fas fa-file-invoice-dollar"></i> Cotizaciones <span class="caret">▼</span>
       </a>
+
       <div class="dropdown-content">
-        <a href="cotizacion.html">Nueva Cotización</a>
         <a href="barraProgramatica.html">Barra programática</a>
       </div>
     </div>
 
-    <a href="ordenes.html"><i class="fas fa-clipboard-list"></i> Documentación</a>
-    <a href="factura.html"><i class="fas fa-receipt"></i> Facturas</a>
-    <a href="creacionTrabajo.html"><i class="fas fa-tools"></i> Crear Trabajo</a>
+    <a href="ordenes.html">
+      <i class="fas fa-clipboard-list"></i> Documentación
+    </a>
+
+    <a href="factura.html">
+      <i class="fas fa-receipt"></i> Facturas
+    </a>
+
+    <a href="creacionTrabajo.html">
+      <i class="fas fa-tools"></i> Crear Trabajo
+    </a>
 
     <div class="dropdown">
       <a href="reportes.html" class="dropbtn active">
         <i class="fas fa-chart-line"></i> Reportes <span class="caret">▼</span>
       </a>
+
       <div class="dropdown-content">
         <a href="historialCambios.html">Historial de cambios</a>
       </div>
@@ -440,10 +431,12 @@
 
   <div class="nav-profile">
     <div class="avatar" id="nav-avatar" onclick="abrirPerfilUsuario()">U</div>
+
     <div id="nav-user-info">
       <div id="nav-user-name">Usuario</div>
       <div id="nav-user-area"></div>
     </div>
+
     <button class="logout-btn" onclick="cerrarSesion()">
       <i class="fas fa-sign-out-alt"></i>
     </button>
@@ -451,72 +444,31 @@
 </nav>
 
 <div class="container">
-  <h1><i class="fas fa-history"></i> Historial de Cambios de Precios</h1>
-  <p class="subtitle">Registro de modificaciones en precios / UMA de cotizaciones</p>
-
-  <!-- BOTONES DE ACCIÓN -->
-  <div class="acciones">
-    <button type="button" class="btn-vino" onclick="aplicarFiltros()">
-      <i class="fas fa-filter"></i> Filtrar
-    </button>
-    <button type="button" class="btn-gris" onclick="limpiarFiltros()">
-      <i class="fas fa-undo"></i> Limpiar
-    </button>
-  </div>
-
-  <div class="filtros">
-    <input type="text" id="filtroUsuario" placeholder="Buscar por usuario..." style="flex:1; min-width:150px;">
-    <input type="date" id="filtroFecha" style="min-width:140px;">
-    <select id="filtroTipo" style="min-width:140px;">
-      <option value="">Todos los cambios</option>
-      <option value="Unitario">Aplicación de precio unitario</option>
-      <option value="Mínimo">Aplicación de precio mínimo</option>
-      <option value="Edición">Edición de cantidad UMA</option>
-    </select>
-  </div>
-
-  <div style="overflow-x: auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Usuario</th>
-          <th>Servicio</th>
-          <th>Cambio realizado</th>
-          <th>Valor anterior</th>
-          <th>Valor nuevo</th>
-          <th>Motivo</th>
-          <th>Folio cotización</th>
-        </tr>
-      </thead>
-      <tbody id="tbodyHistorial">
-        <tr><td colspan="8" style="text-align:center; color: var(--gris);">Cargando historial...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="margin-top: 20px; display: flex; gap: 10px; align-items: center;">
-    <span style="font-size:0.85rem; color: var(--gris);">
-      <i class="fas fa-info-circle"></i> Los datos mostrados son de ejemplo. Conecta con tu tabla de historial real en Supabase.
-    </span>
-  </div>
 </div>
 
 <div class="modal" id="modalPerfilUsuario">
   <div class="modal-content" style="max-width:420px;">
     <div class="modal-header">
       <span><i class="fas fa-user"></i> Perfil de usuario</span>
-      <button onclick="cerrarPerfilUsuario()"><i class="fas fa-times"></i></button>
+
+      <button onclick="cerrarPerfilUsuario()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
+
     <div class="modal-body" style="text-align:center;">
       <img id="perfilFoto" src="" alt="Foto de perfil">
+
       <p><strong>Nombre:</strong> <span id="perfilNombre">Usuario</span></p>
       <p><strong>Área:</strong> <span id="perfilArea">-</span></p>
+
       <input type="file" id="inputFotoPerfil" accept="image/*" style="display:none;">
+
       <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">
         <button class="btn-action" onclick="document.getElementById('inputFotoPerfil').click()">
           <i class="fas fa-image"></i> Editar foto
         </button>
+
         <button class="btn-action" onclick="guardarFotoPerfil()">
           <i class="fas fa-save"></i> Guardar
         </button>
@@ -527,11 +479,22 @@
 
 <footer class="footer">
   <div class="footer-content">
-    <div class="footer-logo"><img src="img/logo_RYT.png" alt="Gobierno Hidalgo"></div>
-    <div class="footer-emergencias">
-      <div class="emergencia-item"><strong>911</strong><span>Emergencia</span></div>
-      <div class="emergencia-item"><strong>089</strong><span>Denuncia Anónima</span></div>
+    <div class="footer-logo">
+      <img src="img/logo_RYT.png" alt="Gobierno Hidalgo">
     </div>
+
+    <div class="footer-emergencias">
+      <div class="emergencia-item">
+        <strong>911</strong>
+        <span>Emergencia</span>
+      </div>
+
+      <div class="emergencia-item">
+        <strong>089</strong>
+        <span>Denuncia Anónima</span>
+      </div>
+    </div>
+
     <div>
       <p>Aviso de privacidad</p>
       <p>Carretera Federal México-Pachuca Km 84.5</p>
@@ -540,85 +503,63 @@
       <p>+52 (771) 71 79000 Ext. 9211</p>
     </div>
   </div>
+
   <div class="footer-line"></div>
-  <div>Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación</div>
+
+  <div>
+    Copyrights © 2026 Todos los derechos reservados por Hidalgo de la Transformación
+  </div>
 </footer>
 
 <script type="module">
-  import { initAuth, supabase } from './app.js';
-  await initAuth();
+  import { initAuth, supabase } from './app.js'
 
-  window.abrirPerfilUsuario = window.abrirPerfilUsuario || function() {};
-  window.cerrarPerfilUsuario = window.cerrarPerfilUsuario || function() {};
-  window.guardarFotoPerfil = window.guardarFotoPerfil || function() {};
+  await initAuth()
 
-  // ================= DATOS DE EJEMPLO =================
-  const historialEjemplo = [
-    { fecha: '2026-07-25 10:30', usuario: 'María López', servicio: 'RTVH-012 - Spot 30 seg', cambio: 'Edición de cantidad UMA', valor_anterior: '2.50 UMA', valor_nuevo: '3.00 UMA', motivo: 'Ajuste por incremento en costo de producción', folio: 'COT-0042', tipo: 'Edición' },
-    { fecha: '2026-07-24 15:20', usuario: 'Carlos Méndez', servicio: 'RTVH-045 - Entrevista en vivo', cambio: 'Aplicación de precio mínimo', valor_anterior: '4.20 UMA', valor_nuevo: '3.50 UMA', motivo: 'Autorización por presupuesto limitado del cliente', folio: 'COT-0038', tipo: 'Mínimo' },
-    { fecha: '2026-07-23 09:15', usuario: 'Ana García', servicio: 'RTVH-023 - Microprograma', cambio: 'Aplicación de precio unitario', valor_anterior: '3.80 UMA', valor_nuevo: '3.80 UMA', motivo: 'Reinicio al precio base', folio: 'COT-0035', tipo: 'Unitario' },
-    { fecha: '2026-07-22 17:45', usuario: 'Luis Ramírez', servicio: 'RTVH-007 - Transmisión especial', cambio: 'Edición de cantidad UMA', valor_anterior: '5.00 UMA', valor_nuevo: '6.20 UMA', motivo: 'Ampliación de tiempo de transmisión', folio: 'COT-0029', tipo: 'Edición' },
-    { fecha: '2026-07-21 11:00', usuario: 'María López', servicio: 'RTVH-012 - Spot 30 seg', cambio: 'Aplicación de precio mínimo', valor_anterior: '3.00 UMA', valor_nuevo: '2.50 UMA', motivo: 'Campaña institucional de gobierno', folio: 'COT-0025', tipo: 'Mínimo' },
-    { fecha: '2026-07-20 14:30', usuario: 'Carlos Méndez', servicio: 'RTVH-034 - Reportaje especial', cambio: 'Edición de cantidad UMA', valor_anterior: '4.00 UMA', valor_nuevo: '4.50 UMA', motivo: 'Incluye material gráfico adicional', folio: 'COT-0022', tipo: 'Edición' },
-    { fecha: '2026-07-19 08:20', usuario: 'Ana García', servicio: 'RTVH-018 - Cuña radiofónica', cambio: 'Aplicación de precio unitario', valor_anterior: '2.00 UMA', valor_nuevo: '2.00 UMA', motivo: 'Restablecimiento tras modificación temporal', folio: 'COT-0018', tipo: 'Unitario' },
-    { fecha: '2026-07-18 16:10', usuario: 'Luis Ramírez', servicio: 'RTVH-051 - Cobertura evento', cambio: 'Aplicación de precio mínimo', valor_anterior: '7.50 UMA', valor_nuevo: '6.00 UMA', motivo: 'Presupuesto especial del evento', folio: 'COT-0014', tipo: 'Mínimo' }
-  ];
+  window.abrirPerfilUsuario = window.abrirPerfilUsuario || function() {}
+  window.cerrarPerfilUsuario = window.cerrarPerfilUsuario || function() {}
+  window.guardarFotoPerfil = window.guardarFotoPerfil || function() {}
 
-  function renderizarTabla(datos) {
-    const tbody = document.getElementById('tbodyHistorial');
-    if (!datos || datos.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color: var(--gris);">No hay registros que coincidan con los filtros.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = '';
-    datos.forEach(item => {
-      let badgeClass = '';
-      if (item.tipo === 'Edición') badgeClass = 'badge-edit';
-      else if (item.tipo === 'Mínimo') badgeClass = 'badge-minimo';
-      else if (item.tipo === 'Unitario') badgeClass = 'badge-unitario';
-      tbody.innerHTML += `
-        <tr>
-          <td>${item.fecha}</td>
-          <td><strong>${item.usuario}</strong></td>
-          <td>${item.servicio}</td>
-          <td><span class="badge ${badgeClass}">${item.cambio}</span></td>
-          <td>${item.valor_anterior}</td>
-          <td>${item.valor_nuevo}</td>
-          <td style="max-width:200px;">${item.motivo}</td>
-          <td><a href="cotizacion.html?folio=${item.folio}" style="color: var(--vino); font-weight:600;">${item.folio}</a></td>
-        </tr>
-      `;
-    });
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('.dropdown.open').forEach(dropdown => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('open')
+      }
+    })
+  })
+
+  document.querySelectorAll('.dropbtn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault()
+
+      const parent = this.closest('.dropdown')
+
+      if (!parent) return
+
+      document.querySelectorAll('.dropdown.open').forEach(dropdown => {
+        if (dropdown !== parent) {
+          dropdown.classList.remove('open')
+        }
+      })
+
+      parent.classList.toggle('open')
+    })
+  })
+
+  window.cerrarSesion = async function() {
+    await supabase.auth.signOut()
+    window.location.href = 'login.html'
   }
 
-  window.aplicarFiltros = function() {
-    const usuarioFiltro = document.getElementById('filtroUsuario').value.toLowerCase().trim();
-    const fechaFiltro = document.getElementById('filtroFecha').value;
-    const tipoFiltro = document.getElementById('filtroTipo').value;
-    const datosFiltrados = historialEjemplo.filter(item => {
-      if (usuarioFiltro && !item.usuario.toLowerCase().includes(usuarioFiltro)) return false;
-      if (fechaFiltro) {
-        const fechaItem = item.fecha.split(' ')[0];
-        if (fechaItem !== fechaFiltro) return false;
+  const avatar = document.getElementById('nav-avatar')
+
+  if (avatar) {
+    avatar.addEventListener('click', () => {
+      if (typeof window.abrirPerfilUsuario === 'function') {
+        window.abrirPerfilUsuario()
       }
-      if (tipoFiltro && item.tipo !== tipoFiltro) return false;
-      return true;
-    });
-    renderizarTabla(datosFiltrados);
-  };
-
-  window.limpiarFiltros = function() {
-    document.getElementById('filtroUsuario').value = '';
-    document.getElementById('filtroFecha').value = '';
-    document.getElementById('filtroTipo').value = '';
-    renderizarTabla(historialEjemplo);
-  };
-
-  renderizarTabla(historialEjemplo);
-
-  document.getElementById('nav-avatar').addEventListener('click', () => {
-    if (typeof window.abrirPerfilUsuario === 'function') window.abrirPerfilUsuario();
-  });
+    })
+  }
 </script>
 
 </body>
